@@ -1,6 +1,6 @@
 Package: frontier
-Version: 0.9-4
-Date: 2008-10-16
+Version: 0.9-6
+Date: 2008-12-06
 Title: Stochastic Frontier Analysis
 Author: Tim Coelli <t.coelli@uq.edu.au>,
    Arne Henningsen <arne.henningsen@googlemail.com>
@@ -16,4 +16,4 @@ Description: Maximum Likelihood Estimation of
    influenced by a number of variables (Battese and Coelli, 1995).
 License: GPL (>= 2)
 URL: http://www.uq.edu.au/economics/cepa/, http://www.uni-kiel.de/agrarpol/ahenningsen/frontier/
-Packaged: Thu Oct 16 12:45:45 2008; suapm095
+Packaged: Sat Dec  6 16:25:46 2008; suapm095
