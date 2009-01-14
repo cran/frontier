@@ -11,7 +11,7 @@
 \usage{
    front41ReadOutput( file = "front41.out" )
 
-   \method{print}{front41Output}( x, efficiencies = FALSE, ... )
+   \method{print}{front41Output}( x, efficiencies = FALSE, \dots )
 }
 
 \arguments{
@@ -20,7 +20,7 @@
       (returned by \code{front41ReadOutput}.}
    \item{efficiencies}{logical. Print all efficiency estimates?
       (If \code{FALSE}, only the mean efficiency is printed.)}
-   \item{...}{currently ignored.}
+   \item{\dots}{currently ignored.}
 }
 
 \value{
@@ -61,7 +61,7 @@
 \details{
    A modified version of Tim Coelli's FRONTIER 4.1
    that can be used non-interactively is available on
-   \url{http://www.uni-kiel.de/agrarpol/ahenningsen/frontier/}.
+   \url{http://frontier.r-forge.r-project.org/front41.html}.
    It can be called from within R using the \code{system} command
    (see example).
    This version is is available as (FORTRAN) source code
@@ -86,7 +86,7 @@
 
 \seealso{\code{\link{front41WriteInput}}, \code{\link{front41Est}}}
 
-\author{Arne Henningsen \email{ahenningsen@agric-econ.uni-kiel.de}}
+\author{Arne Henningsen}
 
 \examples{
    # read the output file that is provided with Frontier 4.1

@@ -10,20 +10,20 @@
 
 \usage{
    front41Est( command = ifelse( .Platform$OS.type == "windows",
-      "front41.exe", "front41.bin" ), ... )
+      "front41.exe", "front41.bin" ), \dots )
 }
 
 \arguments{
    \item{command}{command to call the modified version of FRONTIER 4.1
       (see details).}
-   \item{...}{arguments passed to \code{\link{front41WriteInput}}.}
+   \item{\dots}{arguments passed to \code{\link{front41WriteInput}}.}
 }
 
 \details{
    Using the command \code{front41Est} requires the installation
    of a modified version of Tim Coelli's FRONTIER 4.1.
    It is available on
-   \url{http://www.uni-kiel.de/agrarpol/ahenningsen/frontier/}.
+   \url{http://frontier.r-forge.r-project.org/front41.html}.
    as (FORTRAN) source code
    and (executable) binaries for GNU/Linux and MS-Windows.
 }
@@ -54,7 +54,7 @@
 
 \seealso{\code{\link{front41WriteInput}}, \code{\link{front41ReadOutput}}}
 
-\author{Arne Henningsen \email{ahenningsen@agric-econ.uni-kiel.de}}
+\author{Arne Henningsen}
 
 \examples{
    data( front41Data )

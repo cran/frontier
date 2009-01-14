@@ -22,7 +22,7 @@ frontier( data, crossSectionName, timePeriodName = NULL,
    iprint = 0, indic = 1, tol = 0.00001, tol2 = 0.001, bignum = 1.0E+16,
    step1 = 0.00001, igrid2 = 1, gridno = 0.1, maxit = 100,
    startVal = NULL )
-\method{print}{frontier}( x, ... )
+\method{print}{frontier}( x, \dots )
 }
 
 \arguments{
@@ -70,7 +70,20 @@ frontier( data, crossSectionName, timePeriodName = NULL,
       estimation.}
    \item{x}{an object of class \code{frontier} 
       (returned by the function \code{frontier}).}
-   \item{...}{currently unused.}
+   \item{\dots}{currently unused.}
+}
+
+\details{The \code{frontier} function uses the Fortran source code of
+   Tim Coelli's software FRONTIER 4.1
+   (\url{http://www.uq.edu.au/economics/cepa/frontier.htm})
+   and hence, provides the same features as FRONTIER 4.1.
+   A comprehensive documentation of FRONTIER 4.1 is available
+   in the file \code{Front41.pdf}
+   that is included in the archive \code{FRONT41-xp1.zip},
+   which is available at
+   \url{http://www.uq.edu.au/economics/cepa/frontier.htm}.
+   It is recommended to read this documentation, 
+   because the \code{frontier} function is based on the FRONTIER 4.1 software.
 }
 
 \value{
@@ -139,8 +152,7 @@ frontier( data, crossSectionName, timePeriodName = NULL,
       University of New England.
 }
 
-\author{Tim Coelli \email{t.coelli@uq.edu.au},
-   Arne Henningsen \email{ahenningsen@agric-econ.uni-kiel.de}}
+\author{Tim Coelli and Arne Henningsen}
 
 \examples{
    # example included in FRONTIER 4.1
@@ -166,16 +178,18 @@ frontier( data, crossSectionName, timePeriodName = NULL,
    riceProdPhil$lLABOR <- log( riceProdPhil$LABOR )
    riceProdPhil$lNPK   <- log( riceProdPhil$NPK )
 
+   # Error Components Frontier (Battese & Coelli 1992)
    rice <- frontier( riceProdPhil,
       crossSectionName = "FMERCODE", timePeriodName = "YEARDUM",
       yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ) )
    rice
 
+   # Technical Efficiency Effects Frontier (Battese & Coelli 1995)
    rice2 <- frontier( riceProdPhil,
       crossSectionName = "FMERCODE", timePeriodName = "YEARDUM",
       yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ),
       zNames = c( "EDYRS", "BANRAT" ) )
-   rice
+   rice2
 }
 
 \keyword{models}

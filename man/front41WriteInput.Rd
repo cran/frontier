@@ -13,8 +13,8 @@
    yName, xNames = NULL, qxNames = NULL, zNames = NULL, quadHalf = TRUE,
    modelType = ifelse( is.null( zNames ), 1, 2 ), functionType = 1,
    logDepVar = TRUE, mu = FALSE, eta = FALSE,
-   insFile = "front41.ins", dtaFile = sub( "\\.ins$", ".dta", insFile ),
-   outFile = sub( "\\.ins$", ".out", insFile ), startUpFile = "front41.000",
+   insFile = "front41.ins", dtaFile = sub( "\\\\.ins$", ".dta", insFile ),
+   outFile = sub( "\\\\.ins$", ".out", insFile ), startUpFile = "front41.000",
    iprint = 5, indic = 1, tol = 0.00001, tol2 = 0.001, bignum = 1.0E+16,
    step1 = 0.00001, igrid2 = 1, gridno = 0.1, maxit = 100, ite = 1 )
 }
@@ -72,7 +72,7 @@
 \details{
    A modified version of Tim Coelli's FRONTIER 4.1
    that can be used non-interactively is available on
-   \url{http://www.uni-kiel.de/agrarpol/ahenningsen/frontier/}.
+   \url{http://frontier.r-forge.r-project.org/front41.html}.
    It can be called from within R using the \code{system} command
    (see example).
    This version is is available as (FORTRAN) source code
@@ -117,7 +117,7 @@
 
 \seealso{\code{\link{front41ReadOutput}}, \code{\link{front41Est}}}
 
-\author{Arne Henningsen \email{ahenningsen@agric-econ.uni-kiel.de}}
+\author{Arne Henningsen}
 
 \examples{
    data( front41Data )

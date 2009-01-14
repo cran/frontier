@@ -9,8 +9,8 @@ returned by \code{\link{frontier}}.
 }
 
 \usage{
-\method{summary}{frontier}( object, effic = FALSE, ... )
-\method{print}{summary.frontier}( x, effic = x$printEffic, ... )
+\method{summary}{frontier}( object, effic = FALSE, \dots )
+\method{print}{summary.frontier}( x, effic = x$printEffic, \dots )
 }
 
 \arguments{
@@ -19,7 +19,7 @@ returned by \code{\link{frontier}}.
    \item{x}{an object of class \code{summary.frontier} 
       (returned by the function \code{summary.frontier}).}
    \item{effic}{logical. Print the individual efficiency estimates?}
-   \item{...}{currently unused.}
+   \item{\dots}{currently unused.}
 }
 
 \value{
@@ -33,7 +33,7 @@ returned by \code{\link{frontier}}.
    \item{printEffic}{argument \code{effic}.}
 }
 
-\author{Arne Henningsen \email{ahenningsen@agric-econ.uni-kiel.de}}
+\author{Arne Henningsen}
 
 \examples{
    # example included in FRONTIER 4.1

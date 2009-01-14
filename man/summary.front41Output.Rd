@@ -9,9 +9,9 @@
 }
 
 \usage{
-\method{summary}{front41Output}( object, ... )
+\method{summary}{front41Output}( object, \dots )
 
-\method{print}{summary.front41Output}( x, efficiencies = FALSE, ... )
+\method{print}{summary.front41Output}( x, efficiencies = FALSE, \dots )
 }
 
 \arguments{
@@ -22,7 +22,7 @@
       \code{front41ReadOutput}).}
    \item{efficiencies}{logical. Print all efficiency estimates?
       (If \code{FALSE}, only the mean efficiency is printed.)}
-   \item{...}{currently ignored.}
+   \item{\dots}{currently ignored.}
 }
 
 \value{
@@ -42,7 +42,7 @@
 
 \seealso{\code{\link{front41ReadOutput}}, \code{\link{front41WriteInput}}.}
 
-\author{Arne Henningsen \email{ahenningsen@agric-econ.uni-kiel.de}}
+\author{Arne Henningsen}
 
 \examples{
    # read the output file that is provided with Frontier 4.1

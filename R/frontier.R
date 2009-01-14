@@ -122,9 +122,11 @@ frontier <- function(
    dataTable <- cbind( dataTable, data[[ yName ]] )
 
    # exogenous variables
+   paramNames <- "beta_0"
    if( nXvars > 0 ) {
       for( i in 1:nXvars ) {
          dataTable <- cbind( dataTable, data[[ xNames[ i ] ]] )
+         paramNames <- c( paramNames, paste( "beta", i, sep = "_" ) )
       }
    }
 
@@ -135,6 +137,7 @@ frontier <- function(
             dataTable <- cbind( dataTable,
                ifelse( i == j, 1 , 2 ) * ifelse( quadHalf, 0.5, 1 ) *
                data[[ qxNames[ i ] ]] * data[[ qxNames[ j ] ]] )
+            paramNames <- c( paramNames, paste( "beta", i, j, sep = "_" ) )
          }
       }
    }
@@ -215,7 +218,6 @@ frontier <- function(
    if( modelType == 1 && eta == FALSE ) {
       returnObj$effic <- returnObj$effic[ , 1, drop = FALSE ]
    }
-   paramNames <- paste( "beta", c( 0:nb ), sep = "_" )
    if( modelType == 2 ) {
       if( mu ){
          paramNames <- c( paramNames, "delta_0" )

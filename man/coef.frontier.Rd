@@ -8,7 +8,7 @@ returned by \code{\link{frontier}}.
 }
 
 \usage{
-\method{coef}{frontier}( object, which = "mle", ... )
+\method{coef}{frontier}( object, which = "mle", \dots )
 }
 
 \arguments{
@@ -19,14 +19,14 @@ returned by \code{\link{frontier}}.
       'ols' for coefficients estimated by OLS,
       'grid' for coefficients obtained by the grid search,
       or 'mle' for coefficients estimated by Maximum Likelihood).}
-   \item{...}{currently unused.}
+   \item{\dots}{currently unused.}
 }
 
 \value{
    \code{coef.frontier} returns a named vector of the coefficients.
 }
 
-\author{Arne Henningsen \email{ahenningsen@agric-econ.uni-kiel.de}}
+\author{Arne Henningsen}
 
 \examples{
    # example included in FRONTIER 4.1
