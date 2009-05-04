@@ -1,0 +1,68 @@
+THIS IS THE CHANGELOG OF THE "frontier" PACKAGE
+
+Please note that only the most significant changes are reported here.
+A full ChangeLog is available in the log messages of the SVN repository
+on R-Forge.
+
+
+            CHANGES IN VERSION 0.99-0
+
+* corrected and considerably improved documentation of function "fontier"
+
+* changed order of arguments of function "frontier"
+
+* removed arguments "crossSectionName" and "timePeriodName" from function
+"frontier": in case of cross-section data, these variables (information) are
+not needed, and in case of panel data, the information on the panel structure
+has to be added to the data set by the function "plm.data" of the "plm" package
+
+* argument "modelType" of function "frontier" must be "ECF" or "EEF" now
+
+* replaced argument "funtionType" of function "frontier"
+by argument "ineffDecrease"
+
+* renamed argument "eta" of function "frontier" as "timeEffect"
+
+* split argument "mu" of function "frontier" into "truncNorm"
+and "zIntercept"
+
+* increased default value of argument "maxit" of function "frontier" to 1000
+
+* renamed argument "step1" of function "frontier" as "searchStep"
+
+* renamed argument "tol2" of function "frontier" as "searchTol"
+
+* replaced argument "indic" of function "frontier" by "searchScale"
+
+* renamed argument "gridno" of function "frontier" as "gridSize"
+
+* renamed argument "igrid2" of function "frontier" as "gridDouble"
+
+* renamed argument "iprint" of function "frontier" as "printIter"
+
+* removed arguments "qxNames" and "quadHalf" from function "frontier",
+because quadratic or translog frontiers can be estimated with function
+"frontierQuad" now
+
+* added "logLik" method for objects of class "frontier"
+
+* added function "frontierQuad" for estimating quadratic and translog frontiers
+
+* added function "frontierTranslogRay" for estimating stochastic ray
+translog frontier functions
+
+* added the generic function "efficiencies" and corresponding methods
+for default objects and objects of class "frontier"
+
+* added "elas" method for objects of class "frontierQuad"
+
+* function frontier() and frontierQuad() return the (matched) call now
+
+* the matrix of efficiency estimates returned by "frontier" has row names
+(cross section units) and possibly column names (time period) now
+
+
+
+            CHANGES IN VERSION 0.9-9 AND BEFORE
+
+* please take a look at the log messages of the SVN repository on R-Forge

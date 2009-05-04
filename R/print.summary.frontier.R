@@ -1,15 +1,19 @@
 print.summary.frontier <- function( x, effic = x$printEffic, ... ) {
 
    cat( "Stochastic Frontier Analysis with FRONTIER 4.1\n\n" )
-   if( x$modelType == 1 ) {
+   if( x$modelType == "ECF" ) {
       cat( "Error Components Frontier (see Battese & Coelli 1992)\n" )
-   } else {
+   } else if( x$modelType == "EEF" ) {
       cat( "Efficiency Effects Frontier (see Battese & Coelli 1995)\n" )
-   }
-   if( x$functionType == 1 ) {
-      cat( "The model is a production function\n" )
    } else {
-      cat( "The model is a cost function\n" )
+      stop( "unknown model type '", x$modelType, "'" )
+   }
+   if( x$ineffDecrease ) {
+      cat( "Inefficiency decreases the endogenous variable",
+	"(as in a production function)\n" )
+   } else {
+      cat( "Inefficiency increases the endogenous variable",
+	"(as in a cost function\n" )
    }
    if( x$logDepVar == 1 ) {
       cat( "The dependent variable is logged\n" )

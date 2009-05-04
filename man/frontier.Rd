@@ -15,60 +15,84 @@
 }
 
 \usage{
-frontier( data, crossSectionName, timePeriodName = NULL,
-   yName, xNames = NULL, qxNames = NULL, zNames = NULL, quadHalf = TRUE,
-   modelType = ifelse( is.null( zNames ), 1, 2 ),
-   functionType = 1, logDepVar = TRUE, mu = FALSE, eta = FALSE,
-   iprint = 0, indic = 1, tol = 0.00001, tol2 = 0.001, bignum = 1.0E+16,
-   step1 = 0.00001, igrid2 = 1, gridno = 0.1, maxit = 100,
-   startVal = NULL )
+frontier( yName, xNames = NULL, zNames = NULL, data,
+   modelType = ifelse( is.null( zNames ), "ECF", "EEF" ),
+   ineffDecrease = TRUE, logDepVar = TRUE, truncNorm = FALSE,
+   zIntercept = FALSE, timeEffect = FALSE, startVal = NULL,
+   tol = 0.00001, maxit = 1000, bignum = 1.0E+16,
+   searchStep = 0.00001, searchTol = 0.001, searchScale = NA,
+   gridSize = 0.1, gridDouble = TRUE, printIter = 0 )
 \method{print}{frontier}( x, \dots )
 }
 
 \arguments{
-   \item{data}{data frame that contains the data.}
-   \item{crossSectionName}{string: name of the cross section identifier.}
-   \item{timePeriodName}{string: name of the time period identifier
-      or \code{NULL} in case of cross-section data.}
    \item{yName}{string: name of the endogenous variable.}
    \item{xNames}{a vector of strings containing the names of the X variables
       (exogenous variables of the production or cost function).}
-   \item{qxNames}{a vector of strings containing the names of the variables
-      to construct quadratic and interaction terms.
-      As a shortcut, this argument can be set to \code{"all"}
-      for using all variables specified in argument \code{xNames}
-      to get a full quadratic or translog model.}
    \item{zNames}{a vector of strings containing the names of the Z variables
       (variables explaining the efficiency level).}
-   \item{quadHalf}{logical. Multiply the quadratic terms by one half?}
-   \item{modelType}{model type: either 1 for an 'Error Components Frontier'
-      or 2 for an 'Efficiency Effects Frontier'.}
-   \item{functionType}{function type: either 1 for 'production function' or
-      2 for 'cost function'.}
+   \item{data}{a (panel) data frame that contains the data;
+      if \code{data} is a usual data.frame,
+      it is assumed that these are cross-section data;
+      if \code{data} is a panel data frame
+      (created with \code{\link[plm]{plm.data}}),
+      it is assumed that these are panel data.}
+   \item{modelType}{model type:
+      either \code{"ECF"} for an 'Error Components Frontier'
+      or \code{"EEF"} for an 'Efficiency Effects Frontier'.}
+   \item{ineffDecrease}{logical. If \code{TRUE},
+      inefficiency decreases the endogenous variable
+      (e.g. for estimating a production function);
+      if \code{FALSE},
+      inefficiency increases the endogenous variable
+      (e.g. for estimating a cost function).}
    \item{logDepVar}{logical. Is the dependent variable logged.}
-   \item{mu}{logical. Should a 'mu' (in case of an 'Error Components Frontier',
-      i.e. modelType = 1)
-      or a delta0 (in case of an 'Efficiency Effects Frontier',
-      i.e. modelType = 2)
-      be included in the estimation.}
-   \item{eta}{logical. Should an 'eta' be included in the estimation
-      (only in case of an 'Error Components Frontier', i.e. modelType = 1).}
-   \item{iprint}{numeric. Print info every \code{iprint} iterations;
-      if this argument is 0, do not print.}
-   \item{indic}{numeric. Use in unidimensional search procedure:
-      indic = 2 says do not scale step length in unidimensional search;
-      indic = 1 says scale (to length of last step) only if last step was smaller;
-      indic = any other number says scale (to length of last step).}
-   \item{tol}{numeric. Convergence tolerance (proportional).}
-   \item{tol2}{numeric. Tolerance used in uni-dimensional search procedure.}
-   \item{bignum}{numeric. Used to set bounds on densities and distributions.}
-   \item{step1}{numeric. Size of 1st step in search procedure.}
-   \item{igrid2}{numeric. 1 = double accuracy, 0 = single accuracy.}
-   \item{gridno}{numeric. Steps taken in single accuracy grid search on gamma.}
-   \item{maxit}{numeric. Maximum number of iterations permitted.}
-   \item{startVal}{numeric vector. Optional starting values for the ML 
+   \item{truncNorm}{logical. If \code{TRUE},
+      the inefficiencies are assumed to have a truncated normal distribution
+      (i.e. parameter \eqn{\mu}{mu} is added);
+      if \code{FALSE},
+      they are assumed to have a half-normal distribution
+      (only relevant for the \sQuote{Error Components Frontier}).}
+   \item{zIntercept}{logical. If \code{TRUE},
+      an intercept (with parameter \eqn{\delta_0}{delta_0})
+      is added to the Z variables
+      (only relevant for the \sQuote{Efficiency Effects Frontier}).}
+   \item{timeEffect}{logical. If \code{FALSE} (default),
+      the efficiency estimates of an \sQuote{Error Components Frontier}
+      are time invariant;
+      if \code{TRUE}, time is allowed to have an effect on efficiency
+      (this argument is ignored in case of an
+      \sQuote{Efficiency Effects Frontier}).}
+   \item{startVal}{numeric vector. Optional starting values for the ML
       estimation.}
-   \item{x}{an object of class \code{frontier} 
+   \item{tol}{numeric. Convergence tolerance (proportional).}
+   \item{maxit}{numeric. Maximum number of iterations permitted.}
+   \item{bignum}{numeric. Used to set bounds on densities and distributions.}
+   \item{searchStep}{numeric. Size of the first step in the Coggin
+      uni-dimensional search procedure done each iteration
+      to determine the optimal step length for the next iteration
+      (see Himmelblau 1972).}
+   \item{searchTol}{numeric. Tolerance used in the Coggin
+      uni-dimensional search procedure done each iteration
+      to determine the optimal step length for the next iteration
+      (see Himmelblau 1972).}
+   \item{searchScale}{logical or \code{NA}. Scaling in the Coggin
+      uni-dimensional search procedure done each iteration
+      to determine the optimal step length for the next iteration
+      (see Himmelblau 1972):
+      if \code{TRUE}, the step length is scaled to the length of the last step;
+      if \code{FALSE}, the step length is not scaled;
+      if \code{NA}, the step length is scaled (to the length of last step)
+         only if the last step was smaller.}
+   \item{gridSize}{numeric. The size of the increment
+      in the first phase grid search on \eqn{\gamma}{gamma}.}
+   \item{gridDouble}{logical. If \code{TRUE},
+      a second phase grid search on \eqn{\gamma}{gamma} is conducted
+      around the \dQuote{best} value obtained in the first phase
+      with an increment of \code{gridSize/10}.}
+   \item{printIter}{numeric. Print info every \code{printIter} iterations;
+      if this argument is 0, do not print.}
+   \item{x}{an object of class \code{frontier}
       (returned by the function \code{frontier}).}
    \item{\dots}{currently unused.}
 }
@@ -89,33 +113,33 @@ frontier( data, crossSectionName, timePeriodName = NULL,
 \value{
    \code{frontier} returns a list of class \code{frontier}
    containing following elements:
-   \item{modelType}{model type (see above).}
-   \item{functionType}{function type (see above).}
-   \item{logDepVar}{logical. Is the dependent variable logged?}
+   \item{modelType}{character string. Argument \code{modelType} (see above).}
+   \item{ineffDecrease}{logical. Argument \code{ineffDecrease} (see above).}
+   \item{logDepVar}{logical. Argument \code{logDepVar} (see above).}
    \item{nn}{number of cross-sections.}
    \item{nt}{number of time periods.}
    \item{nob}{number of observations in total.}
    \item{nb}{number of regressor variables (Xs).}
-   \item{mu}{logical. Indicates if a 'mu'/'delta0' is included
-      in the estimation (see above).}
-   \item{eta}{In case of an error component model: logical,
-      indicates if an 'eta' is included in the estimation.
-      In case of an efficiency effects model: numeric,
-      the number of efficiency effects regressors (Zs).}
-   \item{iprint}{numeric. Printing of information
-      on the iterations (see above).}
-   \item{indic}{numeric. Scaling of unidimensional search procedure
-      (see above).}
-   \item{tol}{numeric. Convergence tolerance.}
-   \item{tol2}{numeric. Tolerance used in uni-dimensional search procedure.}
-   \item{bignum}{numeric. Used to set bounds on densities and distributions.}
-   \item{step1}{numeric. Size of 1st step in search procedure.}
-   \item{igrid2}{numeric. 1 = double accuracy, 0 = single accuracy.}
-   \item{gridno}{numeric. Steps taken in single accuracy grid search
-      on gamma.}
-   \item{maxit}{numeric. Maximum number of iterations permitted.}
-   \item{startVal}{numeric vector. Starting values for the ML
-      estimation (if specified by user).}
+   \item{nz}{numeric. The number of efficiency effects regressors (Zs)
+      (only for the \sQuote{Efficiency Effects Frontier}).}
+   \item{truncNorm}{logical. Argument \code{truncNorm}
+      (only for the \sQuote{Error Components Frontier}).}
+   \item{zIntercept}{logical. Argument \code{zIntercept}
+      (only for the \sQuote{Efficiency Effects Frontier}).}
+   \item{timeEffect}{logical. Argument \code{timeEffect}
+      (only or the \sQuote{Error Components Frontier}).}
+   \item{printIter}{numeric. Argument \code{printIter} (see above).}
+   \item{searchScale}{numeric. Argument \code{searchScale} (see above).}
+   \item{tol}{numeric. Argument \code{tol} (see above).}
+   \item{searchTol}{numeric. Argument \code{searchTol} (see above).}
+   \item{bignum}{numeric. Argument \code{bignum} (see above).}
+   \item{searchStep}{numeric. Argument \code{searchStep} (see above).}
+   \item{gridDouble}{logical. Argument \code{gridDouble} (see above).}
+   \item{gridSize}{numeric. Argument \code{gridSize} (see above).}
+   \item{maxit}{numeric.  Argument \code{maxit} (see above).}
+   \item{startVal}{numeric vector. Argument \code{startVal}
+      (only if specified by user).}
+   \item{call}{the matched call.}
    \item{dataTable}{matrix. Data matrix sent to Frontier 4.1.}
    \item{olsParam}{numeric vector. OLS estimates.}
    \item{olsStdEr}{numeric vector. Standard errors of OLS estimates.}
@@ -150,45 +174,44 @@ frontier( data, crossSectionName, timePeriodName = NULL,
       Estimation, CEPA Working Paper 96/08,
       \url{http://www.uq.edu.au/economics/cepa/frontier.htm},
       University of New England.
+
+   Himmelblau, D.M. (1972), \emph{Applied Non-Linear Programming},
+      McGraw-Hill, New York.
 }
+
+\seealso{\code{\link{frontierQuad}} for quadratic/translog frontiers.}
 
 \author{Tim Coelli and Arne Henningsen}
 
 \examples{
-   # example included in FRONTIER 4.1
+   # example included in FRONTIER 4.1 (cross-section data)
    data( front41Data )
    front41Data$logOutput  <- log( front41Data$output )
    front41Data$logCapital <- log( front41Data$capital )
    front41Data$logLabour  <- log( front41Data$labour )
 
    # Cobb-Douglas production frontier
-   cobbDouglas <- frontier( front41Data, "firm", "time", "logOutput",
-      c( "logCapital", "logLabour" ) )
+   cobbDouglas <- frontier( yName = "logOutput",
+      xNames = c( "logCapital", "logLabour" ), data = front41Data )
    cobbDouglas
 
-   # Translog production frontier
-   translog <- frontier( front41Data, "firm", "time", "logOutput",
-      c( "logCapital", "logLabour" ), qxNames = "all" )
-   translog
-
-   # rice producers in the Phillipines
+   # rice producers in the Philippines (panel data)
    data( riceProdPhil )
+   riceProdPhil <- plm.data( riceProdPhil, c( "FMERCODE", "YEARDUM" ) )
    riceProdPhil$lPROD  <- log( riceProdPhil$PROD )
    riceProdPhil$lAREA  <- log( riceProdPhil$AREA )
    riceProdPhil$lLABOR <- log( riceProdPhil$LABOR )
    riceProdPhil$lNPK   <- log( riceProdPhil$NPK )
 
    # Error Components Frontier (Battese & Coelli 1992)
-   rice <- frontier( riceProdPhil,
-      crossSectionName = "FMERCODE", timePeriodName = "YEARDUM",
-      yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ) )
+   rice <- frontier( yName = "lPROD",
+      xNames = c( "lAREA", "lLABOR", "lNPK" ), data = riceProdPhil )
    rice
 
    # Technical Efficiency Effects Frontier (Battese & Coelli 1995)
-   rice2 <- frontier( riceProdPhil,
-      crossSectionName = "FMERCODE", timePeriodName = "YEARDUM",
-      yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ),
-      zNames = c( "EDYRS", "BANRAT" ) )
+   rice2 <- frontier( yName = "lPROD",
+      xNames = c( "lAREA", "lLABOR", "lNPK" ),
+      zNames = c( "EDYRS", "BANRAT" ), data = riceProdPhil )
    rice2
 }
 

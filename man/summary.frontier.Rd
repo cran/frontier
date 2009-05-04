@@ -42,26 +42,25 @@ returned by \code{\link{frontier}}.
    front41Data$logCapital <- log( front41Data$capital )
    front41Data$logLabour  <- log( front41Data$labour )
 
-   sfa <- frontier( front41Data, "firm", "time", "logOutput",
-      c( "logCapital", "logLabour" ) )
+   sfa <- frontier( yName = "logOutput",
+      xNames = c( "logCapital", "logLabour" ), data = front41Data )
    summary( sfa )
 
    # rice producers in the Phillipines
    data( riceProdPhil )
+   riceProdPhil <- plm.data( riceProdPhil, c( "FMERCODE", "YEARDUM" ) )
    riceProdPhil$lPROD  <- log( riceProdPhil$PROD )
    riceProdPhil$lAREA  <- log( riceProdPhil$AREA )
    riceProdPhil$lLABOR <- log( riceProdPhil$LABOR )
    riceProdPhil$lNPK   <- log( riceProdPhil$NPK )
 
-   rice <- frontier( riceProdPhil,
-      crossSectionName = "FMERCODE", timePeriodName = "YEARDUM",
-      yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ) )
+   rice <- frontier( yName = "lPROD",
+      xNames = c( "lAREA", "lLABOR", "lNPK" ), data = riceProdPhil )
    summary( rice )
 
-   rice2 <- frontier( riceProdPhil,
-      crossSectionName = "FMERCODE", timePeriodName = "YEARDUM",
-      yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ),
-      zNames = c( "EDYRS", "BANRAT" ) )
+   rice2 <- frontier( yName = "lPROD",
+      xNames = c( "lAREA", "lLABOR", "lNPK" ),
+      zNames = c( "EDYRS", "BANRAT" ), data = riceProdPhil )
    summary( rice2 )
 }
 

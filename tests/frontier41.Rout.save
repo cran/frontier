@@ -1,6 +1,6 @@
 
-R version 2.8.0 (2008-10-20)
-Copyright (C) 2008 The R Foundation for Statistical Computing
+R version 2.9.0 (2009-04-17)
+Copyright (C) 2009 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -16,6 +16,72 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 Type 'q()' to quit R.
 
 > library( frontier )
+Loading required package: plm
+Loading required package: kinship
+Loading required package: survival
+Loading required package: splines
+Loading required package: nlme
+Loading required package: lattice
+[1] "kinship is loaded"
+Loading required package: Formula
+Loading required package: MASS
+Loading required package: sandwich
+Loading required package: zoo
+
+Attaching package: 'zoo'
+
+
+	The following object(s) are masked from package:base :
+
+	 as.Date.numeric 
+
+Loading required package: micEcon
+Loading required package: systemfit
+Loading required package: Matrix
+
+Attaching package: 'Matrix'
+
+
+	The following object(s) are masked from package:stats :
+
+	 xtabs 
+
+
+	The following object(s) are masked from package:base :
+
+	 rcond 
+
+Loading required package: car
+
+Attaching package: 'car'
+
+
+	The following object(s) are masked from package:Formula :
+
+	 has.intercept 
+
+Loading required package: lmtest
+Loading required package: np
+Loading required package: boot
+
+Attaching package: 'boot'
+
+
+	The following object(s) are masked from package:car :
+
+	 logit 
+
+
+	The following object(s) are masked from package:lattice :
+
+	 melanoma 
+
+
+	The following object(s) are masked from package:survival :
+
+	 aml 
+
+Nonparametric Kernel Methods for Mixed Datatypes (version 0.30-2)
 > 
 > ## *****************************
 > ## Testing front41WriteInput

@@ -38,8 +38,8 @@ for objects of class \code{frontier}.
    front41Data$logCapital <- log( front41Data$capital )
    front41Data$logLabour  <- log( front41Data$labour )
 
-   sfa <- frontier( front41Data, "firm", "time", "logOutput",
-      c( "logCapital", "logLabour" ) )
+   sfa <- frontier( yName = "logOutput",
+      xNames = c( "logCapital", "logLabour" ), data = front41Data )
    coef( summary( sfa ), which = "ols" )
    coef( summary( sfa ) )
 }

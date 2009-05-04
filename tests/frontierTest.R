@@ -2,11 +2,12 @@ library( frontier )
 options( digits = 5 )
 
 data( front41Data )
+row.names( front41Data ) <- paste( "F", row.names( front41Data ), sep = "_" )
 front41Data$logOutput  <- log( front41Data$output )
 front41Data$logCapital <- log( front41Data$capital )
 front41Data$logLabour  <- log( front41Data$labour )
 
-a1 <- frontier( front41Data, "firm", "time", "logOutput",
+a1 <- frontier( data = front41Data, "logOutput",
    c( "logCapital", "logLabour" ) )
 print( a1 )
 coef( a1, which = "start" )
@@ -16,11 +17,16 @@ coef( a1 )
 coef( summary( a1 ), which = "ols" )
 coef( summary( a1 ) )
 vcov( a1 )
+logLik( a1, which = "ols" )
+logLik( a1, which = "grid" )
+logLik( a1 )
 print( summary( a1 ) )
+efficiencies( a1 )
+efficiencies( a1, asInData = TRUE )
 print.default( a1 )
 
-a2 <- frontier( front41Data, "firm", "time", "logOutput",
-   c( "logCapital", "logLabour" ), mu = TRUE )
+a2 <- frontier( data = front41Data, "logOutput",
+   c( "logCapital", "logLabour" ), truncNorm = TRUE )
 print( a2 )
 coef( a2, which = "start" )
 coef( a2, which = "ols" )
@@ -29,11 +35,15 @@ coef( a2 )
 coef( summary( a2 ), which = "ols" )
 coef( summary( a2 ) )
 vcov( a2 )
+logLik( a2, which = "ols" )
+logLik( a2 )
 print( summary( a2 ) )
+efficiencies( a2 )
+efficiencies( a2, asInData = TRUE )
 print.default( a2 )
 
-a3 <- frontier( front41Data, "firm", "time", "logOutput",
-   c( "logCapital", "logLabour" ), eta = TRUE )
+a3 <- frontier( data = front41Data, "logOutput",
+   c( "logCapital", "logLabour" ), timeEffect = TRUE )
 print( a3 )
 coef( a3, which = "start" )
 coef( a3, which = "ols" )
@@ -42,11 +52,15 @@ coef( a3 )
 coef( summary( a3 ), which = "ols" )
 coef( summary( a3 ) )
 vcov( a3 )
+logLik( a3, which = "ols" )
+logLik( a3 )
 print( summary( a3 ) )
+efficiencies( a3 )
+efficiencies( a3, asInData = TRUE )
 print.default( a3 )
 
-a4 <- frontier( front41Data, "firm", "time", "logOutput",
-   c( "logCapital", "logLabour" ), mu = TRUE, eta = TRUE )
+a4 <- frontier( data = front41Data, "logOutput",
+   c( "logCapital", "logLabour" ), truncNorm = TRUE, timeEffect = TRUE )
 print( a4 )
 coef( a4, which = "start" )
 coef( a4, which = "ols" )
@@ -55,11 +69,15 @@ coef( a4 )
 coef( summary( a4 ), which = "ols" )
 coef( summary( a4 ) )
 vcov( a4 )
+logLik( a4, which = "ols" )
+logLik( a4 )
 print( summary( a4 ) )
+efficiencies( a4 )
+efficiencies( a4, asInData = TRUE )
 print.default( a4 )
 
-a5 <- frontier( front41Data, "firm", "time", "logOutput",
-   c( "logCapital", "logLabour" ), mu = TRUE,
+a5 <- frontier( data = front41Data, "logOutput",
+   c( "logCapital", "logLabour" ), truncNorm = TRUE,
    startVal = c( 0.5, 0.3, 0.5, 0.5, 0.9, -1 ) )
 print( a5 )
 coef( a5, which = "start" )
@@ -69,18 +87,25 @@ coef( a5 )
 coef( summary( a5 ), which = "ols" )
 coef( summary( a5 ) )
 vcov( a5 )
+logLik( a5, which = "ols" )
+logLik( a5 )
 print( summary( a5 ) )
+efficiencies( a5 )
+efficiencies( a5, asInData = TRUE )
 print.default( a5 )
 
 
 data( riceProdPhil )
+riceProdPhil$farm <- paste( "F_", ifelse( riceProdPhil$FMERCODE > 9, "", "0" ),
+   riceProdPhil$FMERCODE, sep = "" )
+riceProdPhil$year <- riceProdPhil$YEARDUM + 1998
+riceProdPhil <- plm.data( riceProdPhil, c( "farm", "year" ) )
 riceProdPhil$lPROD  <- log( riceProdPhil$PROD )
 riceProdPhil$lAREA  <- log( riceProdPhil$AREA )
 riceProdPhil$lLABOR <- log( riceProdPhil$LABOR )
 riceProdPhil$lNPK   <- log( riceProdPhil$NPK )
 
-b1 <- frontier( riceProdPhil,
-   crossSectionName = "FMERCODE", timePeriodName = "YEARDUM",
+b1 <- frontier( data = riceProdPhil,
    yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ) )
 print( b1 )
 coef( b1, which = "start" )
@@ -90,13 +115,16 @@ coef( b1 )
 coef( summary( b1 ), which = "ols" )
 coef( summary( b1 ) )
 vcov( b1 )
+logLik( b1, which = "ols" )
+logLik( b1 )
 print( summary( b1 ) )
+efficiencies( b1 )
+efficiencies( b1, asInData = TRUE )
 print.default( b1 )
 
-b2 <- frontier( riceProdPhil,
-   crossSectionName = "FMERCODE", timePeriodName = "YEARDUM",
+b2 <- frontier( data = riceProdPhil,
    yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ),
-   mu = TRUE )
+   truncNorm = TRUE )
 print( b2 )
 coef( b2, which = "start" )
 coef( b2, which = "ols" )
@@ -105,13 +133,16 @@ coef( b2 )
 coef( summary( b2 ), which = "ols" )
 coef( summary( b2 ) )
 vcov( b2 )
+logLik( b2, which = "ols" )
+logLik( b2 )
 print( summary( b2 ) )
+efficiencies( b2 )
+efficiencies( b2, asInData = TRUE )
 print.default( b2 )
 
-b3 <- frontier( riceProdPhil,
-   crossSectionName = "FMERCODE", timePeriodName = "YEARDUM",
+b3 <- frontier( data = riceProdPhil,
    yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ),
-   eta = TRUE )
+   timeEffect = TRUE )
 print( b3 )
 coef( b3, which = "start" )
 coef( b3, which = "ols" )
@@ -120,13 +151,16 @@ coef( b3 )
 coef( summary( b3 ), which = "ols" )
 coef( summary( b3 ) )
 vcov( b3 )
+logLik( b3, which = "ols" )
+logLik( b3 )
 print( summary( b3 ) )
+efficiencies( b3 )
+efficiencies( b3, asInData = TRUE )
 print.default( b3 )
 
-b4 <- frontier( riceProdPhil,
-   crossSectionName = "FMERCODE", timePeriodName = "YEARDUM",
+b4 <- frontier( data = riceProdPhil,
    yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ),
-   mu = TRUE, eta = TRUE )
+   truncNorm = TRUE, timeEffect = TRUE )
 print( b4 )
 coef( b4, which = "start" )
 coef( b4, which = "ols" )
@@ -135,11 +169,14 @@ coef( b4 )
 coef( summary( b4 ), which = "ols" )
 coef( summary( b4 ) )
 vcov( b4 )
+logLik( b4, which = "ols" )
+logLik( b4 )
 print( summary( b4 ) )
+efficiencies( b4 )
+efficiencies( b4, asInData = TRUE )
 print.default( b4 )
 
-b5 <- frontier( riceProdPhil,
-   crossSectionName = "FMERCODE", timePeriodName = "YEARDUM",
+b5 <- frontier( data = riceProdPhil,
    yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ),
    zNames = c( "EDYRS", "BANRAT" ) )
 print( b5 )
@@ -150,13 +187,16 @@ coef( b5 )
 coef( summary( b5 ), which = "ols" )
 coef( summary( b5 ) )
 vcov( b5 )
+logLik( b5, which = "ols" )
+logLik( b5 )
 print( summary( b5 ) )
+efficiencies( b5 )
+efficiencies( b5, asInData = TRUE )
 print.default( b5 )
 
-b6 <- frontier( riceProdPhil,
-   crossSectionName = "FMERCODE", timePeriodName = "YEARDUM",
+b6 <- frontier( data = riceProdPhil,
    yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ),
-   zNames = c( "EDYRS", "BANRAT" ), mu = TRUE )
+   zNames = c( "EDYRS", "BANRAT" ), zIntercept = TRUE )
 print( b6 )
 coef( b6, which = "start" )
 coef( b6, which = "ols" )
@@ -165,13 +205,16 @@ coef( b6 )
 coef( summary( b6 ), which = "ols" )
 coef( summary( b6 ) )
 vcov( b6 )
+logLik( b6, which = "ols" )
+logLik( b6 )
 print( summary( b6 ) )
+efficiencies( b6 )
+efficiencies( b6, asInData = TRUE )
 print.default( b6 )
 
-b7 <- frontier( riceProdPhil,
-   crossSectionName = "FMERCODE", timePeriodName = "YEARDUM",
+b7 <- frontier( data = riceProdPhil,
    yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ),
-   mu = TRUE, eta = TRUE,
+   truncNorm = TRUE, timeEffect = TRUE,
    startVal = c( -1, 0.3, 0.3, 0.3, 0.2, 0.5, -0.3, 0.1 ) )
 print( b7 )
 coef( b7, which = "start" )
@@ -181,13 +224,16 @@ coef( b7 )
 coef( summary( b7 ), which = "ols" )
 coef( summary( b7 ) )
 vcov( b7 )
+logLik( b7, which = "ols" )
+logLik( b7 )
 print( summary( b7 ) )
+efficiencies( b7 )
+efficiencies( b7, asInData = TRUE )
 print.default( b7 )
 
-b8 <- frontier( riceProdPhil,
-   crossSectionName = "FMERCODE", timePeriodName = "YEARDUM",
+b8 <- frontier( data = riceProdPhil,
    yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ),
-   zNames = c( "EDYRS", "BANRAT" ), mu = TRUE, 
+   zNames = c( "EDYRS", "BANRAT" ), zIntercept = TRUE,
    startVal = c( -1, 0.3, 0.3, 0.3, -3, -0.1, -4, 2, 0.8 ) )
 print( b8 )
 coef( b8, which = "start" )
@@ -197,12 +243,16 @@ coef( b8 )
 coef( summary( b8 ), which = "ols" )
 coef( summary( b8 ) )
 vcov( b8 )
+logLik( b8, which = "ols" )
+logLik( b8 )
 print( summary( b8 ) )
+efficiencies( b8 )
+efficiencies( b8, asInData = TRUE )
 print.default( b8 )
 
 # translog
-translog <- frontier( front41Data, "firm", "time", "logOutput",
-   c( "logCapital", "logLabour" ), qxNames = "all" )
+translog <- frontierQuad( data = front41Data, yName = "logOutput",
+   xNames = c( "logCapital", "logLabour" ) )
 print( translog )
 coef( translog, which = "start" )
 coef( translog, which = "ols" )
@@ -211,6 +261,61 @@ coef( translog )
 coef( summary( translog ), which = "ols" )
 coef( summary( translog ) )
 vcov( translog )
+logLik( translog, which = "ols" )
+logLik( translog )
 print( summary( translog ) )
+efficiencies( translog )
+efficiencies( translog, asInData = TRUE )
+translogEla <- elas( translog )
+print( translogEla )
+attributes( translogEla )$variance
+attributes( translogEla )$stdDev
 print.default( translog )
+
+# translog with shifter variable
+front41Data$firmNo <- c( 1:nrow( front41Data ) )
+translogShift <- frontierQuad( yName = "logOutput",
+   xNames = c( "logCapital", "logLabour" ), shifterNames = "firmNo",
+   data = front41Data )
+print( translogShift )
+coef( translogShift, which = "start" )
+coef( translogShift, which = "ols" )
+coef( translogShift, which = "grid" )
+coef( translogShift )
+coef( summary( translogShift ), which = "ols" )
+coef( summary( translogShift ) )
+vcov( translogShift )
+logLik( translogShift, which = "ols" )
+logLik( translogShift )
+print( summary( translogShift ) )
+efficiencies( translogShift )
+efficiencies( translogShift, asInData = TRUE )
+translogShiftEla <- elas( translogShift )
+print( translogShiftEla )
+attributes( translogShiftEla )$variance
+attributes( translogShiftEla )$stdDev
+print.default( translogShift )
+
+# translog with Z variable
+translogZvar <- frontierQuad( yName = "logOutput",
+   xNames = c( "logCapital", "logLabour" ), zNames = "firmNo",
+   data = front41Data )
+print( translogZvar )
+coef( translogZvar, which = "start" )
+coef( translogZvar, which = "ols" )
+coef( translogZvar, which = "grid" )
+coef( translogZvar )
+coef( summary( translogZvar ), which = "ols" )
+coef( summary( translogZvar ) )
+vcov( translogZvar )
+logLik( translogZvar, which = "ols" )
+logLik( translogZvar )
+print( summary( translogZvar ) )
+efficiencies( translogZvar )
+efficiencies( translogZvar, asInData = TRUE )
+translogZvarEla <- elas( translogZvar )
+print( translogZvarEla ) 
+attributes( translogZvarEla )$variance
+attributes( translogZvarEla )$stdDev
+print.default( translogZvar )
 

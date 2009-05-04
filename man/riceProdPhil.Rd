@@ -13,7 +13,7 @@
 \usage{data( riceProdPhil )}
 
 \format{
-   This data frame contains the following vaiables (columns):
+   This data frame contains the following variables (columns):
    \describe{
       \item{YEARDUM}{Time period (1= 1990, ..., 8 = 1997).}
       \item{FMERCODE}{Farmer code (1, ..., 43).}
