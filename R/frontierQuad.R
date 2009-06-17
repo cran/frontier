@@ -53,9 +53,16 @@ frontierQuad <- function(
    if( ! is.null( result$gridParam ) ) {
       names( result$gridParam )[ 1:length( xNamesAll ) ] <- xNamesAll
    }
-   names( result$mleParam )[ 1:length( xNamesAll ) ] <- xNamesAll
-   rownames( result$mleCov )[ 1:length( xNamesAll ) ] <- xNamesAll
-   colnames( result$mleCov )[ 1:length( xNamesAll ) ] <- xNamesAll
+   allParNames <- c( xNamesAll,
+      names( result$mleParam )[ -( 1:length( xNamesAll ) ) ] )
+   for( i in seq( along = zNames ) ) {
+      allParNames <- sub( paste( "^Z_delta_", i, "$", sep = "" ),
+         paste( "Z_", zNames[ i ], sep = "" ), allParNames )
+   }
+   names( result$mleParam ) <- allParNames
+   rownames( result$mleCov ) <- allParNames
+   colnames( result$mleCov ) <- allParNames
+   result$quadHalf <- quadHalf
 
    class( result ) <- c( "frontierQuad", class( result ) )
 

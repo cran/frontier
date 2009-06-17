@@ -1,9 +1,9 @@
 print.summary.frontier <- function( x, effic = x$printEffic, ... ) {
 
    cat( "Stochastic Frontier Analysis with FRONTIER 4.1\n\n" )
-   if( x$modelType == "ECF" ) {
+   if( x$modelType == 1 ) {
       cat( "Error Components Frontier (see Battese & Coelli 1992)\n" )
-   } else if( x$modelType == "EEF" ) {
+   } else if( x$modelType == 2 ) {
       cat( "Efficiency Effects Frontier (see Battese & Coelli 1995)\n" )
    } else {
       stop( "unknown model type '", x$modelType, "'" )

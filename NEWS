@@ -5,6 +5,46 @@ A full ChangeLog is available in the log messages of the SVN repository
 on R-Forge.
 
 
+            CHANGES IN VERSION 0.991-0
+
+* removed argument "modelType": the model type is derived from argument
+"zNames" (NULL or not NULL) now
+
+* the C function "pnorm", which is included in the R software, is used instead
+of the Fortran function "dis", which is included in the Frontier 4.1 software,
+to calculate the cumulative distribution of the standard normal distribution
+
+* the C function "dnorm", which is included in the R software, is used instead
+of the Fortran function "den", which is included in the Frontier 4.1 software,
+to calculate the density of the standard normal distribution
+
+* the logarithm of the density function of the standard normal distribution
+is calculated directly with the C function "pnorm" with argument "give_log"
+equal to 1 (TRUE) now
+
+* the parameters of the X variables are no longer named "beta_0", "beta_1",
+"beta_2" etc. but "(Intercept)", "<varName1>", "<varName2>" etc.
+(as returned by lm())
+
+* the parameters of the Z variables are no longer named "delta_0", "delta_1",
+"delta_2" etc. but "Z_(Intercept)", "Z_<varName1>", "Z_<varName2>" etc.
+
+* the "logLik" method for objects of class "frontier" has a new argument
+"newParam" now: if this argument is provided by the user, the log-likelihood
+value of the model 'object' is calculated with these (new) parameters
+
+* added argument "muBound": in case of an Error Components Frontier (ECF)
+with the inefficiency terms "u" following a truncated normal distribution
+with mean "mu", argument "muBound" can be used to restrict "mu" to be in
+the interval "+/- muBound * sigma_u", where "sigma_u" is the standard
+deviation of "u".
+
+
+            CHANGES IN VERSION 0.99-2
+
+* argument 'maxit' can be zero now
+
+
             CHANGES IN VERSION 0.99-0
 
 * corrected and considerably improved documentation of function "fontier"

@@ -16,10 +16,9 @@
 
 \usage{
 frontier( yName, xNames = NULL, zNames = NULL, data,
-   modelType = ifelse( is.null( zNames ), "ECF", "EEF" ),
    ineffDecrease = TRUE, logDepVar = TRUE, truncNorm = FALSE,
    zIntercept = FALSE, timeEffect = FALSE, startVal = NULL,
-   tol = 0.00001, maxit = 1000, bignum = 1.0E+16,
+   tol = 0.00001, maxit = 1000, muBound = 2, bignum = 1.0E+16,
    searchStep = 0.00001, searchTol = 0.001, searchScale = NA,
    gridSize = 0.1, gridDouble = TRUE, printIter = 0 )
 \method{print}{frontier}( x, \dots )
@@ -37,9 +36,6 @@ frontier( yName, xNames = NULL, zNames = NULL, data,
       if \code{data} is a panel data frame
       (created with \code{\link[plm]{plm.data}}),
       it is assumed that these are panel data.}
-   \item{modelType}{model type:
-      either \code{"ECF"} for an 'Error Components Frontier'
-      or \code{"EEF"} for an 'Efficiency Effects Frontier'.}
    \item{ineffDecrease}{logical. If \code{TRUE},
       inefficiency decreases the endogenous variable
       (e.g. for estimating a production function);
@@ -67,6 +63,8 @@ frontier( yName, xNames = NULL, zNames = NULL, data,
       estimation.}
    \item{tol}{numeric. Convergence tolerance (proportional).}
    \item{maxit}{numeric. Maximum number of iterations permitted.}
+   \item{muBound}{numeric. Bounds on the parameter \eqn{\mu}{mu}
+      (see \sQuote{details} section).}
    \item{bignum}{numeric. Used to set bounds on densities and distributions.}
    \item{searchStep}{numeric. Size of the first step in the Coggin
       uni-dimensional search procedure done each iteration
@@ -97,7 +95,22 @@ frontier( yName, xNames = NULL, zNames = NULL, data,
    \item{\dots}{currently unused.}
 }
 
-\details{The \code{frontier} function uses the Fortran source code of
+\details{
+   One can use the \code{frontier} function
+   to calculate the log likelihood value for a given model,
+   a given data set, and given parameters
+   by using the argument \code{startVal} to specify the parameters
+   and using the other arguments to specify the model and the data.
+   The log likelihood value can then be retrieved by
+   the \code{\link[=logLik.frontier]{logLik}} method
+   with argument \code{which} set to \code{"start"}.
+   Setting argument \code{maxit} to \code{0} avoids the
+   (eventually time-consuming) ML estimation and allows
+   to retrieve the log likelihood value
+   with the \code{\link[=logLik.frontier]{logLik}} method
+   without further arguments.
+
+   The \code{frontier} function uses the Fortran source code of
    Tim Coelli's software FRONTIER 4.1
    (\url{http://www.uq.edu.au/economics/cepa/frontier.htm})
    and hence, provides the same features as FRONTIER 4.1.
@@ -108,26 +121,42 @@ frontier( yName, xNames = NULL, zNames = NULL, data,
    \url{http://www.uq.edu.au/economics/cepa/frontier.htm}.
    It is recommended to read this documentation, 
    because the \code{frontier} function is based on the FRONTIER 4.1 software.
+
+   If argument \code{zNames} is \code{NULL},
+   an \sQuote{Error Components Frontier} (ECF, see Battese and Coelli 1992)
+   is estimated.
+   If argument \code{zNames} is not \code{NULL},
+   an \sQuote{Efficiency Effects Frontier} (EEF, see Battese and Coelli 1995)
+   is estimated.
+   Generally, there should be no reason to estimate an EEF
+   without z variable,
+   but this can done by setting argument \code{zNames} to \code{NA}.
+
+   In case of an Error Components Frontier (ECF)
+   with the inefficiency terms \eqn{u} following a
+   truncated normal distribution with mean \eqn{\mu}{mu},
+   argument \code{muBound} can be used to restrict \eqn{\mu}{mu}
+   to be in the interval \eqn{\pm}{+/-}\code{muBound} * \eqn{\sigma_u}{sigma_u},
+   where \eqn{\sigma_u}{sigma_u} is the standard deviation of \eqn{u}.
+   If \code{muBound} is infinity, zero, or negative,
+   no bounds on \eqn{\mu}{mu} are imposed.
 }
 
 \value{
    \code{frontier} returns a list of class \code{frontier}
    containing following elements:
-   \item{modelType}{character string. Argument \code{modelType} (see above).}
+   \item{modelType}{integer.
+      A \sQuote{1} denotes an \sQuote{Error Components Frontier} (ECF);
+      a \sQuote{2} denotes an \sQuote{Efficiency Effects Frontier} (EFF).}
    \item{ineffDecrease}{logical. Argument \code{ineffDecrease} (see above).}
    \item{logDepVar}{logical. Argument \code{logDepVar} (see above).}
    \item{nn}{number of cross-sections.}
    \item{nt}{number of time periods.}
    \item{nob}{number of observations in total.}
    \item{nb}{number of regressor variables (Xs).}
-   \item{nz}{numeric. The number of efficiency effects regressors (Zs)
-      (only for the \sQuote{Efficiency Effects Frontier}).}
-   \item{truncNorm}{logical. Argument \code{truncNorm}
-      (only for the \sQuote{Error Components Frontier}).}
-   \item{zIntercept}{logical. Argument \code{zIntercept}
-      (only for the \sQuote{Efficiency Effects Frontier}).}
-   \item{timeEffect}{logical. Argument \code{timeEffect}
-      (only or the \sQuote{Error Components Frontier}).}
+   \item{truncNorm}{logical. Argument \code{truncNorm}.}
+   \item{zIntercept}{logical. Argument \code{zIntercept}.}
+   \item{timeEffect}{logical. Argument \code{timeEffect}.}
    \item{printIter}{numeric. Argument \code{printIter} (see above).}
    \item{searchScale}{numeric. Argument \code{searchScale} (see above).}
    \item{tol}{numeric. Argument \code{tol} (see above).}
@@ -146,6 +175,12 @@ frontier( yName, xNames = NULL, zNames = NULL, data,
    \item{olsLogl}{numeric. Log likelihood value of OLS estimation.}
    \item{gridParam}{numeric vector. Parameters obtained from the grid search
       (if no starting values were specified).}
+   \item{gridLogl}{numeric. Log likelihood value of the parameters
+      obtained from the grid search
+      (only if no starting values were specified).}
+   \item{startLogl}{numeric. Log likelihood value of the starting values
+      for the parameters
+      (only if starting values were specified).}
    \item{mleParam}{numeric vector. Parameters obtained from ML estimation.}
    \item{mleCov}{matrix. Covariance matrix of the parameters obtained
       from the OLS estimation.}

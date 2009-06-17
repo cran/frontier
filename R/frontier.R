@@ -1,6 +1,5 @@
 frontier <- function(
       yName, xNames = NULL, zNames = NULL, data,
-      modelType = ifelse( is.null( zNames ), "ECF", "EEF" ),
       ineffDecrease = TRUE,
       logDepVar = TRUE,
       truncNorm = FALSE,
@@ -9,6 +8,7 @@ frontier <- function(
       startVal = NULL,
       tol = 0.00001,
       maxit = 1000,
+      muBound = 2,
       bignum = 1.0E+16,
       searchStep = 0.00001,
       searchTol = 0.001,
@@ -17,14 +17,23 @@ frontier <- function(
       gridDouble = TRUE,
       printIter = 0 ) {
 
-   # modelType (im)
-   if( modelType %in% c( 1, "ECF" ) ) {
+   # determine modelType (im)
+   if( is.null( zNames ) ) {
       modelType <- 1
-   } else if( modelType %in% c( 2, "EEF" ) ) {
-      modelType <- 2
    } else {
-      stop( "argument 'modelType' must be either 'ECF' or 'EEF'" )
+      modelType <- 2
+      if( is.na( zNames[1] ) ) {
+         zNames <- NULL
+      }
    }
+
+   # check names of variables
+   checkNames( c( yName, xNames, zNames ), names( data ) )
+   if( any( c( "id", "t" ) %in% c( yName, xNames, zNames ) ) ) {
+      stop( "variables in arguments 'yName', 'xNames', and 'zNames'",
+         " must not have names 'id' or 't'" )
+   }
+
    # ineffDecrease (ipc)
    if( !is.logical( ineffDecrease ) || length( ineffDecrease ) != 1 ) {
       stop( "argument 'ineffDecrease' must be a single logical value" )
@@ -37,12 +46,25 @@ frontier <- function(
    if( !is.logical( truncNorm ) ) {
       stop( "argument 'truncNorm' must be logical" )
    }
+   if( truncNorm && modelType == 2 ) {
+      warning( "argument 'truncNorm' is ignored in",
+         " Efficiency Effects Frontiers (EEF)" )
+   }
    # zIntercept (mu)
    if( !is.logical( zIntercept ) ) {
       stop( "argument 'zIntercept' must be logical" )
    }
+   if( zIntercept && modelType == 1 ) {
+      warning( "argument 'zIntercept' is ignored in",
+         " Efficiency Components Frontiers (ECF)" )
+   }
+   # timeEffect (eta)
    if( !is.logical( timeEffect ) ) {
       stop( "argument 'timeEffect' must be logical" )
+   }
+   if( timeEffect && ! "plm.dim" %in% class( data ) ) {
+      warning( "argument 'timeEffect' is ignored in case of",
+         " cross-sectional data" )
    }
    # mu: truncNorm, zIntercept
    if( modelType == 1 ) {
@@ -80,6 +102,12 @@ frontier <- function(
       stop( "argument 'searchTol' must be numeric" )
    } else if( searchTol < 0 ) {
       stop( "argument 'searchTol' must be non-negative" )
+   }
+   # muBound
+   if( !is.numeric( muBound ) || length( muBound ) != 1 ) {
+      stop( "argument 'muBound' must be a numeric scalar" )
+   } else if( is.infinite( muBound ) ) {
+      muBound <- 0
    }
    # bignum
    if( !is.numeric( bignum ) ) {
@@ -143,11 +171,11 @@ frontier <- function(
    dataTable <- cbind( dataTable, data[[ yName ]] )
 
    # exogenous variables
-   paramNames <- "beta_0"
+   paramNames <- "(Intercept)";
    if( nXvars > 0 ) {
       for( i in 1:nXvars ) {
          dataTable <- cbind( dataTable, data[[ xNames[ i ] ]] )
-         paramNames <- c( paramNames, paste( "beta", i, sep = "_" ) )
+         paramNames <- c( paramNames, xNames[ i ] )
       }
    }
 
@@ -157,6 +185,9 @@ frontier <- function(
          dataTable <- cbind( dataTable, data[[ zNames[ i ] ]] )
       }
    }
+
+   # adding column names to the data table
+   colnames( dataTable ) <- c( "id", "t", yName, xNames, zNames )
 
    nParamTotal <- nb + 3 + mu + eta
    if( is.null( startVal ) ) {
@@ -168,7 +199,7 @@ frontier <- function(
             nParamTotal, " parameters)" )
       }
    }
-   returnObj <- .Fortran( "front41", 
+   returnObj <- .Fortran( "front41",
       modelType = as.integer( modelType ),
       ineffDecrease = as.integer( !ineffDecrease + 1 ),
       logDepVar = as.integer( logDepVar ),
@@ -187,55 +218,72 @@ frontier <- function(
       gridDouble = as.integer( gridDouble ),
       gridSize = as.double( gridSize ),
       maxit = as.integer( maxit ),
+      muBound = as.double( muBound ),
       nStartVal = as.integer( length( startVal ) ),
       startVal = as.double( startVal ),
       nRowData = as.integer( nrow( dataTable ) ),
       nColData = as.integer( ncol( dataTable ) ),
       dataTable = matrix( as.double( dataTable ), nrow( dataTable ),
-         ncol( dataTable ) ),
+         ncol( dataTable ), dimnames = dimnames( dataTable ) ),
       nParamTotal = as.integer( nParamTotal ),
       olsParam = as.double( rep( 0, nParamTotal ) ),
       olsStdEr = as.double( rep( 0, nParamTotal ) ),
       olsLogl = as.double( 0 ),
       gridParam = as.double( rep( 0, nParamTotal ) ),
+      startLogl = as.double( 0 ),
       mleParam = as.double( rep( 0, nParamTotal ) ),
       mleCov = matrix( as.double( 0 ), nParamTotal, nParamTotal ),
       mleLogl = as.double( 0 ),
-      lrTestVal = as.double( 0 ),
-      lrTestDf = as.integer( 0 ),
       nIter = as.integer( 0 ),
       effic = matrix( as.double( 0 ), nn, nt ) )
    returnObj$nStartVal <- NULL
    returnObj$nRowData <- NULL
    returnObj$nColData <- NULL
    returnObj$nParamTotal <- NULL
-   # modelType
-   if( returnObj$modelType == 1 ) {
-      returnObj$modelType <- "ECF"
-   } else {
-      returnObj$modelType <- "EEF"
+   returnObj$ineffDecrease <- as.logical( 2 - returnObj$ineffDecrease )
+   returnObj$logDepVar <- as.logical( returnObj$logDepVar )
+   returnObj$gridDouble <- as.logical( returnObj$gridDouble )
+   returnObj$olsParam <- returnObj$olsParam[ 1:( nb + 2 ) ]
+   returnObj$olsStdEr <- returnObj$olsStdEr[ 1:( nb + 1 ) ]
+
+   # check if the maximum number of iterations has been reached
+   if( maxit <= returnObj$nIter && maxit > 0 ) {
+      warning( "Maximum number of iterations reached" );
    }
+
+   # likelihood ratio test
+   returnObj$lrTestVal <- 2 * (returnObj$mleLogl - returnObj$olsLogl )
+   if( returnObj$lrTestVal < 0 ) {
+      warning( "the likelihood value of the ML estimation is less",
+         " than that obtained using ols --",
+         " please try again using different starting values" )
+   }
+
+   # degrees of freedom of the likelihood ratio test
+   if( returnObj$modelType == 1 ) {
+      returnObj$lrTestDf <- truncNorm + timeEffect + 1
+   } else {
+      returnObj$lrTestDf <- zIntercept + nZvars + 1
+   }
+
    # mu: truncNorm, zIntercept
    if( modelType == 1 ) {
       returnObj$truncNorm <- as.logical( returnObj$mu )
+      returnObj$zIntercept <- zIntercept
       returnObj$mu <- NULL
    } else {
+      returnObj$truncNorm <- truncNorm
       returnObj$zIntercept <- as.logical( returnObj$mu )
       returnObj$mu <- NULL
    }
    # eta: timeEffect, nz
    if( modelType == 1 ) {
       returnObj$timeEffect <- as.logical( returnObj$eta )
-      returnObj$eta <- NULL
    } else {
-      returnObj$nz <- returnObj$eta
-      returnObj$eta <- NULL
+      returnObj$timeEffect <- timeEffect
    }
-   if( length( startVal ) == 1 ){
-      returnObj$startVal <- NULL
-   }
-  returnObj$ineffDecrease <- as.logical( 2 - returnObj$ineffDecrease )
-   returnObj$gridDouble <- as.logical( returnObj$gridDouble )
+   returnObj$eta <- NULL
+
    if( returnObj$indic == 2 ) {
       returnObj$searchScale <- FALSE
    } else if( returnObj$indic == 1 ) {
@@ -244,8 +292,6 @@ frontier <- function(
       returnObj$searchScale <- TRUE
    }
    returnObj$indic <- NULL
-   returnObj$olsParam <- returnObj$olsParam[ 1:( nb + 2 ) ]
-   returnObj$olsStdEr <- returnObj$olsStdEr[ 1:( nb + 1 ) ]
    if( length( startVal ) == 1 ){
       if( modelType == 1 ) {
          returnObj$gridParam <- returnObj$gridParam[ 1:( nb + 3 ) ]
@@ -253,6 +299,7 @@ frontier <- function(
          returnObj$gridParam <- returnObj$gridParam[
             c( 1:( nb + 1 ), ( nParamTotal - 1 ):nParamTotal ) ]
       }
+      names( returnObj )[ names( returnObj ) == "startLogl" ] <- "gridLogl"
    } else {
       returnObj$gridParam <- NULL
    }
@@ -273,14 +320,17 @@ frontier <- function(
    }
    if( modelType == 2 ) {
       if( zIntercept ){
-         paramNames <- c( paramNames, "delta_0" )
+         paramNames <- c( paramNames, "Z_(Intercept)" )
       }
       if( nZvars > 0 ) {
-         paramNames <- c( paramNames, 
-            paste( "delta", c( 1:nZvars ), sep = "_" ) )
+         paramNames <- c( paramNames, paste( "Z", zNames, sep = "_" ) )
       }
    }
-   paramNames <- c( paramNames, "sigma-sq", "gamma" )
+
+   if( length( startVal ) == 1 ){
+      returnObj$startVal <- NULL
+   }
+   paramNames <- c( paramNames, "sigmaSq", "gamma" )
    if( modelType == 1 ) {
       if( truncNorm ){
          paramNames <- c( paramNames, "mu" )
@@ -290,11 +340,11 @@ frontier <- function(
       }
    }
    names( returnObj$olsParam ) <- c( paramNames[ 1:( nb + 1 ) ],
-      "sigma-sq" )
+      "sigmaSq" )
    names( returnObj$olsStdEr ) <- paramNames[ 1:( nb + 1 ) ]
    if( !is.null( returnObj$gridParam ) ) {
-      names( returnObj$gridParam ) <- c( paramNames[ 1:( nb + 1 ) ], 
-         "sigma-sq", "gamma" )
+      names( returnObj$gridParam ) <- c( paramNames[ 1:( nb + 1 ) ],
+         "sigmaSq", "gamma" )
    }
    names( returnObj$mleParam ) <- paramNames
    rownames( returnObj$mleCov ) <- paramNames
