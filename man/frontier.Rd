@@ -228,7 +228,7 @@ frontier( yName, xNames = NULL, zNames = NULL, data,
    # Cobb-Douglas production frontier
    cobbDouglas <- frontier( yName = "logOutput",
       xNames = c( "logCapital", "logLabour" ), data = front41Data )
-   cobbDouglas
+   summary( cobbDouglas )
 
    # rice producers in the Philippines (panel data)
    data( riceProdPhil )
@@ -241,13 +241,23 @@ frontier( yName, xNames = NULL, zNames = NULL, data,
    # Error Components Frontier (Battese & Coelli 1992)
    rice <- frontier( yName = "lPROD",
       xNames = c( "lAREA", "lLABOR", "lNPK" ), data = riceProdPhil )
-   rice
+   summary( rice )
 
    # Technical Efficiency Effects Frontier (Battese & Coelli 1995)
    rice2 <- frontier( yName = "lPROD",
       xNames = c( "lAREA", "lLABOR", "lNPK" ),
       zNames = c( "EDYRS", "BANRAT" ), data = riceProdPhil )
-   rice2
+   summary( rice2 )
+
+   # Cost Frontier (with land as quasi-fixed input)
+   riceProdPhil$cost <- riceProdPhil$LABOR * riceProdPhil$LABORP +
+      riceProdPhil$NPK * riceProdPhil$NPKP
+   riceProdPhil$lCost   <- log( riceProdPhil$cost )
+   riceProdPhil$lLABORP <- log( riceProdPhil$LABORP )
+   riceProdPhil$lNPKP   <- log( riceProdPhil$NPKP )
+   riceCost <- frontier( "lCost", xNames = c( "lAREA", "lLABORP", "lNPKP" ),
+      data = riceProdPhil, ineffDecrease = FALSE )
+   summary( riceCost )
 }
 
 \keyword{models}

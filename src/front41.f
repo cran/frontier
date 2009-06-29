@@ -516,8 +516,8 @@ c       of the log-likelihood function of the error components model.
 	do 106 j=1,n        
 	gx(j)=0.0
  106    continue
-	gx(n1)=0.5*ftot/s2-0.5*f*(den(-z)/dis(z)+z)*z/s2
-	gx(n2)=-.5*(ftot-f)/(1.-g)-.5*f*(den(-z)/dis(z)+z)*z/g
+	gx(n1)=0.5*ftot/s2-0.5*f*(dendis(z)+z)*z/s2
+	gx(n2)=-.5*(ftot-f)/(1.-g)-.5*f*(dendis(z)+z)*z/g
 	
 	do 105 i=1,nn
 	epr=0.0    
@@ -548,11 +548,11 @@ c       of the log-likelihood function of the error components model.
 	do 146 l=1,nt
 	if(xx(i,l,1).ne.0.0)xpe=xpe+xx(i,l,j)*dexp(-e*(dfloat(l)-fnt))
  146    continue
-	d=(den(-zi)/dis(zi)+zi)*g*xpe*sc
+	d=(dendis(zi)+zi)*g*xpe*sc
 	gx(j)=gx(j)-d/(g*(1.0-g)*s2*(1.0+(epe-1.0)*g))**0.5   
  132    continue    
 	
-	gx(n1)=gx(n1)+.5*(den(-zi)/dis(zi)+zi)*zi/s2
+	gx(n1)=gx(n1)+.5*(dendis(zi)+zi)*zi/s2
 	ss=0.0
 	do 138 l=1,nt   
 	ee=yy(i,l)  
@@ -570,11 +570,11 @@ c       of the log-likelihood function of the error components model.
 	c=0.5*(u*(1.0-g)-sc*g*epr) 
 	dzi=dzi-c*((1.0-2.0*g)+(epe-1.0)*g*(2.0-3.0*g))  
 	dzi=dzi/(d**1.5*s2**0.5)    
-	gx(n2)=gx(n2)-(den(-zi)/dis(zi)+zi)*dzi
+	gx(n2)=gx(n2)-(dendis(zi)+zi)*dzi
   
 	if (nmu.eq.1) then  
-	gx(n3)=gx(n3)+1./(s2*g)**0.5*(den(-z)/dis(z)+z)
-	d=(den(-zi)/dis(zi)+zi)*(1.-g)
+	gx(n3)=gx(n3)+1./(s2*g)**0.5*(dendis(z)+z)
+	d=(dendis(zi)+zi)*(1.-g)
 	gx(n3)=gx(n3)-d/(g*(1.-g)*s2*(1.+(epe-1.)*g))**.5  
 	end if
   
@@ -597,7 +597,7 @@ c       of the log-likelihood function of the error components model.
 	c=u*(1.0-g)-sc*g*epr  
 	c=c*0.5*g**2*(1.0-g)*s2*de    
 	dzi=(d-c)/dd**1.5    
-	gx(n4)=gx(n4)-(den(-zi)/dis(zi)+zi)*dzi
+	gx(n4)=gx(n4)-(dendis(zi)+zi)*dzi
 	gx(n4)=gx(n4)+g/2.0*de/(1.0+(epe-1.0)*g)   
 	end if
   105   continue
@@ -682,19 +682,19 @@ c       of the log-likelihood function of the TE effects model.
 	d=zd/(g*s2)**0.5   
 	ds=us/ss   
 	do 13 j=1,nb   
-	gx(j)=gx(j)+xx(i,l,j)*((ee+sc*zd)/s2+sc*den(ds)/dis(ds)*g/ss)
+	gx(j)=gx(j)+xx(i,l,j)*((ee+sc*zd)/s2+sc*dendis(ds)*g/ss)
    13   continue   
 	if (nz.ne.0) then  
 	do 14 j=nb+1,nr
-	gx(j)=gx(j)-xx(i,l,j)*((sc*ee+zd)/s2+den(d)/dis(d)/(g*s2) 
-     +  **0.5-den(ds)/dis(ds)*(1.-g)/ss)  
+	gx(j)=gx(j)-xx(i,l,j)*((sc*ee+zd)/s2+dendis(d)/(g*s2)
+     +  **0.5-dendis(ds)*(1.-g)/ss)
    14   continue   
 	endif  
-	gx(nr+1)=gx(nr+1)-0.5/s2*(1.-(den(d)/dis(d)*d-den(ds)  
-     +  /dis(ds)*ds)-(ee+sc*zd)**2/s2) 
-	gx(nr+2)=gx(nr+2)+0.5*(den(d)/dis(d)*d/g-den(ds)/dis(ds)
+	gx(nr+1)=gx(nr+1)-0.5/s2*(1.-(dendis(d)*d-dendis(ds)
+     +  *ds)-(ee+sc*zd)**2/s2)
+	gx(nr+2)=gx(nr+2)+0.5*(dendis(d)*d/g-dendis(ds)
      +  /ss*(zd/g+sc*ee/(1.-g)))
-c       gx(nr+2)=gx(nr+2)+0.5*(den(d)/dis(d)*d/g-den(ds)/dis(ds)*  
+c       gx(nr+2)=gx(nr+2)+0.5*(dendis(d)*d/g-dendis(ds)*
 c    +  (2.*(ee+zd)/ss+ds*(1.-2.*g)/(g*(1.-g))))
 	endif
    10   continue   
@@ -883,7 +883,7 @@ c       efficiency.
 	tei=dis(-sc*si*eta+fi/si)/dis(fi/si)
 	tei=tei*dexp(-fi*eta*sc+0.5*si2*eta**2)
 	else
-	tei=fi+si*den(fi/si)/dis(fi/si)
+	tei=fi+si*dendis(fi/si)
 	tei=1.-sc*(eta*tei/(xbb/dfloat(mm(i))))
 	endif
 	if ((ipc.eq.1).and.(tei.gt.1.0)) tei=1.0
@@ -919,7 +919,7 @@ c       efficiency.
 	if (il.eq.1) then
 	tei=dexp(-sc*us+0.5*ss**2)*dis(ds-sc*ss)/dis(ds)
 	else
-	tei=1.-sc*(us+ss*den(ds)/dis(ds))/xb
+	tei=1.-sc*(us+ss*dendis(ds))/xb
 	endif
 	if ((ipc.eq.1).and.(tei.gt.1.0)) tei=1.0
 	if ((ipc.eq.2).and.(tei.lt.1.0)) tei=1.0
@@ -1111,10 +1111,9 @@ c       calculate b=inv(x'x)x'y
 	return 
 	end
  
- 
-
-
-
-
-
-
+      double precision function dendis(a)
+c       calculates den(a) / dis(a)
+      implicit double precision (a-h,o-z)
+      dendis=dexp(denlog(a)-dislog(a))
+      return
+      end

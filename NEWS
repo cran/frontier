@@ -5,6 +5,17 @@ A full ChangeLog is available in the log messages of the SVN repository
 on R-Forge.
 
 
+            CHANGES IN VERSION 0.991-2
+
+* fixed bug #469: it is possible (again) now to estimate frontiers
+with argument "ineffDecrease" set to FALSE (e.g. cost frontiers)
+
+* the ratio between the density function and the cumulative distribution
+function ("den(a)/dis(a)") is calculated by "dexp(denlog(a)-dislog(a))"
+now, because the new approach is capable to calculate this ratio even
+if "a" is smaller than -37.5
+
+
             CHANGES IN VERSION 0.991-0
 
 * removed argument "modelType": the model type is derived from argument

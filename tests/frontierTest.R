@@ -225,6 +225,80 @@ efficiencies( bb8, asInData = TRUE )
 print.default( bb8 )
 
 
+## Cost Frontier (with land as quasi-fixed input)
+riceProdPhil$cost <- riceProdPhil$LABOR * riceProdPhil$LABORP +
+   riceProdPhil$NPK * riceProdPhil$NPKP
+riceProdPhil$lCost   <- log( riceProdPhil$cost )
+riceProdPhil$lLABORP <- log( riceProdPhil$LABORP )
+riceProdPhil$lNPKP   <- log( riceProdPhil$NPKP )
+
+## cross-section rice data, error components cost frontier
+dd1 <- frontier( "lCost", xNames = c( "lAREA", "lLABORP", "lNPKP" ),
+   data = riceProdPhil, ineffDecrease = FALSE )
+print( dd1 )
+coef( dd1, which = "start" )
+coef( dd1, which = "ols" )
+coef( dd1, which = "grid" )
+coef( dd1 )
+coef( summary( dd1 ), which = "ols" )
+coef( summary( dd1 ) )
+vcov( dd1 )
+print( summary( dd1 ) )
+efficiencies( dd1 )
+efficiencies( dd1, asInData = TRUE )
+print.default( dd1 )
+
+## cross-section rice data, error components cost frontier, truncNorm
+dd2 <- frontier( "lCost", xNames = c( "lAREA", "lLABORP", "lNPKP" ),
+   data = riceProdPhil, ineffDecrease = FALSE, truncNorm = TRUE )
+print( dd2 )
+coef( dd2, which = "start" )
+coef( dd2, which = "ols" )
+coef( dd2, which = "grid" )
+coef( dd2 )
+coef( summary( dd2 ), which = "ols" )
+coef( summary( dd2 ) )
+vcov( dd2 )
+print( summary( dd2 ) )
+efficiencies( dd2 )
+efficiencies( dd2, asInData = TRUE )
+print.default( dd2 )
+
+## cross-section rice data, efficiency effects cost frontier
+dd5 <- frontier( "lCost", xNames = c( "lAREA", "lLABORP", "lNPKP" ),
+   zNames = c( "EDYRS" ), data = riceProdPhil, #, "BANRAT"
+   ineffDecrease = FALSE )
+print( dd5 )
+coef( dd5, which = "start" )
+coef( dd5, which = "ols" )
+coef( dd5, which = "grid" )
+coef( dd5 )
+coef( summary( dd5 ), which = "ols" )
+coef( summary( dd5 ) )
+vcov( dd5 )
+print( summary( dd5 ) )
+efficiencies( dd5 )
+efficiencies( dd5, asInData = TRUE )
+print.default( dd5 )
+
+## cross-section rice data, efficiency effects cost frontier, zIntercept
+dd6 <- frontier( "lCost", xNames = c( "lAREA", "lLABORP", "lNPKP" ),
+   zNames = c( "EDYRS", "BANRAT" ), data = riceProdPhil,
+   ineffDecrease = FALSE, zIntercept = TRUE )
+print( dd6 )
+coef( dd6, which = "start" )
+coef( dd6, which = "ols" )
+coef( dd6, which = "grid" )
+coef( dd6 )
+coef( summary( dd6 ), which = "ols" )
+coef( summary( dd6 ) )
+vcov( dd6 )
+print( summary( dd6 ) )
+efficiencies( dd6 )
+efficiencies( dd6, asInData = TRUE )
+print.default( dd6 )
+
+
 ## panel data
 riceProdPhil$farm <- paste( "F_", ifelse( riceProdPhil$FMERCODE > 9, "", "0" ),
    riceProdPhil$FMERCODE, sep = "" )
@@ -383,6 +457,108 @@ print( summary( b8 ) )
 efficiencies( b8 )
 efficiencies( b8, asInData = TRUE )
 print.default( b8 )
+
+
+## Cost Frontier (with land as quasi-fixed input)
+## panel rice data, error components cost frontier
+d1 <- frontier( "lCost", xNames = c( "lAREA", "lLABORP", "lNPKP" ),
+   data = riceProdPhil, ineffDecrease = FALSE )
+print( d1 )
+coef( d1, which = "start" )
+coef( d1, which = "ols" )
+coef( d1, which = "grid" )
+coef( d1 )
+coef( summary( d1 ), which = "ols" )
+coef( summary( d1 ) )
+vcov( d1 )
+print( summary( d1 ) )
+efficiencies( d1 )
+efficiencies( d1, asInData = TRUE )
+print.default( d1 )
+
+## panel rice data, error components cost frontier, truncNorm
+d2 <- frontier( "lCost", xNames = c( "lAREA", "lLABORP", "lNPKP" ),
+   data = riceProdPhil, ineffDecrease = FALSE, truncNorm = TRUE )
+print( d2 )
+coef( d2, which = "start" )
+coef( d2, which = "ols" )
+coef( d2, which = "grid" )
+coef( d2 )
+coef( summary( d2 ), which = "ols" )
+coef( summary( d2 ) )
+vcov( d2 )
+print( summary( d2 ) )
+efficiencies( d2 )
+efficiencies( d2, asInData = TRUE )
+print.default( d2 )
+
+## panel rice data, error components cost frontier, timeEffect
+d3 <- frontier( "lCost", xNames = c( "lAREA", "lLABORP", "lNPKP" ),
+   data = riceProdPhil, ineffDecrease = FALSE, timeEffect = TRUE )
+print( d3 )
+coef( d3, which = "start" )
+coef( d3, which = "ols" )
+coef( d3, which = "grid" )
+coef( d3 )
+coef( summary( d3 ), which = "ols" )
+coef( summary( d3 ) )
+vcov( d3 )
+print( summary( d3 ) )
+efficiencies( d3 )
+efficiencies( d3, asInData = TRUE )
+print.default( d3 )
+
+## panel rice data, error components cost frontier, truncNorm, timeEffect
+d4 <- frontier( "lCost", xNames = c( "lAREA", "lLABORP", "lNPKP" ),
+   data = riceProdPhil, ineffDecrease = FALSE, truncNorm = TRUE,
+   timeEffect = TRUE )
+print( d4 )
+coef( d4, which = "start" )
+coef( d4, which = "ols" )
+coef( d4, which = "grid" )
+coef( d4 )
+coef( summary( d4 ), which = "ols" )
+coef( summary( d4 ) )
+vcov( d4 )
+print( summary( d4 ) )
+efficiencies( d4 )
+efficiencies( d4, asInData = TRUE )
+print.default( d4 )
+
+## panel rice data, efficiency effects cost frontier
+d5 <- frontier( "lCost", xNames = c( "lAREA", "lLABORP", "lNPKP" ),
+   zNames = c( "EDYRS" ), data = riceProdPhil, #, "BANRAT"
+   ineffDecrease = FALSE )
+print( d5 )
+coef( d5, which = "start" )
+coef( d5, which = "ols" )
+coef( d5, which = "grid" )
+coef( d5 )
+coef( summary( d5 ), which = "ols" )
+coef( summary( d5 ) )
+vcov( d5 )
+print( summary( d5 ) )
+efficiencies( d5 )
+efficiencies( d5, asInData = TRUE )
+print.default( d5 )
+
+## panel rice data, efficiency effects cost frontier, zIntercept
+d6 <- frontier( "lCost", xNames = c( "lAREA", "lLABORP", "lNPKP" ),
+   zNames = c( "EDYRS", "BANRAT" ), data = riceProdPhil,
+   ineffDecrease = FALSE, zIntercept = TRUE )
+print( d6 )
+coef( d6, which = "start" )
+coef( d6, which = "ols" )
+coef( d6, which = "grid" )
+coef( d6 )
+coef( summary( d6 ), which = "ols" )
+coef( summary( d6 ) )
+vcov( d6 )
+print( summary( d6 ) )
+efficiencies( d6 )
+efficiencies( d6, asInData = TRUE )
+print.default( d6 )
+
 
 ## translog frontiers
 ## cross-section data, error components frontier, translog
