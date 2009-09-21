@@ -9,11 +9,12 @@ front41Est              Estimate a Stochastic Frontier Model by
                         Frontier 4.1
 front41ReadOutput       Read output of Frontier 4.1
 front41WriteInput       Write input files for Frontier 4.1
-frontier                Stochastic Frontier Analysis
 frontierQuad            Quadratic or Translog Frontiers
 frontierTranslogRay     Translog Ray Frontiers
 logLik.frontier         Extract Log-Likelihood Value
+residuals.frontier      Returning Efficiency Estimates
 riceProdPhil            Rice Production in the Philippines
+sfa                     Stochastic Frontier Analysis
 summary.front41Output   Summarizing the Estimation of Frontier 4.1
 summary.frontier        summary method for class frontier
 vcov.frontier           vcov method for class frontier

@@ -1,12 +1,12 @@
  
 	subroutine front41(
-     $  imArg, ipcArg, ilArg,
+     $  imArg, ipcArg,
      $  nnArg, ntArg, nobArg, nbArg, nmuArg, netaArg,
      $  iprintArg, indicArg, tolArg, tol2Arg, bignumArg,
      $  step1Arg, igrid2Arg, gridnoArg, maxitArg, bmuArg,
      $  nStartVal, startVal, nRowData, nColData, dataTable,
      $  nParamTotal, ob, obse, olsLogl, gb, startLogl, y, h, fmleLogl,
-     $  nIter, ate )
+     $  nIter )
 c       FRONTIER version 4.1d by Tim Coelli.   
 c       (with a very few contributions by Arne Henningsen)
 c       This program uses the Davidon-Fletcher-Powell algorithm to
@@ -40,14 +40,12 @@ c       Hence, this programme can be run automatically (non-interactively) now.
 	dimension gb(nParamTotal)
 	dimension y(nParamTotal)
 	dimension h(nParamTotal,nParamTotal)
-	dimension ate(nnArg,ntArg)
 	common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit   
-	common/one/fx,fy,fxols,nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im,il
+	common/one/fx,fy,fxols,nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im
 	common/five/tol,tol2,bmu,bignum,step1,gridno,igrid2
 
 	im=imArg
 	ipc=ipcArg
-	il=ilArg
 	nn=nnArg
 	nt=ntArg
 	nob=nobArg
@@ -67,19 +65,19 @@ c       Hence, this programme can be run automatically (non-interactively) now.
 	nfunct=0   
 	ndrv=0 
 	call info( nStartVal, startVal, nRowData, nColData, dataTable,
-     $  nParamTotal, ob, obse, gb, fxs, y, h, ate )
+     $  nParamTotal, ob, obse, gb, fxs, y, h )
 	olsLogl = -fxols
       startLogl = -fxs
 	fmleLogl = -fx
 	nIter = iter
 	end
  
-	subroutine mini(yy,xx,mm,sv,ob,obse,gb,fxs,y,h,ate)
+	subroutine mini(yy,xx,mm,sv,ob,obse,gb,fxs,y,h)
 c       contains the main loop of this iterative program. 
 	implicit double precision (a-h,o-z)
-	common/one/fx,fy,fxols,nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im,il
+	common/one/fx,fy,fxols,nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im
 	common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit   
-	dimension yy(nn,nt),xx(nn,nt,nr),mm(nn),sv(n),ate(nn,nt)
+	dimension yy(nn,nt),xx(nn,nt,nr),mm(nn),sv(n)
 	dimension ob(n),gb(n),obse(n),x(:),y(n),s(:)   
 	dimension h(n,n),delx(:),delg(:),gx(:),gy(:)
 	allocatable :: x,s,delx,delg,gx,gy
@@ -104,7 +102,7 @@ c       contains the main loop of this iterative program.
 	fy=fx
       fxs=fx
 	end if 
-	call result(yy,xx,mm,h,y,sv,ob,obse,gb,1,ate)
+	call result(yy,xx,mm,h,y,sv,ob,obse,gb)
 	iter=0 
 	if (im.eq.1) call der1(x,gx,yy,xx) 
 	if (im.eq.2) call der2(x,gx,yy,xx) 
@@ -164,7 +162,6 @@ c       contains the main loop of this iterative program.
 	if(nc.le.n) goto 303   
   301   format(' iteration = ',i5,'  func evals =',i7,'  llf =',e16.8) 
   302   format(4x,5e15.8)  
-	call result(yy,xx,mm,h,y,sv,ob,obse,gb,2,ate)
 	deallocate(x,s,delx,delg,gx,gy)
 	return 
 	end
@@ -175,7 +172,7 @@ c       the program is halted when the proportional change in the log-
 c       likelihood and in each of the parameters is no greater than   
 c       a specified tolerance.
 	implicit double precision (a-h,o-z)
-	common/one/fx,fy,fxols,nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im,il
+	common/one/fx,fy,fxols,nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im
 	common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit   
 	common/five/tol,tol2,bmu,bignum,step1,gridno,igrid2
 	dimension x(n),y(n)
@@ -252,7 +249,7 @@ c       calculates the direction matrix (p).
 c       unidimensional search (coggin) to determine optimal step length
 c       determines the step length (t) using a unidimensional search. 
 	implicit double precision (a-h,o-z)
-	common/one/fx,fy,fxols,nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im,il
+	common/one/fx,fy,fxols,nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im
 	common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit   
 	common/five/tol,tol2,bmu,bignum,step1,gridno,igrid2
 	dimension x(n),y(n),s(n),gx(n),delx(n)
@@ -396,7 +393,7 @@ c       determines the step length (t) using a unidimensional search.
 	subroutine check(b,xx)
 c       checks if params are out of bounds & adjusts if required. 
 	implicit double precision (a-h,o-z)
-	common/one/fx,fy,fxols,nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im,il
+	common/one/fx,fy,fxols,nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im
 	common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit   
 	common/five/tol,tol2,bmu,bignum,step1,gridno,igrid2
 	dimension b(n),xx(nn,nt,nr)
@@ -419,7 +416,7 @@ c       checks if params are out of bounds & adjusts if required.
 c       calculates the negative of the log-likelihood function of the
 c       error components model.
 	implicit double precision (a-h,o-z)
-	common/one/fx,fy,fxols,nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im,il
+	common/one/fx,fy,fxols,nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im
 	common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit   
 	data pi/3.1415926/ 
 	dimension b(n),yy(nn,nt),xx(nn,nt,nr)
@@ -484,7 +481,7 @@ c       error components model.
 c       calculates the first-order partial derivatives of the negative
 c       of the log-likelihood function of the error components model.
 	implicit double precision (a-h,o-z)
-	common/one/fx,fy,fxols,nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im,il
+	common/one/fx,fy,fxols,nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im
 	common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit   
 	dimension b(n),gx(n),yy(nn,nt),xx(nn,nt,nr) 
 	call check(b,xx)  
@@ -555,11 +552,13 @@ c       of the log-likelihood function of the error components model.
 	gx(n1)=gx(n1)+.5*(dendis(zi)+zi)*zi/s2
 	ss=0.0
 	do 138 l=1,nt   
+      if(xx(i,l,1).ne.0.0) then
 	ee=yy(i,l)  
 	do 139 j=1,nb   
 	ee=ee-xx(i,l,j)*b(j)   
  139    continue    
 	ss=ss+ee**2 
+      endif
  138    continue
 	gx(n1)=gx(n1)-0.5*ss/((1.0-g)*s2**2)   
 	
@@ -611,7 +610,7 @@ c       of the log-likelihood function of the error components model.
 c       calculates the negative of the log-likelihood function of the
 c       TE effects model.
 	implicit double precision (a-h,o-z)
-	common/one/fx,fy,fxols,nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im,il
+	common/one/fx,fy,fxols,nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im
 	common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit   
 	dimension b(n),yy(nn,nt),xx(nn,nt,nr)
 	data pi/3.1415926/ 
@@ -652,7 +651,7 @@ c       TE effects model.
 c       calculates the first-order partial derivatives of the negative
 c       of the log-likelihood function of the TE effects model.   
 	implicit double precision (a-h,o-z)
-	common/one/fx,fy,fxols,nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im,il
+	common/one/fx,fy,fxols,nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im
 	common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit   
 	dimension b(n),gx(n),yy(nn,nt),xx(nn,nt,nr)
 	call check(b,xx)  
@@ -707,14 +706,14 @@ c    +  (2.*(ee+zd)/ss+ds*(1.-2.*g)/(g*(1.-g))))
  
 	subroutine info( nStartVal, startVal,
      $  nRowData, nColData, dataTable, 
-     $  nParamTotal, ob, obse, gb, fxs, y, h, ate )
+     $  nParamTotal, ob, obse, gb, fxs, y, h )
 c       accepts instructions from the terminal or from a file and 
 c       also reads data from a file.  
 	implicit double precision (a-h,o-z)
-	common/one/fx,fy,fxols,nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im,il
+	common/one/fx,fy,fxols,nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im
 	common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit   
 	character chst
-	dimension yy(:,:),xx(:,:,:),mm(:),sv(:),xxd(:),ate(nn,nt)
+	dimension yy(:,:),xx(:,:,:),mm(:),sv(:),xxd(:)
 	dimension startVal(nStartVal)
 	dimension dataTable(nRowData,nColData)
 	dimension ob(nParamTotal)
@@ -807,129 +806,33 @@ c       also reads data from a file.
 	stop  
 	end if
   149   continue   
-	call mini(yy,xx,mm,sv,ob,obse,gb,fxs,y,h,ate)
+	call mini(yy,xx,mm,sv,ob,obse,gb,fxs,y,h)
 	deallocate(yy,xx,mm,sv,xxd)
 	return 
 	end
 
 
-	subroutine result(yy,xx,mm,h,y,sv,ob,obse,gb,ncall,ate)
+	subroutine result(yy,xx,mm,h,y,sv,ob,obse,gb)
 c       presents estimates, covariance matrix, standard errors and t-ratios,
 c       as well as presenting many results including estimates of technical  
 c       efficiency.   
 	implicit double precision (a-h,o-z)
-	common/one/fx,fy,fxols,nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im,il
+	common/one/fx,fy,fxols,nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im
 	common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit   
 	common/five/tol,tol2,bmu,bignum,step1,gridno,igrid2
 	dimension yy(nn,nt),xx(nn,nt,nr),mm(nn)
-	dimension h(n,n),y(n),sv(n),ob(n),obse(n),gb(n),ate(nn,nt)
+	dimension h(n,n),y(n),sv(n),ob(n),obse(n),gb(n)
 	data pi/3.1415926/ 
 	n1=nr+1
 	n2=nr+2
 	n3=nr+3
 	n4=nr+4
 	if((nmu.eq.0).and.(neta.eq.1)) n4=nr+3
-	if (ncall.eq.1) then
 	fnob=dfloat(nob) 
 	fnb=dfloat(nb) 
 	os2=ob(nb+1)*(fnob-fnb)/fnob
 	fxols=fnob/2.0*(dlog(2.0*pi)+dlog(os2)+1.0)  
 	
-	else
-	
-	sc=1.
-	if(ipc.eq.2) sc=-1.
-
-	if (im.eq.1) then
-	s2=y(nb+1)
-	g=y(nb+2)
-	u=0.0
-	e=0.0
-	if (nmu.eq.1) then 
-	u=y(nb+3)
-	if (neta.eq.1) e=y(nb+4)
-	else
-	if (neta.eq.1) e=y(nb+3)
-	endif
-	fnt=dfloat(nt)  
-	ntt=nt
-	if (neta.eq.0) ntt=1
-	do 138 l=1,ntt   
-	te=0.
-	ncount=0
-	t=dfloat(l)
-	eta=dexp(-e*(t-fnt))  
-	do 136 i=1,nn   
-	if ((xx(i,l,1).ne.0.0).or.(neta.eq.0)) then  
-	epr=0.0    
-	epe=0.0
-	xbb=0.
-	do 103 k=1,nt   
-	if (xx(i,k,1).ne.0.0) then
-	ee=yy(i,k)  
-	do 102 j=1,nb   
-	ee=ee-y(j)*xx(i,k,j)   
-  102   continue   
-	xb=yy(i,k)-ee
-	xbb=xbb+xb
-	epr=epr+ee*dexp(-e*(dfloat(k)-fnt))   
-	epe=epe+dexp(-2.0*e*(dfloat(k)-fnt))    
-	end if
-  103   continue   
-	fi=(u*(1.0-g)-sc*g*epr)/(1.0+(epe-1.0)*g)  
-	si2=g*(1.0-g)*s2/(1.0+(epe-1.0)*g)  
-	si=si2**0.5
-	if (il.eq.1) then
-	tei=dis(-sc*si*eta+fi/si)/dis(fi/si)
-	tei=tei*dexp(-fi*eta*sc+0.5*si2*eta**2)
-	else
-	tei=fi+si*dendis(fi/si)
-	tei=1.-sc*(eta*tei/(xbb/dfloat(mm(i))))
-	endif
-	if ((ipc.eq.1).and.(tei.gt.1.0)) tei=1.0
-	if ((ipc.eq.2).and.(tei.lt.1.0)) tei=1.0
-	te=te+tei
-	ncount=ncount+1
-	endif
-	ate(i,l) = tei
- 136    continue    
- 138    continue    
-
-	else
-	
-	s2=y(nr+1) 
-	g=y(nr+2)  
-	te=0.  
-	ss=(g*(1.-g)*s2)**0.5  
-	do 10 l=1,nt   
-	do 10 i=1,nn
-	if (xx(i,l,1).ne.0.0) then
-	xb=0.  
-	do 11 j=1,nb   
-	xb=xb+xx(i,l,j)*y(j) 
-   11   continue   
-	zd=0.  
-	if (nz.ne.0) then  
-	do 12 j=nb+1,nr
-	zd=zd+xx(i,l,j)*y(j) 
-   12   continue   
-	endif  
-	us=(1.-g)*zd-sc*g*(yy(i,l)-xb)
-	ds=us/ss  
-	if (il.eq.1) then
-	tei=dexp(-sc*us+0.5*ss**2)*dis(ds-sc*ss)/dis(ds)
-	else
-	tei=1.-sc*(us+ss*dendis(ds))/xb
-	endif
-	if ((ipc.eq.1).and.(tei.gt.1.0)) tei=1.0
-	if ((ipc.eq.2).and.(tei.lt.1.0)) tei=1.0
-	te=te+tei  
-	endif
-	ate(i,l) = tei
-  10    continue
-	endif
-	
-	endif
 	return 
 	end
  
@@ -938,7 +841,7 @@ c       efficiency.
 	subroutine grid(x,y,yy,xx,ob,gb)
 c       does a grid search across gamma
 	implicit double precision (a-h,o-z)
-	common/one/fx,fy,fxols,nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im,il
+	common/one/fx,fy,fxols,nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im
 	common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit   
 	common/five/tol,tol2,bmu,bignum,step1,gridno,igrid2
 	dimension x(n),y(n),yy(nn,nt),xx(nn,nt,nr),ob(n),gb(n)
@@ -1048,7 +951,7 @@ c       finds the inverse of a given matrix.
 	subroutine ols(ob,obse,yy,xx)
 c       calculates the ols estimates and their standard errors.       
 	implicit double precision (a-h,o-z)
-	common/one/fx,fy,fxols,nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im,il
+	common/one/fx,fy,fxols,nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im
 	common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit   
 	dimension ob(n),obse(n),yy(nn,nt),xx(nn,nt,nr)
 	dimension xpx(:,:),xpy(:),mx(:)

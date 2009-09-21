@@ -31,15 +31,12 @@ returned by \code{\link{frontier}}.
 \examples{
    # example included in FRONTIER 4.1
    data( front41Data )
-   front41Data$logOutput  <- log( front41Data$output )
-   front41Data$logCapital <- log( front41Data$capital )
-   front41Data$logLabour  <- log( front41Data$labour )
 
-   sfa <- frontier( yName = "logOutput",
-      xNames = c( "logCapital", "logLabour" ), data = front41Data )
-   coef( sfa, which = "ols" )
-   coef( sfa, which = "grid" )
-   coef( sfa )
+   sfaResult <- sfa( log( output ) ~ log( capital ) + log( labour ),
+      data = front41Data )
+   coef( sfaResult, which = "ols" )
+   coef( sfaResult, which = "grid" )
+   coef( sfaResult )
 }
 
 \keyword{models}

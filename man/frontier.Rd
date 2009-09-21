@@ -1,4 +1,5 @@
-\name{frontier}
+\name{sfa}
+\alias{sfa}
 \alias{frontier}
 \alias{print.frontier}
 \title{Stochastic Frontier Analysis}
@@ -15,21 +16,23 @@
 }
 
 \usage{
-frontier( yName, xNames = NULL, zNames = NULL, data,
-   ineffDecrease = TRUE, logDepVar = TRUE, truncNorm = FALSE,
-   zIntercept = FALSE, timeEffect = FALSE, startVal = NULL,
+sfa( formula, data = sys.frame( sys.parent() ),
+   ineffDecrease = TRUE, truncNorm = FALSE,
+   timeEffect = FALSE, startVal = NULL,
    tol = 0.00001, maxit = 1000, muBound = 2, bignum = 1.0E+16,
    searchStep = 0.00001, searchTol = 0.001, searchScale = NA,
    gridSize = 0.1, gridDouble = TRUE, printIter = 0 )
+
+frontier( yName, xNames = NULL, zNames = NULL, data,
+   zIntercept = FALSE, \dots )
+
 \method{print}{frontier}( x, \dots )
 }
 
 \arguments{
-   \item{yName}{string: name of the endogenous variable.}
-   \item{xNames}{a vector of strings containing the names of the X variables
-      (exogenous variables of the production or cost function).}
-   \item{zNames}{a vector of strings containing the names of the Z variables
-      (variables explaining the efficiency level).}
+   \item{formula}{a symbolic description of the model to be estimated;
+      it can be either a (usual) one-part or a two-part formula
+      (see section \sQuote{Details}).}
    \item{data}{a (panel) data frame that contains the data;
       if \code{data} is a usual data.frame,
       it is assumed that these are cross-section data;
@@ -42,17 +45,12 @@ frontier( yName, xNames = NULL, zNames = NULL, data,
       if \code{FALSE},
       inefficiency increases the endogenous variable
       (e.g. for estimating a cost function).}
-   \item{logDepVar}{logical. Is the dependent variable logged.}
    \item{truncNorm}{logical. If \code{TRUE},
       the inefficiencies are assumed to have a truncated normal distribution
       (i.e. parameter \eqn{\mu}{mu} is added);
       if \code{FALSE},
       they are assumed to have a half-normal distribution
       (only relevant for the \sQuote{Error Components Frontier}).}
-   \item{zIntercept}{logical. If \code{TRUE},
-      an intercept (with parameter \eqn{\delta_0}{delta_0})
-      is added to the Z variables
-      (only relevant for the \sQuote{Efficiency Effects Frontier}).}
    \item{timeEffect}{logical. If \code{FALSE} (default),
       the efficiency estimates of an \sQuote{Error Components Frontier}
       are time invariant;
@@ -90,13 +88,32 @@ frontier( yName, xNames = NULL, zNames = NULL, data,
       with an increment of \code{gridSize/10}.}
    \item{printIter}{numeric. Print info every \code{printIter} iterations;
       if this argument is 0, do not print.}
+   \item{yName}{string: name of the endogenous variable.}
+   \item{xNames}{a vector of strings containing the names of the X variables
+      (exogenous variables of the production or cost function).}
+   \item{zNames}{a vector of strings containing the names of the Z variables
+      (variables explaining the efficiency level).}
+   \item{zIntercept}{logical. If \code{TRUE},
+      an intercept (with parameter \eqn{\delta_0}{delta_0})
+      is added to the Z variables
+      (only relevant for the \sQuote{Efficiency Effects Frontier}).}
    \item{x}{an object of class \code{frontier}
       (returned by the function \code{frontier}).}
-   \item{\dots}{currently unused.}
+   \item{\dots}{additional arguments of \code{frontier}
+      are passed to \code{sfa};
+      additional arguments of the \code{print} method
+      are currently ignored.}
 }
 
 \details{
-   One can use the \code{frontier} function
+   Function \code{frontier} is a wrapper function
+   that calls \code{sfa} for the estimation.
+   The two functions differ only in the user interface;
+   function \code{frontier} has the \dQuote{old} user interface
+   and is kept to maintain compatibility with older versions
+   of the \code{frontier} package.
+
+   One can use functions \code{sfa} and \code{frontier}
    to calculate the log likelihood value for a given model,
    a given data set, and given parameters
    by using the argument \code{startVal} to specify the parameters
@@ -122,15 +139,25 @@ frontier( yName, xNames = NULL, zNames = NULL, data,
    It is recommended to read this documentation, 
    because the \code{frontier} function is based on the FRONTIER 4.1 software.
 
-   If argument \code{zNames} is \code{NULL},
+   If argument \code{formula} of \code{sfa} is a (usual) one-part formula
+   (or argument \code{zNames} of \code{frontier} is \code{NULL}),
    an \sQuote{Error Components Frontier} (ECF, see Battese and Coelli 1992)
    is estimated.
-   If argument \code{zNames} is not \code{NULL},
+   If argument \code{formula} is a two-part formula
+   (or \code{zNames}) is not \code{NULL}),
    an \sQuote{Efficiency Effects Frontier} (EEF, see Battese and Coelli 1995)
    is estimated.
-   Generally, there should be no reason to estimate an EEF
-   without z variable,
-   but this can done by setting argument \code{zNames} to \code{NA}.
+   In this case, the first part of the formula
+   (i.e. the part before the \dQuote{|} symbol)
+   is used to explain the endogenous variable directly (X variables),
+   while the second part of the formula
+   (i.e. the part after the \dQuote{|} symbol)
+   is used to explain the efficiency levels (Z variables).
+   Generally, there should be no reason for estimating an EEF
+   without Z variables,
+   but this can done by setting the second part of argument \code{formula}
+   to \code{1} (with Z intercept) or \code{- 1} (without Z intercept)
+   (or by setting argument \code{zNames}) to \code{NA}).
 
    In case of an Error Components Frontier (ECF)
    with the inefficiency terms \eqn{u} following a
@@ -143,13 +170,12 @@ frontier( yName, xNames = NULL, zNames = NULL, data,
 }
 
 \value{
-   \code{frontier} returns a list of class \code{frontier}
+   \code{sfa} and \code{frontier} return a list of class \code{frontier}
    containing following elements:
    \item{modelType}{integer.
       A \sQuote{1} denotes an \sQuote{Error Components Frontier} (ECF);
       a \sQuote{2} denotes an \sQuote{Efficiency Effects Frontier} (EFF).}
    \item{ineffDecrease}{logical. Argument \code{ineffDecrease} (see above).}
-   \item{logDepVar}{logical. Argument \code{logDepVar} (see above).}
    \item{nn}{number of cross-sections.}
    \item{nt}{number of time periods.}
    \item{nob}{number of observations in total.}
@@ -190,7 +216,7 @@ frontier( yName, xNames = NULL, zNames = NULL, data,
       with \code{lrTestDf} degrees of freedom.}
    \item{lrTestDf}{numeric. Degrees of freedom of the LR test.}
    \item{nIter}{numeric. Number of iterations of the ML estimation.}
-   \item{effic}{matrix. Efficiency estimates:
+   \item{resid}{matrix. Residuals:
       each row corresponds to a cross-section;
       each column corresponds to a time period.}
 }
@@ -221,43 +247,66 @@ frontier( yName, xNames = NULL, zNames = NULL, data,
 \examples{
    # example included in FRONTIER 4.1 (cross-section data)
    data( front41Data )
-   front41Data$logOutput  <- log( front41Data$output )
-   front41Data$logCapital <- log( front41Data$capital )
-   front41Data$logLabour  <- log( front41Data$labour )
 
    # Cobb-Douglas production frontier
-   cobbDouglas <- frontier( yName = "logOutput",
-      xNames = c( "logCapital", "logLabour" ), data = front41Data )
+   cobbDouglas <- sfa( log( output ) ~ log( capital ) + log( labour ),
+      data = front41Data )
    summary( cobbDouglas )
 
    # rice producers in the Philippines (panel data)
    data( riceProdPhil )
    riceProdPhil <- plm.data( riceProdPhil, c( "FMERCODE", "YEARDUM" ) )
+
+   # Error Components Frontier (Battese & Coelli 1992)
+   rice <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ),
+      data = riceProdPhil )
+   summary( rice )
+
+   # Technical Efficiency Effects Frontier (Battese & Coelli 1995)
+   rice2 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ) |
+      EDYRS + BANRAT - 1, data = riceProdPhil )
+   summary( rice2 )
+
+   # Cost Frontier (with land as quasi-fixed input)
+   riceProdPhil$cost <- riceProdPhil$LABOR * riceProdPhil$LABORP +
+      riceProdPhil$NPK * riceProdPhil$NPKP
+   riceCost <- sfa( log( cost ) ~ log( AREA ) + log( LABORP ) + log( NPKP ),
+      data = riceProdPhil, ineffDecrease = FALSE )
+   summary( riceCost )
+
+   ######################################################
+   ### using frontier() with the "old" user interface ###
+   ######################################################
+
+   # example included in FRONTIER 4.1 (cross-section data)
+   front41Data$logOutput  <- log( front41Data$output )
+   front41Data$logCapital <- log( front41Data$capital )
+   front41Data$logLabour  <- log( front41Data$labour )
+
+   # Cobb-Douglas production frontier
+   cobbDouglasFront <- frontier( yName = "logOutput",
+      xNames = c( "logCapital", "logLabour" ), data = front41Data )
+   all.equal( cobbDouglasFront, cobbDouglas )   # only the call (element 34)
+      # and the names of the parameters are slightly different
+
+   # rice producers in the Philippines (panel data)
    riceProdPhil$lPROD  <- log( riceProdPhil$PROD )
    riceProdPhil$lAREA  <- log( riceProdPhil$AREA )
    riceProdPhil$lLABOR <- log( riceProdPhil$LABOR )
    riceProdPhil$lNPK   <- log( riceProdPhil$NPK )
 
    # Error Components Frontier (Battese & Coelli 1992)
-   rice <- frontier( yName = "lPROD",
+   riceFront <- frontier( yName = "lPROD",
       xNames = c( "lAREA", "lLABOR", "lNPK" ), data = riceProdPhil )
-   summary( rice )
+   all.equal( riceFront, rice )   # only the call (element 34)
+      # and the names of the parameters are slightly different
 
    # Technical Efficiency Effects Frontier (Battese & Coelli 1995)
-   rice2 <- frontier( yName = "lPROD",
+   rice2Front <- frontier( yName = "lPROD",
       xNames = c( "lAREA", "lLABOR", "lNPK" ),
       zNames = c( "EDYRS", "BANRAT" ), data = riceProdPhil )
-   summary( rice2 )
-
-   # Cost Frontier (with land as quasi-fixed input)
-   riceProdPhil$cost <- riceProdPhil$LABOR * riceProdPhil$LABORP +
-      riceProdPhil$NPK * riceProdPhil$NPKP
-   riceProdPhil$lCost   <- log( riceProdPhil$cost )
-   riceProdPhil$lLABORP <- log( riceProdPhil$LABORP )
-   riceProdPhil$lNPKP   <- log( riceProdPhil$NPKP )
-   riceCost <- frontier( "lCost", xNames = c( "lAREA", "lLABORP", "lNPKP" ),
-      data = riceProdPhil, ineffDecrease = FALSE )
-   summary( riceCost )
+   all.equal( rice2Front, rice2 )   # only the call (element 34)
+      # and the names of the parameters are slightly different
 }
 
 \keyword{models}

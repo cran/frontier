@@ -9,7 +9,8 @@ returned by \code{\link{frontier}}.
 }
 
 \usage{
-\method{summary}{frontier}( object, effic = FALSE, \dots )
+\method{summary}{frontier}( object, effic = FALSE,
+   logDepVar = TRUE, \dots )
 \method{print}{summary.frontier}( x, effic = x$printEffic, \dots )
 }
 
@@ -19,48 +20,52 @@ returned by \code{\link{frontier}}.
    \item{x}{an object of class \code{summary.frontier} 
       (returned by the function \code{summary.frontier}).}
    \item{effic}{logical. Print the individual efficiency estimates?}
+   \item{logDepVar}{logical. Is the dependent variable logged?}
    \item{\dots}{currently unused.}
 }
 
 \value{
    \code{summary.frontier} returns a list of class \code{summaryfrontier}
    that is identical to an object returned by \code{\link{frontier}}
-   with three exceptions:
+   with two modifications and (up to) four additional elements:
    \item{olsParam}{matrix of OLS estimates, their standard errors,
       t values, and P values.}
    \item{mleParam}{matrix of ML estimates, their standard errors,
       t values, and P values.}
+   \item{logDepVar}{logical. Argument \code{logDepVar} (see above).}
    \item{printEffic}{argument \code{effic}.}
+   \item{effic}{matrix. Efficiency estimates:
+      each row corresponds to a cross-section;
+      each column corresponds to a time period.}
+   \item{efficMean}{numeric scalar. Mean efficiency.}
+   \item{efficYearMeans}{numeric vector.
+      Mean efficiency for each year in the sample
+      (only for panel data but not for the Error Components Frontier
+      without time effects).}
 }
 
 \author{Arne Henningsen}
 
 \examples{
-   # example included in FRONTIER 4.1
+   # example included in FRONTIER 4.1 (cross-section data)
    data( front41Data )
-   front41Data$logOutput  <- log( front41Data$output )
-   front41Data$logCapital <- log( front41Data$capital )
-   front41Data$logLabour  <- log( front41Data$labour )
 
-   sfa <- frontier( yName = "logOutput",
-      xNames = c( "logCapital", "logLabour" ), data = front41Data )
-   summary( sfa )
+   sfaResult <- sfa( log( output ) ~ log( capital ) + log( labour ),
+      data = front41Data )
+   summary( sfaResult )
 
-   # rice producers in the Phillipines
+   # rice producers in the Phillipines (panel data)
    data( riceProdPhil )
    riceProdPhil <- plm.data( riceProdPhil, c( "FMERCODE", "YEARDUM" ) )
-   riceProdPhil$lPROD  <- log( riceProdPhil$PROD )
-   riceProdPhil$lAREA  <- log( riceProdPhil$AREA )
-   riceProdPhil$lLABOR <- log( riceProdPhil$LABOR )
-   riceProdPhil$lNPK   <- log( riceProdPhil$NPK )
 
-   rice <- frontier( yName = "lPROD",
-      xNames = c( "lAREA", "lLABOR", "lNPK" ), data = riceProdPhil )
+   # Error Components Frontier
+   rice <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ),
+      data = riceProdPhil )
    summary( rice )
 
-   rice2 <- frontier( yName = "lPROD",
-      xNames = c( "lAREA", "lLABOR", "lNPK" ),
-      zNames = c( "EDYRS", "BANRAT" ), data = riceProdPhil )
+   # Efficiency Effects Frontier
+   rice2 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ) |
+      EDYRS + BANRAT, data = riceProdPhil )
    summary( rice2 )
 }
 

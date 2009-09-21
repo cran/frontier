@@ -46,7 +46,7 @@
 
 \seealso{
    \code{\link{frontierQuad}}, \code{\link[micEcon]{translogEla}},
-   and \code{\link[micEcon]{QuadFuncEla}}.
+   and \code{\link[micEcon]{quadFuncEla}}.
 }
 
 \author{Arne Henningsen}

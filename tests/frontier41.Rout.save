@@ -1,5 +1,5 @@
 
-R version 2.9.0 (2009-04-17)
+R version 2.9.2 (2009-08-24)
 Copyright (C) 2009 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
 
@@ -44,6 +44,11 @@ Attaching package: 'Matrix'
 
 	The following object(s) are masked from package:stats :
 
+	 contr.helmert,
+	 contr.poly,
+	 contr.SAS,
+	 contr.sum,
+	 contr.treatment,
 	 xtabs 
 
 

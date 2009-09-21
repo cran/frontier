@@ -54,12 +54,12 @@ print.summary.frontier <- function( x, effic = x$printEffic, ... ) {
       print( x$effic )
    }
 
-   if( ncol( x$effic ) > 1 ) {
+   if( !is.null( x$efficYearMeans ) ) {
       cat( "\nmean efficiency of each year\n" )
-      print( colMeans( x$effic ) )
+      print( x$efficYearMeans )
    }
 
-   cat( "\nmean efficiency:", mean( x$effic ), "\n" )
+   cat( "\nmean efficiency:", x$efficMean, "\n" )
 
    invisible( x )
 }

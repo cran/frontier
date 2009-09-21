@@ -15,11 +15,6 @@ print.frontier <- function( x, ... ) {
       cat( "Inefficiency increases the endogenous variable",
 	"(as in a cost function\n" )
    }
-   if( x$logDepVar == 1 ) {
-      cat( "The dependent variable is logged\n" )
-   } else {
-      cat( "The dependent variable is not logged\n" )
-   }
    cat( "\nFinal maximum likelihood estimates\n" )
    print( coef( x ) )
    invisible( x )

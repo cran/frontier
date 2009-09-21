@@ -5,6 +5,50 @@ A full ChangeLog is available in the log messages of the SVN repository
 on R-Forge.
 
 
+            CHANGES IN VERSION 0.995-0
+
+* added new user interface: function "sfa" (instead of "frontier") should be
+used for Stochastic Frontier Analysis (SFA) now; its user interface is much
+more similar to the standard regression tool in R "lm"; function "frontier",
+which is a wrapper to "sfa" now, is kept for compatibility with older versions
+
+* functions "sfa" (and hence also "frontier", "frontierQuad" etc.) no longer
+calculate and return efficiency estimates
+
+* function "sfa" no longer has argument "logDepVar", because this information
+is irrelevant for the estimation
+
+* method "efficiencies" for objects of class "frontier" calculates
+efficiency estimates now (instead of just extracting them)
+
+* method "efficiencies" for objects of class "frontier" has the argument
+"logDepVar" now, which indicates whether the dependent variable is logged
+(this information is required to calculate the efficiency estimates)
+
+* method "summary" for objects of class "frontier" calculates and returns
+the efficiency estimates now (the calculation is done by the "efficiencies"
+method, see above)
+
+* method "summary" for objects of class "frontier" has the argument
+"logDepVar" now, which indicates whether the dependent variable is logged
+(this information is required to calculate the efficiency estimates)
+
+* added "residuals" method for objects of class "frontier" to obtain the
+residuals
+
+* fixed bug in the Fortran subroutine "der1" that calculates the derivatives
+of the likelihood function of the "Error Components Frontier" (ECF): in case
+of unbalanced panel data, uninitialized values (for unobserved observations)
+were used in the calculation so that the derivatives were wrong
+
+* fixed bug in the Fortran code: in case of unbalanced panel data, the
+efficiency estimates of the missing observations were set to the previously
+calculated efficiency estimate (mostly the efficiency estimate of the
+previous firm in the same year)
+
+* added further tests in /tests/frontierTest.R
+
+
             CHANGES IN VERSION 0.991-2
 
 * fixed bug #469: it is possible (again) now to estimate frontiers
