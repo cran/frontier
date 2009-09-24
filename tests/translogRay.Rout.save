@@ -57,14 +57,6 @@ Attaching package: 'Matrix'
 	 rcond 
 
 Loading required package: car
-
-Attaching package: 'car'
-
-
-	The following object(s) are masked from package:Formula :
-
-	 has.intercept 
-
 Loading required package: lmtest
 Loading required package: np
 Loading required package: boot

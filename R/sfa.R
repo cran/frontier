@@ -17,16 +17,16 @@ sfa <- function(
 
    # determine modelType (im)
    formula <- as.Formula( formula )
-   if( length( formula ) == 1 ) {
+   if( length( formula )[2] == 1 ) {
       modelType <- 1
       effFormula <- NULL
-   } else if( length( formula ) == 2 ) {
+   } else if( length( formula )[2] == 2 ) {
       modelType <- 2
-      effFormula <- formula( formula, part = "second", response = FALSE )
+      effFormula <- formula( formula, lhs = 0, rhs = 2 )
    } else {
-      stop( "argument 'formula' has an inappropriate number of parts" )
+      stop( "argument 'formula' has an inappropriate number of RHS parts" )
    }
-   formula <- formula( formula, part = "first", response = TRUE )
+   formula <- formula( formula, lhs = 1, rhs = 1 )
 
    # formula
    if( class( formula ) != "formula" ) {

@@ -5,6 +5,17 @@ A full ChangeLog is available in the log messages of the SVN repository
 on R-Forge.
 
 
+            CHANGES IN VERSION 0.995-6
+
+* modified sfa() so that it works with version 0.2-0 of the "Formula" package
+
+
+            CHANGES IN VERSION 0.995-4
+
+* added data set "telecom" that contains data on telecommunications
+providers in 21 countries in 1990
+
+
             CHANGES IN VERSION 0.995-0
 
 * added new user interface: function "sfa" (instead of "frontier") should be

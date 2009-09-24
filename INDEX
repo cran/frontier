@@ -17,4 +17,5 @@ riceProdPhil            Rice Production in the Philippines
 sfa                     Stochastic Frontier Analysis
 summary.front41Output   Summarizing the Estimation of Frontier 4.1
 summary.frontier        summary method for class frontier
+telecom                 Telecommunications Providers
 vcov.frontier           vcov method for class frontier
