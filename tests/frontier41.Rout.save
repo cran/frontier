@@ -91,8 +91,8 @@ Nonparametric Kernel Methods for Mixed Datatypes (version 0.30-3)
 > insFile <- file()
 > dtaFile  <- file()
 > 
-> front41Ins <- front41WriteInput( front41Data, "firm", "time", "logOutput",
-+    c( "logCapital", "logLabour" ), insFile = insFile, dtaFile = dtaFile  )
+> front41Ins <- front41WriteInput( front41Data, "firm", yName = "logOutput",
++    xNames = c( "logCapital", "logLabour" ), insFile = insFile, dtaFile = dtaFile  )
 > 
 > print( front41Ins )
 $data
@@ -162,7 +162,7 @@ $crossSectionName
 [1] "firm"
 
 $timePeriodName
-[1] "time"
+NULL
 
 $yName
 [1] "logOutput"
@@ -339,8 +339,8 @@ attr(,"class")
 > set.seed( 20061705 )
 > front41Data$firm <- sample( c( 1:( nrow( front41Data ) + 20 ) ) )[ 1:nrow( front41Data ) ]
 > 
-> front41Ins <- front41WriteInput( front41Data, "firm", "time", "logOutput",
-+    c( "logCapital", "logLabour" ), insFile = insFile, dtaFile = dtaFile  )
+> front41Ins <- front41WriteInput( front41Data, "firm", yName = "logOutput",
++    xNames = c( "logCapital", "logLabour" ), insFile = insFile, dtaFile = dtaFile  )
 > 
 > print( front41Ins )
 $data
@@ -410,7 +410,7 @@ $crossSectionName
 [1] "firm"
 
 $timePeriodName
-[1] "time"
+NULL
 
 $yName
 [1] "logOutput"

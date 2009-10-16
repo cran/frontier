@@ -99,23 +99,18 @@ Warning message:
 In sfa(formula = sfaFormula, data = data, ...) :
   the likelihood value of the ML estimation is less than that obtained using ols -- please try again using different starting values
 > print( estResultRay )
-Stochastic Frontier Analysis with FRONTIER 4.1
 
-Error Components Frontier (see Battese & Coelli 1992)
-Inefficiency decreases the endogenous variable (as in a production function)
+Call:
+frontierTranslogRay(yNames = c("qCrop", "qAnimal"), xNames = c("qLabor",      "land", "qVarInput"), data = germanFarms)
 
-Final maximum likelihood estimates
-          a_0           a_1           a_2           a_3           a_t 
--1.137420e+02 -6.049697e+01  8.795054e+01 -7.046872e+01  3.317314e+02 
-        b_1_1         b_1_2         b_1_3         b_1_t         b_2_2 
--2.535501e+01  1.212513e+01 -1.776231e+01  1.142893e+02 -6.713567e+00 
-        b_2_3         b_2_t         b_3_3         b_3_t         b_t_t 
--3.628969e+00 -3.570485e+01  1.658272e+01 -1.365753e+01 -1.338303e+02 
-      sigmaSq         gamma 
- 9.598228e-05  5.000000e-02 
+Maximum likelihood estimates
+       a_0         a_1         a_2         a_3         a_t       b_1_1  
+-1.137e+02  -6.050e+01   8.795e+01  -7.047e+01   3.317e+02  -2.536e+01  
+     b_1_2       b_1_3       b_1_t       b_2_2       b_2_3       b_2_t  
+ 1.213e+01  -1.776e+01   1.143e+02  -6.714e+00  -3.629e+00  -3.570e+01  
+     b_3_3       b_3_t       b_t_t     sigmaSq       gamma  
+ 1.658e+01  -1.366e+01  -1.338e+02   9.598e-05   5.000e-02  
 > summary( estResultRay )
-Stochastic Frontier Analysis with FRONTIER 4.1
-
 Error Components Frontier (see Battese & Coelli 1992)
 Inefficiency decreases the endogenous variable (as in a production function)
 The dependent variable is logged
@@ -163,24 +158,24 @@ sigmaSq  9.598228e-05
 gamma    5.000000e-02
 
 final maximum likelihood estimates
-           Estimate  Std. Error   t value  Pr(>|t|)    
-a_0     -1.1374e+02  1.0000e+00 -113.7420 1.498e-06 ***
-a_1     -6.0497e+01  1.0000e+00  -60.4970 9.950e-06 ***
-a_2      8.7951e+01  1.0000e+00   87.9505 3.240e-06 ***
-a_3     -7.0469e+01  1.0000e+00  -70.4687 6.297e-06 ***
-a_t      3.3173e+02  1.0000e+00  331.7314 6.041e-08 ***
-b_1_1   -2.5355e+01  1.0000e+00  -25.3550 0.0001345 ***
-b_1_2    1.2125e+01  1.0000e+00   12.1251 0.0012075 ** 
-b_1_3   -1.7762e+01  1.0000e+00  -17.7623 0.0003891 ***
-b_1_t    1.1429e+02  1.0000e+00  114.2893 1.477e-06 ***
-b_2_2   -6.7136e+00  1.0000e+00   -6.7136 0.0067448 ** 
-b_2_3   -3.6290e+00  1.0000e+00   -3.6290 0.0360195 *  
-b_2_t   -3.5705e+01  1.0000e+00  -35.7048 4.831e-05 ***
-b_3_3    1.6583e+01  1.0000e+00   16.5827 0.0004774 ***
-b_3_t   -1.3658e+01  1.0000e+00  -13.6575 0.0008492 ***
-b_t_t   -1.3383e+02  1.0000e+00 -133.8303 9.199e-07 ***
-sigmaSq  9.5982e-05  1.0000e+00    0.0001 0.9999294    
-gamma    5.0000e-02  1.0000e+00    0.0500 0.9632651    
+           Estimate  Std. Error   z value  Pr(>|z|)    
+a_0     -1.1374e+02  1.0000e+00 -113.7420 < 2.2e-16 ***
+a_1     -6.0497e+01  1.0000e+00  -60.4970 < 2.2e-16 ***
+a_2      8.7951e+01  1.0000e+00   87.9505 < 2.2e-16 ***
+a_3     -7.0469e+01  1.0000e+00  -70.4687 < 2.2e-16 ***
+a_t      3.3173e+02  1.0000e+00  331.7314 < 2.2e-16 ***
+b_1_1   -2.5355e+01  1.0000e+00  -25.3550 < 2.2e-16 ***
+b_1_2    1.2125e+01  1.0000e+00   12.1251 < 2.2e-16 ***
+b_1_3   -1.7762e+01  1.0000e+00  -17.7623 < 2.2e-16 ***
+b_1_t    1.1429e+02  1.0000e+00  114.2893 < 2.2e-16 ***
+b_2_2   -6.7136e+00  1.0000e+00   -6.7136 1.899e-11 ***
+b_2_3   -3.6290e+00  1.0000e+00   -3.6290 0.0002846 ***
+b_2_t   -3.5705e+01  1.0000e+00  -35.7048 < 2.2e-16 ***
+b_3_3    1.6583e+01  1.0000e+00   16.5827 < 2.2e-16 ***
+b_3_t   -1.3658e+01  1.0000e+00  -13.6575 < 2.2e-16 ***
+b_t_t   -1.3383e+02  1.0000e+00 -133.8303 < 2.2e-16 ***
+sigmaSq  9.5982e-05  1.0000e+00    0.0001 0.9999234    
+gamma    5.0000e-02  1.0000e+00    0.0500 0.9601224    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
 log likelihood value: 64.45507 

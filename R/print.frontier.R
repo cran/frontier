@@ -1,21 +1,13 @@
-print.frontier <- function( x, ... ) {
+print.frontier <- function( x, digits = NULL, ... ) {
 
-   cat( "Stochastic Frontier Analysis with FRONTIER 4.1\n\n" )
-   if( x$modelType == 1 ) {
-      cat( "Error Components Frontier (see Battese & Coelli 1992)\n" )
-   } else if( x$modelType == 2 ) {
-      cat( "Tech. Eff. Effects Frontier (see Battese & Coelli 1995)\n" )
-   } else {
-      stop( "unknown model type '", x$modelType, "'" )
+   if( is.null( digits ) ) {
+      digits <- max( 3, getOption( "digits" ) - 3 )
    }
-   if( x$ineffDecrease ) {
-      cat( "Inefficiency decreases the endogenous variable",
-	"(as in a production function)\n" )
-   } else {
-      cat( "Inefficiency increases the endogenous variable",
-	"(as in a cost function\n" )
-   }
-   cat( "\nFinal maximum likelihood estimates\n" )
-   print( coef( x ) )
+   cat( "\nCall:\n" )
+   cat( deparse( x$call ) )
+   cat( "\n\n" )
+   cat( "Maximum likelihood estimates\n" )
+   print.default( format( coef( x ), digits = digits ), print.gap = 2,
+      quote = FALSE )
    invisible( x )
 }

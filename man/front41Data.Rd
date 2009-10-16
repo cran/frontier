@@ -14,7 +14,6 @@
    This data frame contains the following columns:
    \describe{
       \item{firm}{firm ID.}
-      \item{time}{time period.}
       \item{output}{output.}
       \item{capital}{capital.}
       \item{labour}{labour.}

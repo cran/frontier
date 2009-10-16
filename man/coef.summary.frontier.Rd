@@ -3,7 +3,8 @@
 \title{coef method for class summary.frontier}
 
 \description{
-Extract the coefficients, their standard errors, t-values, and P-values
+Extract the coefficients, their standard errors, z-values or t-values,
+and (asymptotic) P-values
 from stochastic frontier models returned by the \code{summary} method
 for objects of class \code{frontier}.
 }
@@ -26,7 +27,8 @@ for objects of class \code{frontier}.
    The \code{coef} method for objects of class \code{summary.frontier} 
    returns a matrix,
    where the four columns contain the estimated
-   coefficients, their standard errors, t-values, and P-values.
+   coefficients, their standard errors, z-values or t-values,
+   and (asymptotic) P-values.
 }
 
 \author{Arne Henningsen}

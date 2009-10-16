@@ -5,6 +5,23 @@ A full ChangeLog is available in the log messages of the SVN repository
 on R-Forge.
 
 
+            CHANGES IN VERSION 0.995-8
+
+* the P values of the parameters estimated by ML are calculated using a
+standard normal distribution (instead of a t distribution) now, because
+the "t values" do not follow a t distribution but asymptotically follow
+a standard normal distribution
+
+* renamed the "t values" of the parameters estimated by ML (and returned
+by the "summary" method) as "z values" (see above)
+
+* print.frontier() prints the estimation results in a way that is much more
+similar (almost identical) to the output of print.lm() now
+
+* removed variable "time" from the data set "front41Data", because it is
+a cross-section data set
+
+
             CHANGES IN VERSION 0.995-6
 
 * modified sfa() so that it works with version 0.2-0 of the "Formula" package

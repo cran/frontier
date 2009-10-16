@@ -125,8 +125,8 @@
    front41Data$logCapital <- log( front41Data$capital )
    front41Data$logLabour  <- log( front41Data$labour )
 
-   front41WriteInput( front41Data, "firm", "time", "logOutput",
-      c( "logCapital", "logLabour" ), insFile = "coelli.ins" )
+   front41WriteInput( front41Data, "firm", yName = "logOutput",
+      xNames = c( "logCapital", "logLabour" ), insFile = "coelli.ins" )
 
    \dontrun{
    system( "front41.bin coelli.ins" )

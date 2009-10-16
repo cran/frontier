@@ -64,8 +64,7 @@
 
    \dontrun{
    front41Est( data = front41Data, crossSectionName = "firm",
-      timePeriodName = "time", yName = "logOutput",
-      xNames = c( "logCapital", "logLabour" ) )
+      yName = "logOutput", xNames = c( "logCapital", "logLabour" ) )
    }
 }
 

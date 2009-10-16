@@ -11,8 +11,8 @@ front41Data$logLabour  <- log( front41Data$labour )
 insFile <- file()
 dtaFile  <- file()
 
-front41Ins <- front41WriteInput( front41Data, "firm", "time", "logOutput",
-   c( "logCapital", "logLabour" ), insFile = insFile, dtaFile = dtaFile  )
+front41Ins <- front41WriteInput( front41Data, "firm", yName = "logOutput",
+   xNames = c( "logCapital", "logLabour" ), insFile = insFile, dtaFile = dtaFile  )
 
 print( front41Ins )
 
@@ -23,8 +23,8 @@ print( readLines( dtaFile ) )
 set.seed( 20061705 )
 front41Data$firm <- sample( c( 1:( nrow( front41Data ) + 20 ) ) )[ 1:nrow( front41Data ) ]
 
-front41Ins <- front41WriteInput( front41Data, "firm", "time", "logOutput",
-   c( "logCapital", "logLabour" ), insFile = insFile, dtaFile = dtaFile  )
+front41Ins <- front41WriteInput( front41Data, "firm", yName = "logOutput",
+   xNames = c( "logCapital", "logLabour" ), insFile = insFile, dtaFile = dtaFile  )
 
 print( front41Ins )
 

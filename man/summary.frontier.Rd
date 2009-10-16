@@ -29,9 +29,9 @@ returned by \code{\link{frontier}}.
    that is identical to an object returned by \code{\link{frontier}}
    with two modifications and (up to) four additional elements:
    \item{olsParam}{matrix of OLS estimates, their standard errors,
-      t values, and P values.}
+      t-values, and P-values.}
    \item{mleParam}{matrix of ML estimates, their standard errors,
-      t values, and P values.}
+      z-values, and asymptotic P-values.}
    \item{logDepVar}{logical. Argument \code{logDepVar} (see above).}
    \item{printEffic}{argument \code{effic}.}
    \item{effic}{matrix. Efficiency estimates:
