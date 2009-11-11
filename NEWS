@@ -5,6 +5,34 @@ A full ChangeLog is available in the log messages of the SVN repository
 on R-Forge.
 
 
+            CHANGES IN VERSION 0.996-0
+
+* observations with values that are not available (NA + NaN) or infinite (Inf)
+are automatically excluded from the estimation now
+
+* a warning is given now, if the OLS residuals have the wrong skewness (the
+skewness is calculated by the function skewness() of the package "moments")
+
+* added method lrtest.frontier (based on the generic function lrtest() of the
+"lmtest" package) that can test parameter restriction using LR tests: it can
+be used to compare different stochastic frontier models (estimated by ML)
+and to test the (one-sided) inefficiency term (i.e. MLE vs. OLS)
+
+* the object returned by logLik.frontier() is of class "logLik" now and has two
+attributes: "nobs" (number of observations) and "df" (number of free parameters)
+
+* improved and added some warning messages so that they are (hopefully)
+more helpful now
+
+* reduced output printed by print.summary.frontier()
+
+* the OLS estimation in done inside R using lm() now
+
+* added some further tests in the /tests/ subdirectory
+
+* minor improvements in the documentation of some functions/methods
+
+
             CHANGES IN VERSION 0.995-8
 
 * the P values of the parameters estimated by ML are calculated using a

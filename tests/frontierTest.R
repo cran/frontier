@@ -12,10 +12,10 @@ front41Data$firmNo     <- c( 1:nrow( front41Data ) )
 ## cross-section data, error components frontier
 sa1 <- sfa( logOutput ~ logCapital + logLabour, data = front41Data )
 Sa1 <- sfa( log( output ) ~ log( capital ) + log( labour ), data = front41Data )
-all.equal( Sa1[-33], sa1[-33], check.attributes = FALSE )
+all.equal( Sa1[-34], sa1[-34], check.attributes = FALSE )
 a1 <- frontier( data = front41Data, "logOutput",
    c( "logCapital", "logLabour" ) )
-all.equal( sa1[-33], a1[-33] )
+all.equal( sa1[-34], a1[-34] )
 print( a1 )
 coef( a1, which = "start" )
 coef( a1, which = "ols" )
@@ -28,6 +28,7 @@ logLik( a1, which = "ols" )
 logLik( a1, which = "grid" )
 logLik( a1 )
 print( summary( a1 ) )
+lrtest( a1 )
 efficiencies( a1 )
 efficiencies( a1, asInData = TRUE )
 residuals( a1 )
@@ -39,7 +40,7 @@ sa2 <- sfa( logOutput ~ logCapital + logLabour, data = front41Data,
    truncNorm = TRUE )
 a2 <- frontier( data = front41Data, "logOutput",
    c( "logCapital", "logLabour" ), truncNorm = TRUE )
-all.equal( sa2[-33], a2[-33] )
+all.equal( sa2[-34], a2[-34] )
 print( a2 )
 coef( a2, which = "start" )
 coef( a2, which = "ols" )
@@ -51,6 +52,7 @@ vcov( a2 )
 logLik( a2, which = "ols" )
 logLik( a2 )
 print( summary( a2 ) )
+lrtest( a2 )
 efficiencies( a2 )
 efficiencies( a2, asInData = TRUE )
 residuals( a2 )
@@ -63,7 +65,7 @@ sa5 <- sfa( logOutput ~ logCapital + logLabour, data = front41Data,
 a5 <- frontier( data = front41Data, "logOutput",
    c( "logCapital", "logLabour" ), truncNorm = TRUE,
    startVal = c( 0.5, 0.3, 0.5, 0.5, 0.9, -1 ) )
-all.equal( sa5[-33], a5[-33] )
+all.equal( sa5[-34], a5[-34] )
 print( a5 )
 coef( a5, which = "start" )
 coef( a5, which = "ols" )
@@ -75,6 +77,7 @@ vcov( a5 )
 logLik( a5, which = "ols" )
 logLik( a5 )
 print( summary( a5 ) )
+lrtest( a5 )
 efficiencies( a5 )
 efficiencies( a5, asInData = TRUE )
 print.default( a5 )
@@ -84,10 +87,10 @@ saa1 <- sfa( logOutput ~ logCapital + logLabour | firmNo - 1,
    data = front41Data )
 Saa1 <- sfa( log( output ) ~ log( capital ) + log( labour ) | firmNo - 1,
    data = front41Data )
-all.equal( Saa1[-33], saa1[-33], check.attributes = FALSE )
+all.equal( Saa1[-34], saa1[-34], check.attributes = FALSE )
 aa1 <- frontier( data = front41Data, "logOutput",
    c( "logCapital", "logLabour" ), zNames = "firmNo" )
-all.equal( saa1[-33], aa1[-33] )
+all.equal( saa1[-34], aa1[-34] )
 print( aa1 )
 coef( aa1, which = "start" )
 coef( aa1, which = "ols" )
@@ -97,6 +100,7 @@ coef( summary( aa1 ), which = "ols" )
 coef( summary( aa1 ) )
 vcov( aa1 )
 print( summary( aa1 ) )
+lrtest( aa1 )
 efficiencies( aa1 )
 efficiencies( aa1, asInData = TRUE )
 residuals( aa1 )
@@ -108,7 +112,7 @@ saa2 <- sfa( logOutput ~ logCapital + logLabour | firmNo,
    data = front41Data )
 aa2 <- frontier( data = front41Data, "logOutput",
    c( "logCapital", "logLabour" ), zNames = "firmNo", zIntercept = TRUE )
-all.equal( saa2[-33], aa2[-33] )
+all.equal( saa2[-34], aa2[-34] )
 print( aa2 )
 coef( aa2, which = "start" )
 coef( aa2, which = "ols" )
@@ -118,6 +122,7 @@ coef( summary( aa2 ), which = "ols" )
 coef( summary( aa2 ) )
 vcov( aa2 )
 print( summary( aa2 ) )
+lrtest( aa2 )
 efficiencies( aa2 )
 efficiencies( aa2, asInData = TRUE )
 residuals( aa2 )
@@ -130,7 +135,7 @@ saa5 <- sfa( logOutput ~ logCapital + logLabour | firmNo,
 aa5 <- frontier( data = front41Data, "logOutput",
    c( "logCapital", "logLabour" ), zNames = "firmNo", zIntercept = TRUE,
    startVal = c( 0.5, 0.3, 0.5, -0.4, -0.01 , 0.4, 0.9 ) )
-all.equal( saa5[-33], aa5[-33] )
+all.equal( saa5[-34], aa5[-34] )
 print( aa5 )
 coef( aa5, which = "start" )
 coef( aa5, which = "ols" )
@@ -140,9 +145,16 @@ coef( summary( aa5 ), which = "ols" )
 coef( summary( aa5 ) )
 vcov( aa5 )
 print( summary( aa5 ) )
+lrtest( aa5 )
 efficiencies( aa5 )
 efficiencies( aa5, asInData = TRUE )
 print.default( aa5 )
+
+## cross-section data, efficiency effects frontier, no Z vars
+aa9 <- sfa( log( output ) ~ log( capital ) + log( labour ) | - 1,
+   data = front41Data )
+summary( aa9 )
+lrtest( aa9 )
 
 
 ## data set of rice producers in the Philippines
@@ -156,10 +168,10 @@ riceProdPhil$lNPK   <- log( riceProdPhil$NPK )
 sbb1 <- sfa( lPROD ~ lAREA + lLABOR + lNPK, data = riceProdPhil )
 Sbb1 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ),
    data = riceProdPhil )
-all.equal( Sbb1[-33], sbb1[-33], check.attributes = FALSE )
+all.equal( Sbb1[-34], sbb1[-34], check.attributes = FALSE )
 bb1 <- frontier( data = riceProdPhil,
    yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ) )
-all.equal( sbb1[-33], bb1[-33] )
+all.equal( sbb1[-34], bb1[-34] )
 print( bb1 )
 coef( bb1, which = "start" )
 coef( bb1, which = "ols" )
@@ -169,6 +181,7 @@ coef( summary( bb1 ), which = "ols" )
 coef( summary( bb1 ) )
 vcov( bb1 )
 print( summary( bb1 ) )
+lrtest( bb1 )
 efficiencies( bb1 )
 efficiencies( bb1, asInData = TRUE )
 residuals( bb1 )
@@ -181,7 +194,7 @@ sbb2 <- sfa( lPROD ~ lAREA + lLABOR + lNPK, data = riceProdPhil,
 bb2 <- frontier( data = riceProdPhil,
    yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ),
    truncNorm = TRUE )
-all.equal( sbb2[-33], bb2[-33] )
+all.equal( sbb2[-34], bb2[-34] )
 print( bb2 )
 coef( bb2, which = "start" )
 coef( bb2, which = "ols" )
@@ -191,6 +204,7 @@ coef( summary( bb2 ), which = "ols" )
 coef( summary( bb2 ) )
 vcov( bb2 )
 print( summary( bb2 ) )
+lrtest( bb2 )
 efficiencies( bb2 )
 efficiencies( bb2, asInData = TRUE )
 residuals( bb2 )
@@ -202,11 +216,11 @@ sbb5 <- sfa( lPROD ~ lAREA + lLABOR + lNPK | EDYRS + BANRAT - 1,
    data = riceProdPhil )
 Sbb5 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ) |
    EDYRS + BANRAT - 1, data = riceProdPhil )
-all.equal( Sbb5[-33], sbb5[-33], check.attributes = FALSE )
+all.equal( Sbb5[-34], sbb5[-34], check.attributes = FALSE )
 bb5 <- frontier( data = riceProdPhil,
    yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ),
    zNames = c( "EDYRS", "BANRAT" ) )
-all.equal( sbb5[-33], bb5[-33] )
+all.equal( sbb5[-34], bb5[-34] )
 print( bb5 )
 coef( bb5, which = "start" )
 coef( bb5, which = "ols" )
@@ -216,6 +230,7 @@ coef( summary( bb5 ), which = "ols" )
 coef( summary( bb5 ) )
 vcov( bb5 )
 print( summary( bb5 ) )
+lrtest( bb5 )
 efficiencies( bb5 )
 efficiencies( bb5, asInData = TRUE )
 residuals( bb5 )
@@ -228,7 +243,7 @@ sbb6 <- sfa( lPROD ~ lAREA + lLABOR + lNPK | EDYRS + BANRAT,
 bb6 <- frontier( data = riceProdPhil,
    yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ),
    zNames = c( "EDYRS", "BANRAT" ), zIntercept = TRUE )
-all.equal( sbb6[-33], bb6[-33] )
+all.equal( sbb6[-34], bb6[-34] )
 print( bb6 )
 coef( bb6, which = "start" )
 coef( bb6, which = "ols" )
@@ -238,6 +253,7 @@ coef( summary( bb6 ), which = "ols" )
 coef( summary( bb6 ) )
 vcov( bb6 )
 print( summary( bb6 ) )
+lrtest( bb6 )
 efficiencies( bb6 )
 efficiencies( bb6, asInData = TRUE )
 residuals( bb6 )
@@ -251,7 +267,7 @@ bb7 <- frontier( data = riceProdPhil,
    yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ),
    truncNorm = TRUE,
    startVal = c( -1, 0.3, 0.3, 0.3, 0.2, 0.9, -0.01 ) )
-all.equal( sbb7[-33], bb7[-33] )
+all.equal( sbb7[-34], bb7[-34] )
 print( bb7 )
 coef( bb7, which = "start" )
 coef( bb7, which = "ols" )
@@ -261,6 +277,7 @@ coef( summary( bb7 ), which = "ols" )
 coef( summary( bb7 ) )
 vcov( bb7 )
 print( summary( bb7 ) )
+lrtest( bb7 )
 efficiencies( bb7 )
 efficiencies( bb7, asInData = TRUE )
 print.default( bb7 )
@@ -273,7 +290,7 @@ bb8 <- frontier( data = riceProdPhil,
    yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ),
    zNames = c( "EDYRS", "BANRAT" ), zIntercept = TRUE,
    startVal = c( -1, 0.3, 0.3, 0.3, -0.2, -0.01, -0.3, 0.3, 0.8 ) )
-all.equal( sbb8[-33], bb8[-33] )
+all.equal( sbb8[-34], bb8[-34] )
 print( bb8 )
 coef( bb8, which = "start" )
 coef( bb8, which = "ols" )
@@ -283,9 +300,16 @@ coef( summary( bb8 ), which = "ols" )
 coef( summary( bb8 ) )
 vcov( bb8 )
 print( summary( bb8 ) )
+lrtest( bb8 )
 efficiencies( bb8 )
 efficiencies( bb8, asInData = TRUE )
 print.default( bb8 )
+
+## cross-section rice data, efficiency effects frontier, no Z vars
+bb9 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ) | - 1,
+   data = riceProdPhil )
+summary( bb9 )
+lrtest( bb9 )
 
 
 ## Cost Frontier (with land as quasi-fixed input)
@@ -300,10 +324,10 @@ sdd1 <- sfa( lCost ~ lPROD + lAREA + lLABORP + lNPKP, data = riceProdPhil,
    ineffDecrease = FALSE )
 Sdd1 <- sfa( log( cost ) ~ log( PROD ) + log( AREA ) + log( LABORP ) +
    log( NPKP ), data = riceProdPhil, ineffDecrease = FALSE )
-all.equal( Sdd1[-33], sdd1[-33], check.attributes = FALSE )
+all.equal( Sdd1[-34], sdd1[-34], check.attributes = FALSE )
 dd1 <- frontier( "lCost", xNames = c( "lPROD", "lAREA", "lLABORP", "lNPKP" ),
    data = riceProdPhil, ineffDecrease = FALSE )
-all.equal( sdd1[-33], dd1[-33] )
+all.equal( sdd1[-34], dd1[-34] )
 print( dd1 )
 coef( dd1, which = "start" )
 coef( dd1, which = "ols" )
@@ -313,6 +337,7 @@ coef( summary( dd1 ), which = "ols" )
 coef( summary( dd1 ) )
 vcov( dd1 )
 print( summary( dd1 ) )
+lrtest( dd1 )
 efficiencies( dd1 )
 efficiencies( dd1, asInData = TRUE )
 residuals( dd1 )
@@ -324,7 +349,7 @@ sdd2 <- sfa( lCost ~ lPROD + lAREA + lLABORP + lNPKP, data = riceProdPhil,
    ineffDecrease = FALSE, truncNorm = TRUE )
 dd2 <- frontier( "lCost", xNames = c( "lPROD", "lAREA", "lLABORP", "lNPKP" ),
    data = riceProdPhil, ineffDecrease = FALSE, truncNorm = TRUE )
-all.equal( sdd2[-33], dd2[-33] )
+all.equal( sdd2[-34], dd2[-34] )
 print( dd2 )
 coef( dd2, which = "start" )
 coef( dd2, which = "ols" )
@@ -334,6 +359,7 @@ coef( summary( dd2 ), which = "ols" )
 coef( summary( dd2 ) )
 vcov( dd2 )
 print( summary( dd2 ) )
+lrtest( dd2 )
 efficiencies( dd2 )
 efficiencies( dd2, asInData = TRUE )
 residuals( dd2 )
@@ -345,11 +371,11 @@ sdd5 <- sfa( lCost ~ lPROD + lAREA + lLABORP + lNPKP | EDYRS + BANRAT - 1,
    data = riceProdPhil, ineffDecrease = FALSE )
 Sdd5 <- sfa( log( cost ) ~ log( PROD ) + log( AREA ) + log( LABORP ) +
    log( NPKP ) | EDYRS + BANRAT - 1, data = riceProdPhil, ineffDecrease = FALSE )
-all.equal( Sdd5[-33], sdd5[-33], check.attributes = FALSE )
+all.equal( Sdd5[-34], sdd5[-34], check.attributes = FALSE )
 dd5 <- frontier( "lCost", xNames = c( "lPROD", "lAREA", "lLABORP", "lNPKP" ),
    zNames = c( "EDYRS", "BANRAT" ), data = riceProdPhil,
    ineffDecrease = FALSE )
-all.equal( sdd5[-33], dd5[-33] )
+all.equal( sdd5[-34], dd5[-34] )
 print( dd5 )
 coef( dd5, which = "start" )
 coef( dd5, which = "ols" )
@@ -359,6 +385,7 @@ coef( summary( dd5 ), which = "ols" )
 coef( summary( dd5 ) )
 vcov( dd5 )
 print( summary( dd5 ) )
+lrtest( dd5 )
 efficiencies( dd5 )
 efficiencies( dd5, asInData = TRUE )
 residuals( dd5 )
@@ -371,7 +398,7 @@ sdd6 <- sfa( lCost ~ lPROD + lAREA + lLABORP + lNPKP | EDYRS + BANRAT,
 dd6 <- frontier( "lCost", xNames = c( "lPROD", "lAREA", "lLABORP", "lNPKP" ),
    zNames = c( "EDYRS", "BANRAT" ), data = riceProdPhil,
    ineffDecrease = FALSE, zIntercept = TRUE )
-all.equal( sdd6[-33], dd6[-33] )
+all.equal( sdd6[-34], dd6[-34] )
 print( dd6 )
 coef( dd6, which = "start" )
 coef( dd6, which = "ols" )
@@ -381,11 +408,18 @@ coef( summary( dd6 ), which = "ols" )
 coef( summary( dd6 ) )
 vcov( dd6 )
 print( summary( dd6 ) )
+lrtest( dd6 )
 efficiencies( dd6 )
 efficiencies( dd6, asInData = TRUE )
 residuals( dd6 )
 residuals( dd6, asInData = TRUE )
 print.default( dd6 )
+
+## cross-section rice data, efficiency effects cost frontier: no Z vars
+dd9 <- sfa( log( cost ) ~ log( PROD ) + log( AREA ) + log( LABORP ) +
+   log( NPKP ) | - 1, data = riceProdPhil, ineffDecrease = FALSE )
+summary( dd9 )
+lrtest( dd9 )
 
 
 ## panel data
@@ -398,10 +432,10 @@ riceProdPhilPanel <- plm.data( riceProdPhil, c( "farm", "year" ) )
 sb1 <- sfa( lPROD ~ lAREA + lLABOR + lNPK, data = riceProdPhilPanel )
 Sb1 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ),
    data = riceProdPhilPanel )
-all.equal( Sb1[-33], sb1[-33], check.attributes = FALSE )
+all.equal( Sb1[-34], sb1[-34], check.attributes = FALSE )
 b1 <- frontier( data = riceProdPhilPanel,
    yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ) )
-all.equal( sb1[-33], b1[-33] )
+all.equal( sb1[-34], b1[-34] )
 print( b1 )
 coef( b1, which = "start" )
 coef( b1, which = "ols" )
@@ -413,6 +447,7 @@ vcov( b1 )
 logLik( b1, which = "ols" )
 logLik( b1 )
 print( summary( b1 ) )
+lrtest( b1 )
 efficiencies( b1 )
 efficiencies( b1, asInData = TRUE )
 residuals( b1 )
@@ -425,7 +460,7 @@ sb2 <- sfa( lPROD ~ lAREA + lLABOR + lNPK, data = riceProdPhilPanel,
 b2 <- frontier( data = riceProdPhilPanel,
    yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ),
    truncNorm = TRUE )
-all.equal( sb2[-33], b2[-33] )
+all.equal( sb2[-34], b2[-34] )
 print( b2 )
 coef( b2, which = "start" )
 coef( b2, which = "ols" )
@@ -437,6 +472,7 @@ vcov( b2 )
 logLik( b2, which = "ols" )
 logLik( b2 )
 print( summary( b2 ) )
+lrtest( b2 )
 efficiencies( b2 )
 efficiencies( b2, asInData = TRUE )
 residuals( b2 )
@@ -449,7 +485,7 @@ sb3 <- sfa( lPROD ~ lAREA + lLABOR + lNPK, data = riceProdPhilPanel,
 b3 <- frontier( data = riceProdPhilPanel,
    yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ),
    timeEffect = TRUE )
-all.equal( sb3[-33], b3[-33] )
+all.equal( sb3[-34], b3[-34] )
 print( b3 )
 coef( b3, which = "start" )
 coef( b3, which = "ols" )
@@ -461,6 +497,7 @@ vcov( b3 )
 logLik( b3, which = "ols" )
 logLik( b3 )
 print( summary( b3 ) )
+lrtest( b3 )
 efficiencies( b3 )
 efficiencies( b3, asInData = TRUE )
 residuals( b3 )
@@ -473,7 +510,7 @@ sb4 <- sfa( lPROD ~ lAREA + lLABOR + lNPK, data = riceProdPhilPanel,
 b4 <- frontier( data = riceProdPhilPanel,
    yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ),
    truncNorm = TRUE, timeEffect = TRUE )
-all.equal( sb4[-33], b4[-33] )
+all.equal( sb4[-34], b4[-34] )
 print( b4 )
 coef( b4, which = "start" )
 coef( b4, which = "ols" )
@@ -485,6 +522,7 @@ vcov( b4 )
 logLik( b4, which = "ols" )
 logLik( b4 )
 print( summary( b4 ) )
+lrtest( b4 )
 efficiencies( b4 )
 efficiencies( b4, asInData = TRUE )
 residuals( b4 )
@@ -496,11 +534,11 @@ sb5 <- sfa( lPROD ~ lAREA + lLABOR + lNPK | EDYRS + BANRAT - 1,
    data = riceProdPhilPanel )
 Sb5 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ) |
    EDYRS + BANRAT - 1, data = riceProdPhilPanel )
-all.equal( Sb5[-33], sb5[-33], check.attributes = FALSE )
+all.equal( Sb5[-34], sb5[-34], check.attributes = FALSE )
 b5 <- frontier( data = riceProdPhilPanel,
    yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ),
    zNames = c( "EDYRS", "BANRAT" ) )
-all.equal( sb5[-33], b5[-33] )
+all.equal( sb5[-34], b5[-34] )
 print( b5 )
 coef( b5, which = "start" )
 coef( b5, which = "ols" )
@@ -512,6 +550,7 @@ vcov( b5 )
 logLik( b5, which = "ols" )
 logLik( b5 )
 print( summary( b5 ) )
+lrtest( b5 )
 efficiencies( b5 )
 efficiencies( b5, asInData = TRUE )
 residuals( b5 )
@@ -524,7 +563,7 @@ sb6 <- sfa( lPROD ~ lAREA + lLABOR + lNPK | EDYRS + BANRAT,
 b6 <- frontier( data = riceProdPhilPanel,
    yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ),
    zNames = c( "EDYRS", "BANRAT" ), zIntercept = TRUE )
-all.equal( sb6[-33], b6[-33] )
+all.equal( sb6[-34], b6[-34] )
 print( b6 )
 coef( b6, which = "start" )
 coef( b6, which = "ols" )
@@ -536,6 +575,7 @@ vcov( b6 )
 logLik( b6, which = "ols" )
 logLik( b6 )
 print( summary( b6 ) )
+lrtest( b6 )
 efficiencies( b6 )
 efficiencies( b6, asInData = TRUE )
 residuals( b6 )
@@ -550,7 +590,7 @@ b7 <- frontier( data = riceProdPhilPanel,
    yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ),
    truncNorm = TRUE, timeEffect = TRUE,
    startVal = c( -1, 0.3, 0.3, 0.3, 0.2, 0.5, -0.3, 0.1 ) )
-all.equal( sb7[-33], b7[-33] )
+all.equal( sb7[-34], b7[-34] )
 print( b7 )
 coef( b7, which = "start" )
 coef( b7, which = "ols" )
@@ -562,6 +602,7 @@ vcov( b7 )
 logLik( b7, which = "ols" )
 logLik( b7 )
 print( summary( b7 ) )
+lrtest( b7 )
 efficiencies( b7 )
 efficiencies( b7, asInData = TRUE )
 print.default( b7 )
@@ -574,7 +615,7 @@ b8 <- frontier( data = riceProdPhilPanel,
    yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ),
    zNames = c( "EDYRS", "BANRAT" ), zIntercept = TRUE,
    startVal = c( -1, 0.3, 0.3, 0.3, -0.3, -0.01, -0.4, 0.2, 0.8 ) )
-all.equal( sb8[-33], b8[-33] )
+all.equal( sb8[-34], b8[-34] )
 print( b8 )
 coef( b8, which = "start" )
 coef( b8, which = "ols" )
@@ -586,9 +627,16 @@ vcov( b8 )
 logLik( b8, which = "ols" )
 logLik( b8 )
 print( summary( b8 ) )
+lrtest( b8 )
 efficiencies( b8 )
 efficiencies( b8, asInData = TRUE )
 print.default( b8 )
+
+## panel data, efficiency effects frontier: no Z vars
+b9 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ) | - 1,
+   data = riceProdPhilPanel )
+summary( b9 )
+lrtest( b9 )
 
 
 ## Cost Frontier (with land as quasi-fixed input)
@@ -597,10 +645,10 @@ sd1 <- sfa( lCost ~ lPROD + lAREA + lLABORP + lNPKP, data = riceProdPhilPanel,
    ineffDecrease = FALSE )
 Sd1 <- sfa( log( cost ) ~ log( PROD ) + log( AREA ) + log( LABORP ) +
    log( NPKP ), data = riceProdPhilPanel, ineffDecrease = FALSE )
-all.equal( Sd1[-33], sd1[-33], check.attributes = FALSE )
+all.equal( Sd1[-34], sd1[-34], check.attributes = FALSE )
 d1 <- frontier( "lCost", xNames = c( "lPROD", "lAREA", "lLABORP", "lNPKP" ),
    data = riceProdPhilPanel, ineffDecrease = FALSE )
-all.equal( sd1[-33], d1[-33] )
+all.equal( sd1[-34], d1[-34] )
 print( d1 )
 coef( d1, which = "start" )
 coef( d1, which = "ols" )
@@ -610,6 +658,7 @@ coef( summary( d1 ), which = "ols" )
 coef( summary( d1 ) )
 vcov( d1 )
 print( summary( d1 ) )
+lrtest( d1 )
 efficiencies( d1 )
 efficiencies( d1, asInData = TRUE )
 residuals( d1 )
@@ -621,7 +670,7 @@ sd2 <- sfa( lCost ~ lPROD + lAREA + lLABORP + lNPKP, data = riceProdPhilPanel,
    ineffDecrease = FALSE, truncNorm = TRUE )
 d2 <- frontier( "lCost", xNames = c( "lPROD", "lAREA", "lLABORP", "lNPKP" ),
    data = riceProdPhilPanel, ineffDecrease = FALSE, truncNorm = TRUE )
-all.equal( sd2[-33], d2[-33] )
+all.equal( sd2[-34], d2[-34] )
 print( d2 )
 coef( d2, which = "start" )
 coef( d2, which = "ols" )
@@ -631,6 +680,7 @@ coef( summary( d2 ), which = "ols" )
 coef( summary( d2 ) )
 vcov( d2 )
 print( summary( d2 ) )
+lrtest( d2 )
 efficiencies( d2 )
 efficiencies( d2, asInData = TRUE )
 residuals( d2 )
@@ -642,7 +692,7 @@ sd3 <- sfa( lCost ~ lPROD + lAREA + lLABORP + lNPKP, data = riceProdPhilPanel,
    ineffDecrease = FALSE, timeEffect = TRUE )
 d3 <- frontier( "lCost", xNames = c( "lPROD", "lAREA", "lLABORP", "lNPKP" ),
    data = riceProdPhilPanel, ineffDecrease = FALSE, timeEffect = TRUE )
-all.equal( sd3[-33], d3[-33] )
+all.equal( sd3[-34], d3[-34] )
 print( d3 )
 coef( d3, which = "start" )
 coef( d3, which = "ols" )
@@ -652,6 +702,7 @@ coef( summary( d3 ), which = "ols" )
 coef( summary( d3 ) )
 vcov( d3 )
 print( summary( d3 ) )
+lrtest( d3 )
 efficiencies( d3 )
 efficiencies( d3, asInData = TRUE )
 residuals( d3 )
@@ -664,7 +715,7 @@ sd4 <- sfa( lCost ~ lPROD + lAREA + lLABORP + lNPKP, data = riceProdPhilPanel,
 d4 <- frontier( "lCost", xNames = c( "lPROD", "lAREA", "lLABORP", "lNPKP" ),
    data = riceProdPhilPanel, ineffDecrease = FALSE, truncNorm = TRUE,
    timeEffect = TRUE )
-all.equal( sd4[-33], d4[-33] )
+all.equal( sd4[-34], d4[-34] )
 print( d4 )
 coef( d4, which = "start" )
 coef( d4, which = "ols" )
@@ -674,6 +725,7 @@ coef( summary( d4 ), which = "ols" )
 coef( summary( d4 ) )
 vcov( d4 )
 print( summary( d4 ) )
+lrtest( d4 )
 efficiencies( d4 )
 efficiencies( d4, asInData = TRUE )
 residuals( d4 )
@@ -686,11 +738,11 @@ sd5 <- sfa( lCost ~ lPROD + lAREA + lLABORP + lNPKP | EDYRS + BANRAT - 1,
 Sd5 <- sfa( log( cost ) ~ log( PROD ) + log( AREA ) + log( LABORP ) +
    log( NPKP ) | EDYRS + BANRAT - 1, data = riceProdPhilPanel,
    ineffDecrease = FALSE )
-all.equal( Sd5[-33], sd5[-33], check.attributes = FALSE )
+all.equal( Sd5[-34], sd5[-34], check.attributes = FALSE )
 d5 <- frontier( "lCost", xNames = c( "lPROD", "lAREA", "lLABORP", "lNPKP" ),
    zNames = c( "EDYRS", "BANRAT" ), data = riceProdPhilPanel,
    ineffDecrease = FALSE )
-all.equal( sd5[-33], d5[-33] )
+all.equal( sd5[-34], d5[-34] )
 print( d5 )
 coef( d5, which = "start" )
 coef( d5, which = "ols" )
@@ -700,6 +752,7 @@ coef( summary( d5 ), which = "ols" )
 coef( summary( d5 ) )
 vcov( d5 )
 print( summary( d5 ) )
+lrtest( d5 )
 efficiencies( d5 )
 efficiencies( d5, asInData = TRUE )
 residuals( d5 )
@@ -712,7 +765,7 @@ sd6 <- sfa( lCost ~ lPROD + lAREA + lLABORP + lNPKP | EDYRS + BANRAT,
 d6 <- frontier( "lCost", xNames = c( "lPROD", "lAREA", "lLABORP", "lNPKP" ),
    zNames = c( "EDYRS", "BANRAT" ), data = riceProdPhilPanel,
    ineffDecrease = FALSE, zIntercept = TRUE )
-all.equal( sd6[-33], d6[-33] )
+all.equal( sd6[-34], d6[-34] )
 print( d6 )
 coef( d6, which = "start" )
 coef( d6, which = "ols" )
@@ -722,21 +775,33 @@ coef( summary( d6 ), which = "ols" )
 coef( summary( d6 ) )
 vcov( d6 )
 print( summary( d6 ) )
+lrtest( d6 )
 efficiencies( d6 )
 efficiencies( d6, asInData = TRUE )
 residuals( d6 )
 residuals( d6, asInData = TRUE )
 print.default( d6 )
 
+## panel rice data, efficiency effects cost frontier: no Z vars
+d9 <- sfa( log( cost ) ~ log( PROD ) + log( AREA ) + log( LABORP ) +
+   log( NPKP ) | - 1, data = riceProdPhilPanel, ineffDecrease = FALSE )
+summary( d9 )
+lrtest( d9 )
+
 
 ## unbalanced panel data
 set.seed( 321 )
-riceProdPhilPanelUnb <- riceProdPhilPanel[ -c(3,5,111,222), ]
+riceProdPhilPanelUnb <- riceProdPhilPanel
+riceProdPhilPanelUnb[ 3, c( "PROD", "lPROD" ) ] <- NA
+riceProdPhilPanelUnb[ 5, c( "AREA", "lAREA" ) ] <- NA
+riceProdPhilPanelUnb[ 111, c( "LABOR", "lLABOR", "LABORP", "lLABORP" ) ] <- NA
+riceProdPhilPanelUnb[ 222, c( "NPK", "lNPK", "NPKP", "lNPKP" ) ] <- NA
 
 ## unbalanced panel data, error components frontier
 b1u <- sfa( lPROD ~ lAREA + lLABOR + lNPK, data = riceProdPhilPanelUnb )
 print( b1u )
 print( summary( b1u ) )
+lrtest( b1u )
 efficiencies( b1u )
 efficiencies( b1u, asInData = TRUE )
 residuals( b1u )
@@ -748,6 +813,7 @@ b2u <- sfa( lPROD ~ lAREA + lLABOR + lNPK, data = riceProdPhilPanelUnb,
    truncNorm = TRUE )
 print( b2u )
 print( summary( b2u ) )
+lrtest( b2u )
 efficiencies( b2u )
 efficiencies( b2u, asInData = TRUE )
 residuals( b2u )
@@ -759,6 +825,7 @@ b3u <- sfa( lPROD ~ lAREA + lLABOR + lNPK, data = riceProdPhilPanelUnb,
    timeEffect = TRUE )
 print( b3u )
 print( summary( b3u ) )
+lrtest( b3u )
 efficiencies( b3u )
 efficiencies( b3u, asInData = TRUE )
 residuals( b3u )
@@ -770,6 +837,7 @@ b4u <- sfa( lPROD ~ lAREA + lLABOR + lNPK, data = riceProdPhilPanelUnb,
    truncNorm = TRUE, timeEffect = TRUE )
 print( b4u )
 print( summary( b4u ) )
+lrtest( b4u )
 efficiencies( b4u )
 efficiencies( b4u, asInData = TRUE )
 residuals( b4u )
@@ -781,6 +849,7 @@ b5u <- sfa( lPROD ~ lAREA + lLABOR + lNPK | EDYRS + BANRAT - 1,
    data = riceProdPhilPanelUnb )
 print( b5u )
 print( summary( b5u ) )
+lrtest( b5u )
 efficiencies( b5u )
 efficiencies( b5u, asInData = TRUE )
 residuals( b5u )
@@ -792,6 +861,7 @@ b6u <- sfa( lPROD ~ lAREA + lLABOR + lNPK | EDYRS + BANRAT,
    data = riceProdPhilPanelUnb )
 print( b6u )
 print( summary( b6u ) )
+lrtest( b6u )
 efficiencies( b6u )
 efficiencies( b6u, asInData = TRUE )
 residuals( b6u )
@@ -803,6 +873,7 @@ d1u <- sfa( lCost ~ lPROD + lAREA + lLABORP + lNPKP, data = riceProdPhilPanelUnb
    ineffDecrease = FALSE )
 print( d1u )
 print( summary( d1u ) )
+lrtest( d1u )
 efficiencies( d1u )
 efficiencies( d1u, asInData = TRUE )
 residuals( d1u )
@@ -814,6 +885,7 @@ d2u <- sfa( lCost ~ lPROD + lAREA + lLABORP + lNPKP, data = riceProdPhilPanelUnb
    ineffDecrease = FALSE, truncNorm = TRUE )
 print( d2u )
 print( summary( d2u ) )
+lrtest( d2u )
 efficiencies( d2u )
 efficiencies( d2u, asInData = TRUE )
 residuals( d2u )
@@ -825,6 +897,7 @@ d3u <- sfa( lCost ~ lPROD + lAREA + lLABORP + lNPKP, data = riceProdPhilPanelUnb
    ineffDecrease = FALSE, timeEffect = TRUE )
 print( d3u )
 print( summary( d3u ) )
+lrtest( d3u )
 efficiencies( d3u )
 efficiencies( d3u, asInData = TRUE )
 residuals( d3u )
@@ -836,6 +909,7 @@ d4u <- sfa( lCost ~ lPROD + lAREA + lLABORP + lNPKP, data = riceProdPhilPanelUnb
    ineffDecrease = FALSE, truncNorm = TRUE, timeEffect = TRUE )
 print( d4u )
 print( summary( d4u ) )
+lrtest( d4u )
 efficiencies( d4u )
 efficiencies( d4u, asInData = TRUE )
 residuals( d4u )
@@ -847,6 +921,7 @@ d5u <- sfa( lCost ~ lPROD + lAREA + lLABORP + lNPKP | EDYRS + BANRAT - 1,
    data = riceProdPhilPanelUnb, ineffDecrease = FALSE )
 print( d5u )
 print( summary( d5u ) )
+lrtest( d5u )
 efficiencies( d5u )
 efficiencies( d5u, asInData = TRUE )
 residuals( d5u )
@@ -858,6 +933,7 @@ d6u <- sfa( lCost ~ lPROD + lAREA + lLABORP + lNPKP | EDYRS + BANRAT,
    data = riceProdPhilPanelUnb, ineffDecrease = FALSE )
 print( d6u )
 print( summary( d6u ) )
+lrtest( d6u )
 efficiencies( d6u )
 efficiencies( d6u, asInData = TRUE )
 residuals( d6u )
@@ -880,6 +956,7 @@ vcov( translog )
 logLik( translog, which = "ols" )
 logLik( translog )
 print( summary( translog ) )
+lrtest( translog )
 efficiencies( translog )
 efficiencies( translog, asInData = TRUE )
 residuals( translog )
@@ -905,6 +982,7 @@ vcov( translogShift )
 logLik( translogShift, which = "ols" )
 logLik( translogShift )
 print( summary( translogShift ) )
+lrtest( translogShift )
 efficiencies( translogShift )
 efficiencies( translogShift, asInData = TRUE )
 residuals( translogShift )
@@ -930,6 +1008,7 @@ vcov( translogZvar )
 logLik( translogZvar, which = "ols" )
 logLik( translogZvar )
 print( summary( translogZvar ) )
+lrtest( translogZvar )
 efficiencies( translogZvar )
 efficiencies( translogZvar, asInData = TRUE )
 residuals( translogZvar )
@@ -1119,15 +1198,15 @@ z1 <- front41Data$firmNo
 
 ## cross-section data, error components frontier
 a1a <- sfa( log( y ) ~ log( x1 ) + log( x2 ) )
-all.equal( a1a[-33], a1[-33], check.attributes = FALSE )
+all.equal( a1a[-34], a1[-34], check.attributes = FALSE )
 
 ## cross-section data, efficiency effects frontier
 aa1a <- sfa( log( y ) ~ log( x1 ) + log( x2 ) | z1 - 1 )
-all.equal( aa1a[-33], aa1[-33], check.attributes = FALSE )
+all.equal( aa1a[-34], aa1[-34], check.attributes = FALSE )
 
 ## cross-section data, efficiency effects frontier, zIntercept
 aa2a <- sfa( log( y ) ~ log( x1 ) + log( x2 ) | z1 )
-all.equal( aa2a[-33], aa2[-33], check.attributes = FALSE )
+all.equal( aa2a[-34], aa2[-34], check.attributes = FALSE )
 
 
 ##############################################
@@ -1138,25 +1217,25 @@ all.equal( aa2a[-33], aa2[-33], check.attributes = FALSE )
 sa10 <- sfa( logOutput ~ 1, data = front41Data )
 a10 <- frontier( "logOutput", NULL, data = front41Data )
 print( sa10 )
-all.equal( sa10[-33], a10[-33], check.attributes = FALSE )
+all.equal( sa10[-34], a10[-34], check.attributes = FALSE )
 
 sa11 <- sfa( logOutput ~ logLabour, data = front41Data )
 a11 <- frontier( "logOutput", "logLabour", data = front41Data )
 print( sa11 )
-all.equal( sa11[-33], a11[-33], check.attributes = FALSE )
+all.equal( sa11[-34], a11[-34], check.attributes = FALSE )
 
 ## cross-section data, efficiency effects frontier
 saa10 <- sfa( logOutput ~ 1 | firmNo - 1, data = front41Data )
 aa10 <- frontier( data = front41Data, "logOutput", NULL,
    zNames = "firmNo" )
 print( saa10 )
-all.equal( saa10[-33], aa10[-33] )
+all.equal( saa10[-34], aa10[-34] )
 
 saa11 <- sfa( logOutput ~ logLabour | firmNo - 1, data = front41Data )
 aa11 <- frontier( data = front41Data, "logOutput", "logLabour",
    zNames = "firmNo" )
 print( saa11 )
-all.equal( saa11[-33], aa11[-33] )
+all.equal( saa11[-34], aa11[-34] )
 
 
 ##############################################
@@ -1347,3 +1426,60 @@ logLik( translogShift, newParam = coef( translogShift ) )
 ## cross-section data, efficiency effects frontier, translog
 logLik( translogZvar )
 logLik( translogZvar, newParam = coef( translogZvar ) )
+
+
+##############################################
+########   likelihood ratio tests   ##########
+##############################################
+
+## cross-section data, error components frontier
+lrtest( a2, a1, a5 )
+lrtest( a1, a2, a5 )
+
+## cross-section data, efficiency effects frontier
+lrtest( aa2, aa1, aa9, aa2, aa5 )
+lrtest( aa9, aa1, aa2, aa5 )
+
+## cross-section data, ECM + EEF
+try( lrtest( a2, a1, aa1 ) )
+try( lrtest( aa2, a1, aa1 ) )
+
+
+## data set of rice producers in the Philippines
+## cross-section rice data, error components frontier
+lrtest( bb2, bb1, bb7 )
+
+## cross-section rice data, efficiency effects frontier
+lrtest( bb6, bb5, bb9, bb6, bb8 )
+
+
+## Cost Frontier (with land as quasi-fixed input)
+## cross-section rice data, error components cost frontier
+lrtest( dd1, dd2 )
+
+## cross-section rice data, efficiency effects frontier
+lrtest( dd6, dd5, dd9, dd6 )
+
+
+## panel data
+## panel data, error components frontier
+lrtest( b4, b3, b1, b7 )
+lrtest( b4, b2, b1 )
+lrtest( b4, b1 )
+
+## panel data, efficiency effects frontier
+lrtest( b6, b5, b9, b6, b8 )
+
+
+## Cost Frontier (with land as quasi-fixed input)
+## panel rice data, error components cost frontier
+lrtest( d4, d3, d1 )
+lrtest( d4, d2, d1 )
+lrtest( d4, d1 )
+
+## panel rice data, efficiency effects cost frontier
+lrtest( d6, d5, d9, d6 )
+
+
+## translog
+lrtest( translogShift, translog )

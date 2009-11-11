@@ -39,9 +39,10 @@
    used for the estimation.
 }
 
-\author{Arne Henningsen}
+\author{Arne Henningsen \email{arne.henningsen@gmail.com}}
 
-\seealso{\code{\link{frontier}}, \code{\link{efficiencies}}.}
+\seealso{\code{\link{sfa}}, \code{\link{summary.frontier}},
+   and \code{\link{efficiencies}}.}
 
 \examples{
    # rice producers in the Philippines (panel data)

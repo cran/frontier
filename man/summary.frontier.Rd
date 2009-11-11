@@ -25,7 +25,7 @@ returned by \code{\link{frontier}}.
 }
 
 \value{
-   \code{summary.frontier} returns a list of class \code{summaryfrontier}
+   \code{summary.frontier} returns a list of class \code{summary.frontier}
    that is identical to an object returned by \code{\link{frontier}}
    with two modifications and (up to) four additional elements:
    \item{olsParam}{matrix of OLS estimates, their standard errors,
@@ -44,7 +44,10 @@ returned by \code{\link{frontier}}.
       without time effects).}
 }
 
-\author{Arne Henningsen}
+\author{Arne Henningsen \email{arne.henningsen@gmail.com}}
+
+\seealso{\code{\link{sfa}}, \code{\link{efficiencies.frontier}},
+   and \code{\link{lrtest.frontier}}.}
 
 \examples{
    # example included in FRONTIER 4.1 (cross-section data)

@@ -153,27 +153,28 @@ sfa <- function(
    if( "plm.dim" %in% class( data ) ) {
       dataTable <- matrix( as.integer( data[[ 1 ]] ), ncol = 1 )
       dataTable <- cbind( dataTable, as.integer( data[[ 2 ]] ) )
-      nn <- length( unique( data[[ 1 ]] ) )
-      nt <- length( unique( data[[ 2 ]] ) )
    } else {
       dataTable <- matrix( 1:length( yVec ), ncol = 1 )
       dataTable <- cbind( dataTable, rep( 1, nrow( dataTable ) ) )
-      nn <- nrow( xMat )
-      nt <- 1
    }
-   nob <- nrow( dataTable )
    nXvars <- length( xNames )
    nb <- nXvars
 
    # endogenous variable
    dataTable <- cbind( dataTable, yVec )
-   dataTable <- cbind( dataTable, xMat )
+   if( sum( !is.na( yVec ) & is.finite( yVec ) ) == 0 ) {
+      stop( "the dependent variable has no valid observations" )
+   }
 
    # exogenous variables
+   dataTable <- cbind( dataTable, xMat )
    paramNames <- "(Intercept)";
    if( nXvars > 0 ) {
       for( i in 1:nXvars ) {
          paramNames <- c( paramNames, xNames[ i ] )
+         if( sum( !is.na( xMat[ , i ] ) & is.finite( xMat[ , i ] ) ) == 0 ) {
+            stop( "regressor '", xNames[ i ], "' has no valid observations" )
+         }
       }
    }
 
@@ -210,8 +211,26 @@ sfa <- function(
       }
       dataTable <- cbind( dataTable, zMat )
       zNames <- colnames( zMat )
+      if( length( zNames ) > 0 ) {
+         for( i in 1:length( zNames ) ) {
+            if( sum( !is.na( zMat[ , i ] ) & is.finite( zMat[ , i ] ) ) == 0 ) {
+               stop( "the regressor for the inefficiency term '", zNames[ i ],
+                  "' has no valid observations" )
+            }
+         }
+      }
    }
    nZvars <- length( zNames )
+
+   # detect and remove observations with NAs, NaNs, and INFs
+   validObs <- rowSums( is.na( dataTable ) | is.infinite( dataTable ) ) == 0
+   dataTable <- dataTable[ validObs, ]
+   # number of (valid) observations
+   nob <- sum( validObs )
+   # number of cross-section units
+   nn <- length( unique( dataTable[ , 1 ] ) )
+   # number of time periods
+   nt <- length( unique( dataTable[ , 2 ] ) )
 
    # mu: truncNorm, zIntercept
    if( modelType == 1 ) {
@@ -242,9 +261,17 @@ sfa <- function(
    } else {
       obsNames <- NULL
    }
-   rownames( dataTable ) <- obsNames
+   rownames( dataTable ) <- obsNames[ validObs ]
+   names( validObs ) <- obsNames
 
    nParamTotal <- nb + 3 + mu + eta
+   if( nParamTotal > nob ) {
+      stop( "the model cannot be estimated,",
+         " because the number of parameters (", nParamTotal,
+         ") is larger than the number of",
+         ifelse( sum( !validObs ) > 0, " valid", "" ),
+         " observations (", nob, ")" )
+   }
    if( is.null( startVal ) ) {
       startVal <- 0
    } else {
@@ -254,6 +281,16 @@ sfa <- function(
             nParamTotal, " parameters)" )
       }
    }
+
+   # OLS estimation
+   if( nXvars > 0 ) {
+      ols <- lm( dataTable[ , 3 ] ~ dataTable[ , 4:( 3 + nb ) ] )
+   } else {
+      ols <- lm( dataTable[ , 3 ] ~ 1 )
+   }
+   olsParam <- c( coef( ols ), summary( ols )$sigma^2 )
+   olsStdEr <- sqrt( diag( vcov( ols ) ) )
+   olsLogl  <- logLik( ols )[ 1 ]
 
    returnObj <- .Fortran( "front41",
       modelType = as.integer( modelType ),
@@ -281,9 +318,7 @@ sfa <- function(
       dataTable = matrix( as.double( dataTable ), nrow( dataTable ),
          ncol( dataTable ), dimnames = dimnames( dataTable ) ),
       nParamTotal = as.integer( nParamTotal ),
-      olsParam = as.double( rep( 0, nParamTotal ) ),
-      olsStdEr = as.double( rep( 0, nParamTotal ) ),
-      olsLogl = as.double( 0 ),
+      olsParam = as.double( c( olsParam, rep( 0, 1 + mu + eta ) ) ),
       gridParam = as.double( rep( 0, nParamTotal ) ),
       startLogl = as.double( 0 ),
       mleParam = as.double( rep( 0, nParamTotal ) ),
@@ -296,41 +331,63 @@ sfa <- function(
    returnObj$nParamTotal <- NULL
    returnObj$ineffDecrease <- as.logical( 2 - returnObj$ineffDecrease )
    returnObj$gridDouble <- as.logical( returnObj$gridDouble )
-   returnObj$olsParam <- returnObj$olsParam[ 1:( nb + 2 ) ]
-   returnObj$olsStdEr <- returnObj$olsStdEr[ 1:( nb + 1 ) ]
+   returnObj$olsParam <- olsParam
+   returnObj$olsStdEr <- olsStdEr
+   returnObj$olsLogl  <- olsLogl
 
    ## calculate residuals
    resid <- drop( dataTable[ , 3 ] -
-      cbind( rep( 1, nrow( dataTable ) ), xMat ) %*%
+      cbind( rep( 1, nrow( dataTable ) ), xMat[ validObs, ] ) %*%
       returnObj$mleParam[ 1:( nb + 1 ) ] )
    returnObj$resid <- matrix( NA, nrow = nn, ncol = nt )
    if( length( resid ) != nrow( dataTable ) ) {
       stop( "internal error: length of residuals is not equal to",
-         " the number of rows of the data table" )
+         " the number of rows of the data table (valid observations)" )
    }
    for( i in 1:length( resid ) ) {
       returnObj$resid[ dataTable[ i, 1 ], dataTable[ i, 2 ] ] <-
          resid[ i ]
    }
 
-   # check if the maximum number of iterations has been reached
-   if( maxit <= returnObj$nIter && maxit > 0 ) {
-      warning( "Maximum number of iterations reached" );
-   }
+   ## skewness of OLS residuals
+   returnObj$olsResid <- residuals( ols )
+   returnObj$olsSkewness <- skewness( returnObj$olsResid )
+   returnObj$olsSkewnessOkay <- returnObj$olsSkewness * ( -1 )^ineffDecrease >= 0
 
-   # likelihood ratio test
-   returnObj$lrTestVal <- 2 * (returnObj$mleLogl - returnObj$olsLogl )
-   if( returnObj$lrTestVal < 0 ) {
+
+   ## warnings regarding wrong skewness, smaller logLik value, and no convergence
+   warnMaxit <- maxit <= returnObj$nIter && maxit > 0
+   if( !returnObj$olsSkewnessOkay && returnObj$mleLogl < returnObj$olsLogl ) {
+      warning( "the residuals of the OLS estimates are ",
+         ifelse( ineffDecrease, "right", "left" ), "-skewed",
+         " and the likelihood value of the ML estimation is less",
+         " than that obtained using OLS;",
+         " this usually indicates that there is no inefficiency",
+         " or that the model is misspecified" )
+   } else if( !returnObj$olsSkewnessOkay ) {
+      warning( "the residuals of the OLS estimates are ",
+         ifelse( ineffDecrease, "right", "left" ), "-skewed;",
+         " this might indicate that there is no inefficiency",
+         " or that the model is misspecified" )
+   } else if( returnObj$mleLogl < returnObj$olsLogl && warnMaxit ) {
+      warning( "the maximum number of iterations has been reached and",
+         " the likelihood value of the ML estimation is less",
+         " than that obtained using OLS;",
+         " please try again using different starting values and/or",
+         " increase the maximum number of iterations" )
+      warnMaxit <- FALSE
+   } else if( returnObj$mleLogl < returnObj$olsLogl ) {
       warning( "the likelihood value of the ML estimation is less",
-         " than that obtained using ols --",
-         " please try again using different starting values" )
+         " than that obtained using OLS;",
+         " this indicates that the likelihood maximization did not",
+         " converge to the global maximum or",
+         " that there is no inefficiency",
+         " (you could try again using different starting values)" )
    }
-
-   # degrees of freedom of the likelihood ratio test
-   if( returnObj$modelType == 1 ) {
-      returnObj$lrTestDf <- truncNorm + timeEffect + 1
-   } else {
-      returnObj$lrTestDf <- zIntercept + nZvars + 1
+   if( warnMaxit ) {
+      warning( "the maximum number of iterations has been reached;",
+         " please try again using different starting values and/or",
+         " increase the maximum number of iterations" )
    }
 
    # mu: truncNorm, zIntercept
@@ -413,6 +470,7 @@ sfa <- function(
       names( returnObj$startVal ) <- paramNames
    }
    returnObj$call <- match.call()
+   returnObj$validObs <- validObs
 
    class( returnObj ) <- "frontier"
    return( returnObj )

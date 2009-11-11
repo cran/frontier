@@ -126,17 +126,17 @@ efficiencies.frontier <- function( object, asInData = FALSE,
    }
 
    if( asInData ) {
-      effic <- rep( NA, object$nob )
-      for( i in 1:object$nob ) {
-         if( ncol( result ) > 1 ) {
-            effic[ i ] <- result[ object$dataTable[ i , 1 ],
-               object$dataTable[ i , 2 ] ]
-         } else {
-            effic[ i ] <- result[ object$dataTable[ i , 1 ], 1 ]
-         }
+      effic <- rep( NA, length( object$validObs ) )
+      if( sum( object$validObs ) != nrow( object$dataTable ) ) {
+         stop( "internal error: number of rows of element 'dataTable' is not",
+            " equal to number of valid observations" )
+      }
+      for( i in 1:nrow( object$dataTable ) ) {
+         effic[ object$validObs ][ i ] <- result[ object$dataTable[ i , 1 ],
+            min( object$dataTable[ i , 2 ], ncol( result ) ) ]
       }
       result <- effic
-      names( result ) <- rownames( object$dataTable )
+      names( result ) <- names( object$validObs )
    }
    return( result )
 }

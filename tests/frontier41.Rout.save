@@ -1,5 +1,5 @@
 
-R version 2.9.2 (2009-08-24)
+R version 2.10.0 (2009-10-26)
 Copyright (C) 2009 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
 
@@ -38,24 +38,6 @@ Attaching package: 'zoo'
 Loading required package: micEcon
 Loading required package: systemfit
 Loading required package: Matrix
-
-Attaching package: 'Matrix'
-
-
-	The following object(s) are masked from package:stats :
-
-	 contr.helmert,
-	 contr.poly,
-	 contr.SAS,
-	 contr.sum,
-	 contr.treatment,
-	 xtabs 
-
-
-	The following object(s) are masked from package:base :
-
-	 rcond 
-
 Loading required package: car
 Loading required package: lmtest
 Loading required package: np

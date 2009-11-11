@@ -1,0 +1,243 @@
+
+R version 2.10.0 (2009-10-26)
+Copyright (C) 2009 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library( frontier )
+Loading required package: plm
+Loading required package: kinship
+Loading required package: survival
+Loading required package: splines
+Loading required package: nlme
+Loading required package: lattice
+[1] "kinship is loaded"
+Loading required package: Formula
+Loading required package: MASS
+Loading required package: sandwich
+Loading required package: zoo
+
+Attaching package: 'zoo'
+
+
+	The following object(s) are masked from package:base :
+
+	 as.Date.numeric 
+
+Loading required package: micEcon
+Loading required package: systemfit
+Loading required package: Matrix
+Loading required package: car
+Loading required package: lmtest
+Loading required package: np
+Loading required package: boot
+
+Attaching package: 'boot'
+
+
+	The following object(s) are masked from package:car :
+
+	 logit 
+
+
+	The following object(s) are masked from package:lattice :
+
+	 melanoma 
+
+
+	The following object(s) are masked from package:survival :
+
+	 aml 
+
+Nonparametric Kernel Methods for Mixed Datatypes (version 0.30-3)
+> 
+> ## example data included in FRONTIER 4.1 (cross-section data)
+> data( front41Data )
+> front41Data$firmNo <- c( 1:nrow( front41Data ) )
+> 
+> ## non-existing variable
+> try( sfa( log( output ) ~ log( capital7 ) + log( labour ),
++    data = front41Data ) )
+Error in eval(expr, envir, enclos) : object 'capital7' not found
+> 
+> ## nParamTotal > nObs
+> try( sfa( log( output ) ~ log( capital ) + log( labour ),
++    data = front41Data[ 1:4, ] ) )
+Error in sfa(log(output) ~ log(capital) + log(labour), data = front41Data[1:4,  : 
+  the model cannot be estimated, because the number of parameters (5) is larger than the number of observations (4)
+> 
+> ## nParamTotal >> nObs
+> try( sfa( log( output ) ~ log( capital ) + log( labour ),
++    data = front41Data[ 1:2, ] ) )
+Error in sfa(log(output) ~ log(capital) + log(labour), data = front41Data[1:2,  : 
+  the model cannot be estimated, because the number of parameters (5) is larger than the number of observations (2)
+> 
+> ## nParamTotal > number of valid observations
+> try( sfa( log( output ) ~ log( capital ) + log( labour ) + log( firmNo - 56 ),
++    data = front41Data ) )
+Error in sfa(log(output) ~ log(capital) + log(labour) + log(firmNo - 56),  : 
+  the model cannot be estimated, because the number of parameters (6) is larger than the number of valid observations (4)
+In addition: Warning message:
+In log(firmNo - 56) : NaNs produced
+> 
+> ## the dependent variable has only infinite values
+> try( sfa( log( 0 * output ) ~ log( capital ) + log( labour ),
++    data = front41Data ) )
+Error in sfa(log(0 * output) ~ log(capital) + log(labour), data = front41Data) : 
+  the dependent variable has no valid observations
+> 
+> ## the dependent variable has only NA values
+> try( sfa( log( -output ) ~ log( capital ) + log( labour ),
++    data = front41Data ) )
+Error in sfa(log(-output) ~ log(capital) + log(labour), data = front41Data) : 
+  the dependent variable has no valid observations
+In addition: Warning message:
+In log(-output) : NaNs produced
+> 
+> ## one of the regressors has only infinite values
+> try( sfa( log( output ) ~ log( 0 * capital ) + log( labour ),
++    data = front41Data ) )
+Error in sfa(log(output) ~ log(0 * capital) + log(labour), data = front41Data) : 
+  regressor 'log(0 * capital)' has no valid observations
+> 
+> ## one of the regressors has only NA values
+> try( sfa( log( output ) ~ log( capital ) + log( -labour ),
++    data = front41Data ) )
+Error in sfa(log(output) ~ log(capital) + log(-labour), data = front41Data) : 
+  regressor 'log(-labour)' has no valid observations
+In addition: Warning message:
+In log(-labour) : NaNs produced
+> 
+> ## one of the regressors of the inefficiency term has only infinite values
+> try( sfa( log( output ) ~ log( capital ) + log( labour ) | log( 0 * firmNo ),
++    data = front41Data ) )
+Error in sfa(log(output) ~ log(capital) + log(labour) | log(0 * firmNo),  : 
+  the regressor for the inefficiency term 'log(0 * firmNo)' has no valid observations
+> 
+> ## one of the regressors of the inefficiency term has only NA values
+> try( sfa( log( output ) ~ log( capital ) + log( labour ) | log(-firmNo ),
++    data = front41Data ) )
+Error in sfa(log(output) ~ log(capital) + log(labour) | log(-firmNo),  : 
+  the regressor for the inefficiency term 'log(-firmNo)' has no valid observations
+In addition: Warning message:
+In log(-firmNo) : NaNs produced
+> 
+> ## no convergence
+> a1 <- sfa( log( output ) ~ log( capital ) + log( labour ),
++    data = front41Data, maxit = 2 )
+Warning message:
+In sfa(log(output) ~ log(capital) + log(labour), data = front41Data,  :
+  the maximum number of iterations has been reached; please try again using different starting values and/or increase the maximum number of iterations
+> summary( a1 )
+Error Components Frontier (see Battese & Coelli 1992)
+Inefficiency decreases the endogenous variable (as in a production function)
+The dependent variable is logged
+convergence NOT achieved after 2 iterations
+
+final maximum likelihood estimates
+             Estimate Std. Error z value Pr(>|z|)
+(Intercept)   0.57926    0.97370  0.5949   0.5519
+log(capital)  0.27989    0.95104  0.2943   0.7685
+log(labour)   0.53294    0.40183  1.3263   0.1847
+sigmaSq       0.21847    0.99541  0.2195   0.8263
+gamma         0.80098    0.99760  0.8029   0.4220
+log likelihood value: -17.03291 
+
+cross-sectional data
+total number of observations = 60 
+
+mean efficiency: 0.7391901 
+> 
+> ## no convergence, L(MLE) < L(OLS)
+> a2 <- sfa( log( output ) ~ log( capital ) + log( labour ),
++    data = front41Data, maxit = 2, start = c( 1, 0, 0, 1, 0.5 ) )
+Warning message:
+In sfa(log(output) ~ log(capital) + log(labour), data = front41Data,  :
+  the maximum number of iterations has been reached and the likelihood value of the ML estimation is less than that obtained using OLS; please try again using different starting values and/or increase the maximum number of iterations
+> summary( a2 )
+Error Components Frontier (see Battese & Coelli 1992)
+Inefficiency decreases the endogenous variable (as in a production function)
+The dependent variable is logged
+convergence NOT achieved after 2 iterations
+
+final maximum likelihood estimates
+             Estimate Std. Error z value Pr(>|z|)
+(Intercept)   1.12166    0.97915  1.1455   0.2520
+log(capital)  0.20130    0.96013  0.2097   0.8339
+log(labour)   0.50580    0.58085  0.8708   0.3839
+sigmaSq       0.97730    0.98320  0.9940   0.3202
+gamma         0.36130    0.90323  0.4000   0.6892
+log likelihood value: -56.03528 
+
+cross-sectional data
+total number of observations = 60 
+
+mean efficiency: 0.648431 
+> 
+> ## no convergence, L(MLE) < L(OLS), wrong skewness
+> a3 <- sfa( log( output ) ~ log( capital ) + log( labour ),
++    data = front41Data, maxit = 2, ineffDecrease = FALSE )
+Warning messages:
+1: In sfa(log(output) ~ log(capital) + log(labour), data = front41Data,  :
+  the residuals of the OLS estimates are left-skewed and the likelihood value of the ML estimation is less than that obtained using OLS; this usually indicates that there is no inefficiency or that the model is misspecified
+2: In sfa(log(output) ~ log(capital) + log(labour), data = front41Data,  :
+  the maximum number of iterations has been reached; please try again using different starting values and/or increase the maximum number of iterations
+> summary( a3 )
+Error Components Frontier (see Battese & Coelli 1992)
+Inefficiency increases the endogenous variable (as in a cost function
+The dependent variable is logged
+convergence NOT achieved after 2 iterations
+
+final maximum likelihood estimates
+             Estimate Std. Error z value Pr(>|z|)
+(Intercept)   0.18532    0.98590  0.1880   0.8509
+log(capital)  0.28057    0.97569  0.2876   0.7737
+log(labour)   0.53357    0.76527  0.6972   0.4857
+sigmaSq       0.11224    0.71844  0.1562   0.8759
+gamma         0.04848    0.98784  0.0491   0.9609
+log likelihood value: -18.46032 
+
+cross-sectional data
+total number of observations = 60 
+
+mean efficiency: 1.061667 
+> 
+> ## L(MLE) < L(OLS)
+> a4 <- sfa( log( output ) ~ log( capital ) + log( labour ),
++    data = front41Data, start = c( 1, 0, 0, 1, 0.999995 ) )
+Warning message:
+In sfa(log(output) ~ log(capital) + log(labour), data = front41Data,  :
+  the likelihood value of the ML estimation is less than that obtained using OLS; this indicates that the likelihood maximization did not converge to the global maximum or that there is no inefficiency (you could try again using different starting values)
+> summary( a4 )
+Error Components Frontier (see Battese & Coelli 1992)
+Inefficiency decreases the endogenous variable (as in a production function)
+The dependent variable is logged
+convergence achieved after 10 iterations
+
+final maximum likelihood estimates
+                Estimate  Std. Error z value Pr(>|z|)    
+(Intercept)  -5.5210e+00  3.7061e+00 -1.4897   0.1363    
+log(capital)  6.6312e-01  8.9159e-01  0.7437   0.4570    
+log(labour)   1.4994e+00  9.3547e-01  1.6028   0.1090    
+sigmaSq       3.2841e+01  2.6564e+00 12.3628   <2e-16 ***
+gamma         1.0000e-08  2.8544e-06  0.0035   0.9972    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+log likelihood value: -162.9074 
+
+cross-sectional data
+total number of observations = 60 
+
+mean efficiency: 0.999543 
+> 

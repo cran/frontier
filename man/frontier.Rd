@@ -205,6 +205,10 @@ frontier( yName, xNames = NULL, zNames = NULL, data,
    \item{olsParam}{numeric vector. OLS estimates.}
    \item{olsStdEr}{numeric vector. Standard errors of OLS estimates.}
    \item{olsLogl}{numeric. Log likelihood value of OLS estimation.}
+   \item{olsResid}{numeric vector. Residuals of the OLS estimation.}
+   \item{olsSkewness}{numeric. Skewness of the residuals of the OLS estimation.}
+   \item{olsSkewnessOkay}{logical. Indicating if the residuals
+      of the OLS estimation have the expected skewness.}
    \item{gridParam}{numeric vector. Parameters obtained from the grid search
       (if no starting values were specified).}
    \item{gridLogl}{numeric. Log likelihood value of the parameters
@@ -217,14 +221,14 @@ frontier( yName, xNames = NULL, zNames = NULL, data,
    \item{mleCov}{matrix. Covariance matrix of the parameters obtained
       from the OLS estimation.}
    \item{mleLogl}{numeric. Log likelihood value of the ML estimation.}
-   \item{lrTestVal}{LR test of the one-sided error
-      (this statistic has a mixed chi-square distribution
-      with \code{lrTestDf} degrees of freedom.}
-   \item{lrTestDf}{numeric. Degrees of freedom of the LR test.}
    \item{nIter}{numeric. Number of iterations of the ML estimation.}
    \item{resid}{matrix. Residuals:
       each row corresponds to a cross-section;
       each column corresponds to a time period.}
+   \item{validObs}{vector of logical values indicating which observations
+      of the provided data were used for the estimation,
+      i.e. do not have values that are not available (\code{NA}, \code{NaN})
+      or infinite (\code{Inf}).}
 }
 
 \references{
@@ -246,9 +250,12 @@ frontier( yName, xNames = NULL, zNames = NULL, data,
       McGraw-Hill, New York.
 }
 
-\seealso{\code{\link{frontierQuad}} for quadratic/translog frontiers.}
+\seealso{\code{\link{frontierQuad}} for quadratic/translog frontiers,
+   \code{\link{summary.frontier}} for creating and printing summary results,
+   \code{\link{efficiencies.frontier}} for calculating efficiency estimates,
+   and \code{\link{lrtest.frontier}} for comparing models by LR tests.}
 
-\author{Tim Coelli and Arne Henningsen}
+\author{Tim Coelli and Arne Henningsen \email{arne.henningsen@gmail.com}}
 
 \examples{
    # example included in FRONTIER 4.1 (cross-section data)

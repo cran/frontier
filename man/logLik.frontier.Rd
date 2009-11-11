@@ -31,7 +31,10 @@ returned by \code{\link{frontier}}.
 }
 
 \value{
-   \code{logLik.frontier} returns a scalar.
+   \code{logLik.frontier} returns an object of class \code{logLik},
+   which is a numeric scalar (the log-likelihood value) with 2 attributes:
+   \code{nobs} (total number of observations in all equations) and
+   \code{df} (number of free parameters, i.e. length of the coefficient vector).
 }
 
 \seealso{\code{\link{frontier}}.}

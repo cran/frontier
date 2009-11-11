@@ -1,0 +1,298 @@
+
+R version 2.10.0 (2009-10-26)
+Copyright (C) 2009 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library( frontier )
+Loading required package: plm
+Loading required package: kinship
+Loading required package: survival
+Loading required package: splines
+Loading required package: nlme
+Loading required package: lattice
+[1] "kinship is loaded"
+Loading required package: Formula
+Loading required package: MASS
+Loading required package: sandwich
+Loading required package: zoo
+
+Attaching package: 'zoo'
+
+
+	The following object(s) are masked from package:base :
+
+	 as.Date.numeric 
+
+Loading required package: micEcon
+Loading required package: systemfit
+Loading required package: Matrix
+Loading required package: car
+Loading required package: lmtest
+Loading required package: np
+Loading required package: boot
+
+Attaching package: 'boot'
+
+
+	The following object(s) are masked from package:car :
+
+	 logit 
+
+
+	The following object(s) are masked from package:lattice :
+
+	 melanoma 
+
+
+	The following object(s) are masked from package:survival :
+
+	 aml 
+
+Nonparametric Kernel Methods for Mixed Datatypes (version 0.30-3)
+> 
+> ## example data included in FRONTIER 4.1 (cross-section data)
+> data( front41Data )
+> data( riceProdPhil )
+> riceProdPhil$cost <- riceProdPhil$LABOR * riceProdPhil$LABORP +
++    riceProdPhil$NPK * riceProdPhil$NPKP
+> 
+> ###### left-skewed residuals but ineffDecrease = FALSE
+> ## front41Data
+> a1 <- sfa( log( output ) ~ log( capital ) + log( labour ),
++    ineffDecrease = FALSE, data = front41Data )
+Warning message:
+In sfa(log(output) ~ log(capital) + log(labour), ineffDecrease = FALSE,  :
+  the residuals of the OLS estimates are left-skewed; this might indicate that there is no inefficiency or that the model is misspecified
+> summary( a1 )
+Error Components Frontier (see Battese & Coelli 1992)
+Inefficiency increases the endogenous variable (as in a cost function
+The dependent variable is logged
+convergence achieved after 50 iterations
+
+final maximum likelihood estimates
+               Estimate Std. Error z value  Pr(>|z|)    
+(Intercept)  2.4390e-01 4.5338e-01  0.5380    0.5906    
+log(capital) 2.8049e-01 4.6639e-02  6.0141 1.809e-09 ***
+log(labour)  5.3331e-01 4.7172e-02 11.3056 < 2.2e-16 ***
+sigmaSq      1.0829e-01 1.8910e-02  5.7265 1.025e-08 ***
+gamma        1.4013e-05 1.5175e-02  0.0009    0.9993    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+log likelihood value: -18.44684 
+
+cross-sectional data
+total number of observations = 60 
+
+mean efficiency: 1.000984 
+> lrtest( a1 )
+Likelihood ratio test
+
+Model 1: OLS (no inefficiency)
+Model 2: Error Components Frontier (ECF)
+  #Df  LogLik Df     Chisq Pr(>Chisq)
+1   4 -18.447                        
+2   5 -18.447  1 2.748e-06     0.4993
+> 
+> ## front41Data, truncNorm
+> a2 <- sfa( log( output ) ~ log( capital ) + log( labour ),
++    ineffDecrease = FALSE, truncNorm = TRUE, data = front41Data )
+Warning message:
+In sfa(log(output) ~ log(capital) + log(labour), ineffDecrease = FALSE,  :
+  the residuals of the OLS estimates are left-skewed and the likelihood value of the ML estimation is less than that obtained using OLS; this usually indicates that there is no inefficiency or that the model is misspecified
+> summary( a2 )
+Error Components Frontier (see Battese & Coelli 1992)
+Inefficiency increases the endogenous variable (as in a cost function
+The dependent variable is logged
+convergence achieved after 12 iterations
+
+final maximum likelihood estimates
+               Estimate Std. Error z value  Pr(>|z|)    
+(Intercept)   0.2352850  0.3989503  0.5898    0.5554    
+log(capital)  0.2806616  0.0458909  6.1158 9.605e-10 ***
+log(labour)   0.5333579  0.0565884  9.4252 < 2.2e-16 ***
+sigmaSq       0.1088107  0.0253322  4.2953 1.744e-05 ***
+gamma         0.0057257  0.2257765  0.0254    0.9798    
+mu           -0.0499208  0.4947342 -0.1009    0.9196    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+log likelihood value: -18.44699 
+
+cross-sectional data
+total number of observations = 60 
+
+mean efficiency: 1.009395 
+> lrtest( a2 )
+Likelihood ratio test
+
+Model 1: OLS (no inefficiency)
+Model 2: Error Components Frontier (ECF)
+  #Df  LogLik Df  Chisq Pr(>Chisq)
+1   4 -18.447                     
+2   6 -18.447  2 -3e-04          1
+> 
+> ## riceProdPhil
+> b1 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ),
++    ineffDecrease = FALSE, data = riceProdPhil )
+Warning message:
+In sfa(log(PROD) ~ log(AREA) + log(LABOR) + log(NPK), ineffDecrease = FALSE,  :
+  the residuals of the OLS estimates are left-skewed; this might indicate that there is no inefficiency or that the model is misspecified
+> summary( b1 )
+Error Components Frontier (see Battese & Coelli 1992)
+Inefficiency increases the endogenous variable (as in a cost function
+The dependent variable is logged
+convergence achieved after 46 iterations
+
+final maximum likelihood estimates
+               Estimate  Std. Error z value  Pr(>|z|)    
+(Intercept) -1.6705e+00  3.5002e-01 -4.7725 1.820e-06 ***
+log(AREA)    3.2976e-01  6.1726e-02  5.3423 9.175e-08 ***
+log(LABOR)   3.8374e-01  6.5274e-02  5.8789 4.129e-09 ***
+log(NPK)     2.8292e-01  3.9390e-02  7.1825 6.845e-13 ***
+sigmaSq      1.0775e-01  8.3210e-03 12.9490 < 2.2e-16 ***
+gamma        9.5576e-06  6.3316e-03  0.0015    0.9988    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+log likelihood value: -104.9068 
+
+cross-sectional data
+total number of observations = 344 
+
+mean efficiency: 1.000810 
+> lrtest( b1 )
+Likelihood ratio test
+
+Model 1: OLS (no inefficiency)
+Model 2: Error Components Frontier (ECF)
+  #Df  LogLik Df     Chisq Pr(>Chisq)
+1   5 -104.91                        
+2   6 -104.91  1 1.576e-05     0.4984
+> 
+> ## riceProdPhil, truncNorm
+> b2 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ),
++    ineffDecrease = FALSE, truncNorm = TRUE, data = riceProdPhil )
+Warning message:
+In sfa(log(PROD) ~ log(AREA) + log(LABOR) + log(NPK), ineffDecrease = FALSE,  :
+  the residuals of the OLS estimates are left-skewed and the likelihood value of the ML estimation is less than that obtained using OLS; this usually indicates that there is no inefficiency or that the model is misspecified
+> summary( b2 )
+Error Components Frontier (see Battese & Coelli 1992)
+Inefficiency increases the endogenous variable (as in a cost function
+The dependent variable is logged
+convergence achieved after 12 iterations
+
+final maximum likelihood estimates
+              Estimate Std. Error z value  Pr(>|z|)    
+(Intercept) -1.6775088  0.2630026 -6.3783 1.791e-10 ***
+log(AREA)    0.3291913  0.0621172  5.2995 1.161e-07 ***
+log(LABOR)   0.3834639  0.0657841  5.8291 5.572e-09 ***
+log(NPK)     0.2831189  0.0388498  7.2875 3.157e-13 ***
+sigmaSq      0.1082674  0.0106018 10.2122 < 2.2e-16 ***
+gamma        0.0051624  0.0825598  0.0625    0.9501    
+mu          -0.0472828  0.1849685 -0.2556    0.7982    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+log likelihood value: -104.9087 
+
+cross-sectional data
+total number of observations = 344 
+
+mean efficiency: 1.008894 
+> lrtest( b2 )
+Likelihood ratio test
+
+Model 1: OLS (no inefficiency)
+Model 2: Error Components Frontier (ECF)
+  #Df  LogLik Df   Chisq Pr(>Chisq)
+1   5 -104.91                      
+2   7 -104.91  2 -0.0038          1
+> 
+> 
+> ###### right-skewed residuals but ineffDecrease = TRUE
+> ## riceProdPhil
+> d1 <- sfa( log( cost ) ~ log( PROD ) + log( AREA ) + log( LABORP ) +
++    log( NPKP ), data = riceProdPhil )
+Warning message:
+In sfa(log(cost) ~ log(PROD) + log(AREA) + log(LABORP) + log(NPKP),  :
+  the residuals of the OLS estimates are right-skewed; this might indicate that there is no inefficiency or that the model is misspecified
+> summary( d1 )
+Error Components Frontier (see Battese & Coelli 1992)
+Inefficiency decreases the endogenous variable (as in a production function)
+The dependent variable is logged
+convergence achieved after 60 iterations
+
+final maximum likelihood estimates
+              Estimate Std. Error z value Pr(>|z|)    
+(Intercept) 6.0606e+00 2.4292e-01 24.9488   <2e-16 ***
+log(PROD)   4.4030e-01 2.8908e-02 15.2310   <2e-16 ***
+log(AREA)   5.2215e-01 3.1512e-02 16.5700   <2e-16 ***
+log(LABORP) 4.1806e-01 3.2819e-02 12.7384   <2e-16 ***
+log(NPKP)   6.0234e-02 5.3992e-02  1.1156   0.2646    
+sigmaSq     4.6667e-02 3.7036e-03 12.6002   <2e-16 ***
+gamma       5.7736e-05 1.4198e-02  0.0041   0.9968    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+log likelihood value: 39.02474 
+
+cross-sectional data
+total number of observations = 344 
+
+mean efficiency: 0.9986917 
+> lrtest( d1 )
+Likelihood ratio test
+
+Model 1: OLS (no inefficiency)
+Model 2: Error Components Frontier (ECF)
+  #Df LogLik Df     Chisq Pr(>Chisq)
+1   6 39.025                        
+2   7 39.025  1 1.481e-05     0.4985
+> 
+> ## riceProdPhil, truncNorm
+> d2 <- sfa( log( cost ) ~ log( PROD ) + log( AREA ) + log( LABORP ) +
++    log( NPKP ), truncNorm = TRUE, data = riceProdPhil )
+Warning message:
+In sfa(log(cost) ~ log(PROD) + log(AREA) + log(LABORP) + log(NPKP),  :
+  the residuals of the OLS estimates are right-skewed and the likelihood value of the ML estimation is less than that obtained using OLS; this usually indicates that there is no inefficiency or that the model is misspecified
+> summary( d2 )
+Error Components Frontier (see Battese & Coelli 1992)
+Inefficiency decreases the endogenous variable (as in a production function)
+The dependent variable is logged
+convergence achieved after 14 iterations
+
+final maximum likelihood estimates
+             Estimate Std. Error z value  Pr(>|z|)    
+(Intercept)  6.064279   0.250721 24.1874 < 2.2e-16 ***
+log(PROD)    0.440526   0.029790 14.7875 < 2.2e-16 ***
+log(AREA)    0.521931   0.032811 15.9073 < 2.2e-16 ***
+log(LABORP)  0.418311   0.031662 13.2119 < 2.2e-16 ***
+log(NPKP)    0.060449   0.059750  1.0117    0.3117    
+sigmaSq      0.047070   0.010190  4.6191 3.854e-06 ***
+gamma        0.007577   0.183960  0.0412    0.9671    
+mu          -0.037770   0.201138 -0.1878    0.8510    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+log likelihood value: 39.02398 
+
+cross-sectional data
+total number of observations = 344 
+
+mean efficiency: 0.9929969 
+> lrtest( d2 )
+Likelihood ratio test
+
+Model 1: OLS (no inefficiency)
+Model 2: Error Components Frontier (ECF)
+  #Df LogLik Df   Chisq Pr(>Chisq)
+1   6 39.025                      
+2   8 39.024  2 -0.0015          1
+> 

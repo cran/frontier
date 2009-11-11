@@ -12,6 +12,8 @@ front41WriteInput       Write input files for Frontier 4.1
 frontierQuad            Quadratic or Translog Frontiers
 frontierTranslogRay     Translog Ray Frontiers
 logLik.frontier         Extract Log-Likelihood Value
+lrtest.frontier         Likelihood Ratio test for Stochastic Frontier
+                        Models
 residuals.frontier      Returning Efficiency Estimates
 riceProdPhil            Rice Production in the Philippines
 sfa                     Stochastic Frontier Analysis

@@ -2,6 +2,14 @@ frontierQuad <- function(
       yName, xNames, shifterNames = NULL, zNames = NULL, data,
       quadHalf = TRUE, ...  ) {
 
+   # check names of variables
+   checkNames( c( yName, xNames, shifterNames ), names( data ) )
+   if( !is.null( zNames ) ) {
+      if( !is.na( zNames[1] ) ) {
+         checkNames( c( zNames ), names( data ) )
+      }
+   }
+
    if ("plm.dim" %in% class(data)) {
       dataQuad <- data[, 1:2]
       dataQuad$y <- data[[ yName ]]

@@ -17,6 +17,7 @@ estResultRay <- frontierTranslogRay( yNames = c( "qCrop", "qAnimal" ),
    data = germanFarms )
 print( estResultRay )
 summary( estResultRay )
+lrtest( estResultRay )
 efficiencies( estResultRay )
 efficiencies( estResultRay, asInData = TRUE )
 residuals( estResultRay )

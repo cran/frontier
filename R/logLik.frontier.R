@@ -65,5 +65,10 @@ logLik.frontier <- function( object, which = "mle", newParam = NULL, ... ) {
          }
       }
    }
+
+   attributes( result )$nobs <- object$nob
+   attributes( result )$df <- length( coef( object, which = which ) )
+   class( result ) <- "logLik"
+
    return( result )
 }
