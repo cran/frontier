@@ -1,5 +1,5 @@
 
-R version 2.10.0 (2009-10-26)
+R version 2.10.1 (2009-12-14)
 Copyright (C) 2009 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
 
@@ -27,14 +27,6 @@ Loading required package: Formula
 Loading required package: MASS
 Loading required package: sandwich
 Loading required package: zoo
-
-Attaching package: 'zoo'
-
-
-	The following object(s) are masked from package:base :
-
-	 as.Date.numeric 
-
 Loading required package: micEcon
 Loading required package: systemfit
 Loading required package: Matrix
@@ -61,6 +53,7 @@ Attaching package: 'boot'
 	 aml 
 
 Nonparametric Kernel Methods for Mixed Datatypes (version 0.30-3)
+Loading required package: miscTools
 > 
 > ## preparing data
 > data( germanFarms )

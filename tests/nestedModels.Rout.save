@@ -1,5 +1,5 @@
 
-R version 2.10.0 (2009-10-26)
+R version 2.10.1 (2009-12-14)
 Copyright (C) 2009 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
 
@@ -27,14 +27,6 @@ Loading required package: Formula
 Loading required package: MASS
 Loading required package: sandwich
 Loading required package: zoo
-
-Attaching package: 'zoo'
-
-
-	The following object(s) are masked from package:base :
-
-	 as.Date.numeric 
-
 Loading required package: micEcon
 Loading required package: systemfit
 Loading required package: Matrix
@@ -61,6 +53,7 @@ Attaching package: 'boot'
 	 aml 
 
 Nonparametric Kernel Methods for Mixed Datatypes (version 0.30-3)
+Loading required package: miscTools
 > 
 > ## data set of rice producers in the Philippines
 > data( riceProdPhil )
@@ -98,14 +91,14 @@ Nonparametric Kernel Methods for Mixed Datatypes (version 0.30-3)
 > # Comparisons
 > rbind( coef( bb5ecf ), coef( bb5eef ) )
      (Intercept)     lAREA    lLABOR      lNPK   sigmaSq     gamma
-[1,]   -1.043183 0.3555197 0.3332875 0.2712756 0.2386335 0.8853908
+[1,]   -1.043244 0.3555118 0.3332984 0.2712777 0.2386278 0.8853821
 [2,]   -1.043244 0.3555118 0.3332984 0.2712777 0.2386278 0.8853821
 > all.equal( coef( bb5ecf ), coef( bb5eef ) )
-[1] "Mean relative difference: 3.060598e-05"
+[1] TRUE
 > all.equal( vcov( bb5ecf ), vcov( bb5eef ) )
-[1] "Mean relative difference: 0.04006521"
+[1] TRUE
 > all.equal( efficiencies( bb5ecf ), efficiencies( bb5eef ) )
-[1] "Mean relative difference: 5.756184e-06"
+[1] TRUE
 > 
 > 
 > ## with mu / zIntercept
@@ -129,11 +122,11 @@ Nonparametric Kernel Methods for Mixed Datatypes (version 0.30-3)
 > 
 > # Comparisons
 > rbind( coef( bb6ecf ), coef( bb6eef )[ c( 1:4, 6:7, 5 ) ] )
-     (Intercept)     lAREA    lLABOR      lNPK  sigmaSq     gamma         mu
-[1,]   -1.144629 0.3539924 0.3343705 0.2728643 17.42756 0.9979388  -63.70104
-[2,]   -1.145388 0.3539980 0.3344319 0.2728482 28.56214 0.9987397 -105.07671
+     (Intercept)     lAREA    lLABOR      lNPK  sigmaSq     gamma        mu
+[1,]   -1.145231 0.3539752 0.3344151 0.2728684 25.04219 0.9985631 -91.97841
+[2,]   -1.144160 0.3540077 0.3343342 0.2728599 14.17584 0.9974693 -51.62613
 > all.equal( efficiencies( bb6ecf ), efficiencies( bb6eef ) )
-[1] "Mean relative difference: 0.0005055283"
+[1] "Mean relative difference: 0.0006332687"
 > 
 > 
 > ############ panel data ###############
@@ -158,14 +151,14 @@ Nonparametric Kernel Methods for Mixed Datatypes (version 0.30-3)
 > # Comparisons
 > rbind( coef( b5ecf ), coef( b5eef ) )
      (Intercept)     lAREA    lLABOR      lNPK   sigmaSq     gamma
-[1,]   -1.043183 0.3555197 0.3332875 0.2712756 0.2386335 0.8853908
+[1,]   -1.043244 0.3555118 0.3332984 0.2712777 0.2386278 0.8853821
 [2,]   -1.043244 0.3555118 0.3332984 0.2712777 0.2386278 0.8853821
 > all.equal( coef( b5ecf ), coef( b5eef ) )
-[1] "Mean relative difference: 3.060598e-05"
+[1] TRUE
 > all.equal( vcov( b5ecf ), vcov( b5eef ) )
-[1] "Mean relative difference: 0.04006521"
+[1] TRUE
 > all.equal( c( efficiencies( b5ecf ) ), c( t( efficiencies( b5eef ) ) ) )
-[1] "Mean relative difference: 5.756184e-06"
+[1] TRUE
 > 
 > 
 > ## without mu / zIntercept
@@ -191,18 +184,18 @@ Nonparametric Kernel Methods for Mixed Datatypes (version 0.30-3)
 > all.equal( b6eef[ -c( 3, 4, 16, 26, 34 ) ], bb6eef[ -c( 3, 4, 16, 26, 34 ) ] )
 [1] TRUE
 > all.equal( c( efficiencies( b6ecf ) ), c( efficiencies( bb6eef ) ) )
-[1] "Mean relative difference: 0.0005055283"
+[1] "Mean relative difference: 0.0006332687"
 > all.equal( c( residuals( b6ecf ) ), c( residuals( bb6eef ) ) )
-[1] "Mean relative difference: 0.001788234"
+[1] "Mean relative difference: 0.002192908"
 > 
 > # Comparisons
 > rbind( coef( b6ecf ), coef( b6eef )[ c( 1:4, 6:7, 5 ) ] )
-     (Intercept)     lAREA    lLABOR      lNPK  sigmaSq     gamma         mu
-[1,]   -1.144629 0.3539924 0.3343705 0.2728643 17.42756 0.9979388  -63.70104
-[2,]   -1.145388 0.3539980 0.3344319 0.2728482 28.56214 0.9987397 -105.07671
+     (Intercept)     lAREA    lLABOR      lNPK  sigmaSq     gamma        mu
+[1,]   -1.145231 0.3539752 0.3344151 0.2728684 25.04219 0.9985631 -91.97841
+[2,]   -1.144160 0.3540077 0.3343342 0.2728599 14.17584 0.9974693 -51.62613
 > all.equal( c( efficiencies( b6ecf ) ), c( t( efficiencies( b6eef ) ) ) )
-[1] "Mean relative difference: 0.0005055283"
+[1] "Mean relative difference: 0.0006332687"
 > all.equal( c( residuals( b6ecf ) ), c( t( residuals( b6eef ) ) ) )
-[1] "Mean relative difference: 0.001788234"
+[1] "Mean relative difference: 0.002192908"
 > 
 > 

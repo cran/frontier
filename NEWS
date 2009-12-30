@@ -5,6 +5,16 @@ A full ChangeLog is available in the log messages of the SVN repository
 on R-Forge.
 
 
+            CHANGES IN VERSION 0.996-4
+
+* updated NEWS (changelog) file
+
+
+            CHANGES IN VERSION 0.996-2
+
+* the frontier package works with version 0.6-0 of the micEcon package now
+
+
             CHANGES IN VERSION 0.996-0
 
 * observations with values that are not available (NA + NaN) or infinite (Inf)
