@@ -5,6 +5,15 @@ A full ChangeLog is available in the log messages of the SVN repository
 on R-Forge.
 
 
+            CHANGES IN VERSION 0.996-6
+
+* frontierTranslogRay() no longer uses the function .micEconLogData() from
+package "micEcon" (removed in version 0.6-1) but the function logDataSet()
+from package "miscTools" (added in version 0.6-1); hence, this package now
+depends on "micEcon" version >= 0.6-1, which further depends on "miscTools"
+version >= 0.6-1.
+
+
             CHANGES IN VERSION 0.996-4
 
 * updated NEWS (changelog) file

@@ -15,7 +15,7 @@ frontierTranslogRay <- function( yNames, xNames, shifterNames = NULL,
 
    nInput <- length( xNames )
 
-   logData <- micEcon:::.micEconLogData( data = data, varNames = xNames )
+   logData <- logDataSet( data = data, varNames = xNames )
 
    distance <- sqrt( data[[ yNames[ 1 ] ]]^2 + data[[ yNames[ 2 ] ]]^2 )
 
