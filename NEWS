@@ -5,6 +5,28 @@ A full ChangeLog is available in the log messages of the SVN repository
 on R-Forge.
 
 
+            CHANGES IN VERSION 0.996-8
+
+* function sfa() (and hence, all functions that are based on sfa()) now return
+additionally a component "code" that indicates the reason why the iterated
+ML estimation terminated (see documentation)
+
+* the tolerance limit in the unidimensional search procedure to determine
+the optimal step length now can be reduced 10 times (rather than 5 times)
+before the algorithm gives up
+
+* if the search procedure cannot find a parameter vector that result in a
+larger likelihood value than the initial values, the initial values
+(provided by the user or obtained by the grid search) are multiplied
+by a numeric scalar (specified by argument "restartFactor") and the search
+procedure is re-started (the maximum number of restarts is specified by
+argument "restartMax")
+
+* removed argument "quadHalf" of frontierQuad(), as this argument is confusing,
+not really helpful, and has been removed also from many functions of the
+"micEcon" package
+
+
             CHANGES IN VERSION 0.996-6
 
 * frontierTranslogRay() no longer uses the function .micEconLogData() from

@@ -13,6 +13,8 @@ sfa <- function(
       searchScale = NA,
       gridSize = 0.1,
       gridDouble = TRUE,
+      restartMax = 10,
+      restartFactor = 0.999,
       printIter = 0 ) {
 
    # determine modelType (im)
@@ -115,14 +117,30 @@ sfa <- function(
       stop( "argument 'gridSize' must be positive" )
    }
    # maxit
-   if( !is.numeric( maxit ) ) {
-      stop( "argument 'maxit' must be numeric" )
+   if( !is.numeric( maxit ) || length( maxit ) != 1 ) {
+      stop( "argument 'maxit' must be a single numeric scalar" )
    } else if( maxit != round( maxit ) ) {
       stop( "argument 'maxit' must be an integer" )
    } else if( maxit < 0 ) {
       stop( "argument 'maxit' must not be negative" )
    }
    maxit <- as.integer( maxit )
+   # restartMax
+   if( !is.numeric( restartMax ) || length( restartMax ) != 1 ) {
+      stop( "argument 'restartMax' must be a single numeric scalar" )
+   } else if( restartMax != round( restartMax ) ) {
+      stop( "argument 'restartMax' must be an integer" )
+   } else if( restartMax < 0 ) {
+      stop( "argument 'restartMax' must not be negative" )
+   }
+   restartMax <- as.integer( restartMax )
+   # restartFactor
+   if( !is.numeric( restartFactor ) || length( restartFactor ) != 1 ) {
+      stop( "argument 'restartFactor' must be a numeric scalar" )
+   } else if( is.infinite( restartFactor ) ) {
+      stop( "argument 'restartFactor' must be finite" )
+   }
+
 
    # preparing model matrix and model response
    mc <- match.call( expand.dots = FALSE )
@@ -311,6 +329,9 @@ sfa <- function(
       gridSize = as.double( gridSize ),
       maxit = as.integer( maxit ),
       muBound = as.double( muBound ),
+      restartMax = as.integer( restartMax ),
+      restartFactor = as.double( restartFactor ),
+      nRestart = as.integer( 0 ),
       nStartVal = as.integer( length( startVal ) ),
       startVal = as.double( startVal ),
       nRowData = as.integer( nrow( dataTable ) ),
@@ -324,7 +345,8 @@ sfa <- function(
       mleParam = as.double( rep( 0, nParamTotal ) ),
       mleCov = matrix( as.double( 0 ), nParamTotal, nParamTotal ),
       mleLogl = as.double( 0 ),
-      nIter = as.integer( 0 ) )
+      nIter = as.integer( 0 ),
+      code = as.integer( 0 ) )
    returnObj$nStartVal <- NULL
    returnObj$nRowData <- NULL
    returnObj$nColData <- NULL

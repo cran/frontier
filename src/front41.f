@@ -4,9 +4,10 @@
      $  nnArg, ntArg, nobArg, nbArg, nmuArg, netaArg,
      $  iprintArg, indicArg, tolArg, tol2Arg, bignumArg,
      $  step1Arg, igrid2Arg, gridnoArg, maxitArg, bmuArg,
+     $  mrestartArg, frestartArg, nrestartArg,
      $  nStartVal, startVal, nRowData, nColData, dataTable,
      $  nParamTotal, ob, gb, startLogl, y, h, fmleLogl,
-     $  nIter )
+     $  nIter, icodeArg )
 c       FRONTIER version 4.1d by Tim Coelli.   
 c       (with a very few contributions by Arne Henningsen)
 c       This program uses the Davidon-Fletcher-Powell algorithm to
@@ -39,7 +40,8 @@ c       Hence, this programme can be run automatically (non-interactively) now.
 	dimension gb(nParamTotal)
 	dimension y(nParamTotal)
 	dimension h(nParamTotal,nParamTotal)
-	common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit   
+	common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit,icode,
+     $  mrestart,frestart,nrestart
 	common/one/fx,fy,nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im
 	common/five/tol,tol2,bmu,bignum,step1,gridno,igrid2
 
@@ -56,11 +58,15 @@ c       Hence, this programme can be run automatically (non-interactively) now.
 	tol=tolArg
 	tol2=tol2Arg
       bmu=bmuArg
+      mrestart=mrestartArg
+      frestart=frestartArg
+      nrestart=0
 	bignum=bignumArg
 	step1=step1Arg
 	igrid2=igrid2Arg
 	gridno=gridnoArg
 	maxit=maxitArg
+      icode=0
 	nfunct=0   
 	ndrv=0 
 	call info( nStartVal, startVal, nRowData, nColData, dataTable,
@@ -68,13 +74,16 @@ c       Hence, this programme can be run automatically (non-interactively) now.
       startLogl = -fxs
 	fmleLogl = -fx
 	nIter = iter
+      icodeArg = icode
+      nrestartArg = nrestart
 	end
  
 	subroutine mini(yy,xx,mm,sv,ob,gb,fxs,y,h)
 c       contains the main loop of this iterative program. 
 	implicit double precision (a-h,o-z)
 	common/one/fx,fy,nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im
-	common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit   
+	common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit,icode,
+     $  mrestart,frestart,nrestart
 	dimension yy(nn,nt),xx(nn,nt,nr),mm(nn),sv(n)
 	dimension ob(n),gb(n),x(:),y(n),s(:)
 	dimension h(n,n),delx(:),delg(:),gx(:),gy(:)
@@ -84,8 +93,8 @@ c       contains the main loop of this iterative program.
 	do 98 i=1,n   
 	gx(i)=0.0  
 	gy(i)=0.0  
-  98    continue   
-	if (igrid.eq.1) then   
+  98    continue
+  107 if ((igrid.eq.1).and.(nrestart.eq.0)) then
 	call grid(x,y,yy,xx,ob,gb)  
       if (im.eq.1) call fun1(gb,fxs,yy,xx)
       if (im.eq.2) call fun2(gb,fxs,yy,xx)
@@ -117,17 +126,31 @@ c       contains the main loop of this iterative program.
  2100   format(' gradient step')  
 	do 30 i=1,n
    30   s(i)=-gx(i)
-   40   call search(x,y,s,gx,delx,yy,xx)
+   40 icode=0
+      call search(x,y,s,gx,delx,yy,xx)
 	iter=iter+1   
 	if (iter.ge.maxit) then
+      icode=10
 	goto 70
 	endif  
-   7    if(fy.gt.fx) goto 5 
-	if (im.eq.1) call der1(y,gy,yy,xx) 
+   7    if(fy.gt.fx) goto 5
+	if (im.eq.1) call der1(y,gy,yy,xx)
 	if (im.eq.2) call der2(y,gy,yy,xx) 
 	call convrg(ipass,x,y) 
-	if (ipass.eq.1.) goto 70   
-	if (iprint.ne.0) then 
+	if (ipass.eq.1.) then
+      if ((iter.eq.1).and.(icode.eq.5).and.(nrestart.le.10)) then
+      write(6,109) frestart
+  109 format('restarting with starting values multiplied by',e16.8)
+      do 108 i=1,n
+      sv(i)=x(i)*frestart
+  108 continue
+      nrestart=nrestart+1
+      goto 107
+      else
+      goto 70
+      endif
+      endif
+	if (iprint.ne.0) then
 	printcon=float(iter)/float(iprint)-float(iter/iprint)
 	if (printcon.eq.0.0) then   
 	write(6,301) iter,nfunct,-fy   
@@ -147,7 +170,7 @@ c       contains the main loop of this iterative program.
 	do 60 i=1,n
 	s(i)=0.0   
 	do 60 j=1,n
-   60   s(i)=s(i)-h(i,j)*gy(j) 
+   60   s(i)=s(i)-h(i,j)*gy(j)
 	goto 40
    70   continue  
 	if (iprint.ne.0) write(6,301) iter,nfunct,-fy
@@ -168,7 +191,8 @@ c       likelihood and in each of the parameters is no greater than
 c       a specified tolerance.
 	implicit double precision (a-h,o-z)
 	common/one/fx,fy,nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im
-	common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit   
+	common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit,icode,
+     $  mrestart,frestart,nrestart
 	common/five/tol,tol2,bmu,bignum,step1,gridno,igrid2
 	dimension x(n),y(n)
 	xtol=tol   
@@ -184,15 +208,17 @@ c       a specified tolerance.
    30   if(dabs(x(i)-y(i)).gt.xtol) goto 60 
    40   continue
 	ipass=1
+      if (icode.eq.0) icode=1
 	return 
-   60   ipass=2 
-	return 
+   60   ipass=2
+	return
 	end
  
 	subroutine eta(h,delx,delg,gx) 
 c       calculates the direction matrix (p).  
 	implicit double precision (a-h,o-z)
-	common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit   
+	common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit,icode,
+     $  mrestart,frestart,nrestart
 	common/five/tol,tol2,bmu,bignum,step1,gridno,igrid2
 	dimension h(n,n),delx(n),delg(n),gx(n)
 	dimension hdg(:),dgh(:),hgx(:)  
@@ -245,7 +271,8 @@ c       unidimensional search (coggin) to determine optimal step length
 c       determines the step length (t) using a unidimensional search. 
 	implicit double precision (a-h,o-z)
 	common/one/fx,fy,nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im
-	common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit   
+	common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit,icode,
+     $  mrestart,frestart,nrestart
 	common/five/tol,tol2,bmu,bignum,step1,gridno,igrid2
 	dimension x(n),y(n),s(n),gx(n),delx(n)
 	dimension yy(nn,nt),xx(nn,nt,nr)
@@ -277,7 +304,12 @@ c       determines the step length (t) using a unidimensional search.
    2    y(i)=x(i)+d*s(i)
 	if (im.eq.1) call fun1(y,f,yy,xx) 
 	if (im.eq.2) call fun2(y,f,yy,xx) 
-	k=k+1  
+      if (f.ne.f) then
+      write(6,2505)
+ 2505 format(' function value in search procedure is NaN')
+      return
+      endif
+	k=k+1
 	if(f-fa) 5,3,6 
    3    do 4 i=1,n  
    4    y(i)=x(i)+da*s(i)   
@@ -343,7 +375,7 @@ c       determines the step length (t) using a unidimensional search.
    20   fc=f   
 	dc=d   
    21   a=fa*(db-dc)+fb*(dc-da)+fc*(da-db) 
-	if(a) 22,30,22 
+	if(a) 22,30,22
    22   d=0.5*((db*db-dc*dc)*fa+(dc*dc-da*da)*fb+(da*da-db*db)*fc)/a   
 	if((da-d)*(d-dc)) 13,13,23 
    23   do 24 i=1,n
@@ -367,21 +399,23 @@ c       determines the step length (t) using a unidimensional search.
    99   continue   
 	goto 33
   325   if(ntol.ne.0.and.iprint.eq.1) write(6,3000) ntol  
- 3000   format(1x,'tolerance reduced',i1,'time(s)')   
+ 3000   format(1x,'tolerance reduced ',i2,' time(s)')
   326   if(fy.lt.fx) return   
 	do 101 i=1,n   
 	if(s(i).ne.-gx(i)) return  
   101   continue  
 	write(6,5000)  
  5000   format(' search failed on gradient step, termination')
+      icode=6
 	return 
-   33   if(ntol.eq.5) goto 34  
+   33   if(ntol.eq.10) goto 34
 	iexit=0
 	ntol=ntol+1
 	ftol=ftol/10.  
 	goto 12
   34    if(iprint.ne.0) write(6,2000)   
- 2000   format(' pt better than entering pt cannot be found') 
+ 2000   format(' pt better than entering pt cannot be found')
+      icode=5
 	return 
 	end
  
@@ -389,7 +423,8 @@ c       determines the step length (t) using a unidimensional search.
 c       checks if params are out of bounds & adjusts if required. 
 	implicit double precision (a-h,o-z)
 	common/one/fx,fy,nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im
-	common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit   
+	common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit,icode,
+     $  mrestart,frestart,nrestart
 	common/five/tol,tol2,bmu,bignum,step1,gridno,igrid2
 	dimension b(n),xx(nn,nt,nr)
 	n1=nr+1
@@ -412,7 +447,8 @@ c       calculates the negative of the log-likelihood function of the
 c       error components model.
 	implicit double precision (a-h,o-z)
 	common/one/fx,fy,nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im
-	common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit   
+	common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit,icode,
+     $  mrestart,frestart,nrestart
 	data pi/3.1415926/ 
 	dimension b(n),yy(nn,nt),xx(nn,nt,nr)
 	call check(b,xx)  
@@ -477,7 +513,8 @@ c       calculates the first-order partial derivatives of the negative
 c       of the log-likelihood function of the error components model.
 	implicit double precision (a-h,o-z)
 	common/one/fx,fy,nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im
-	common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit   
+	common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit,icode,
+     $  mrestart,frestart,nrestart
 	dimension b(n),gx(n),yy(nn,nt),xx(nn,nt,nr) 
 	call check(b,xx)  
 	f=dfloat(nn)    
@@ -606,7 +643,8 @@ c       calculates the negative of the log-likelihood function of the
 c       TE effects model.
 	implicit double precision (a-h,o-z)
 	common/one/fx,fy,nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im
-	common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit   
+	common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit,icode,
+     $  mrestart,frestart,nrestart
 	dimension b(n),yy(nn,nt),xx(nn,nt,nr)
 	data pi/3.1415926/ 
 	call check(b,xx)  
@@ -647,7 +685,8 @@ c       calculates the first-order partial derivatives of the negative
 c       of the log-likelihood function of the TE effects model.   
 	implicit double precision (a-h,o-z)
 	common/one/fx,fy,nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im
-	common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit   
+	common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit,icode,
+     $  mrestart,frestart,nrestart
 	dimension b(n),gx(n),yy(nn,nt),xx(nn,nt,nr)
 	call check(b,xx)  
 	s2=b(nr+1) 
@@ -706,7 +745,8 @@ c       accepts instructions from the terminal or from a file and
 c       also reads data from a file.  
 	implicit double precision (a-h,o-z)
 	common/one/fx,fy,nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im
-	common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit   
+	common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit,icode,
+     $  mrestart,frestart,nrestart
 	character chst
 	dimension yy(:,:),xx(:,:,:),mm(:),sv(:),xxd(:)
 	dimension startVal(nStartVal)
@@ -811,7 +851,8 @@ c       also reads data from a file.
 c       does a grid search across gamma
 	implicit double precision (a-h,o-z)
 	common/one/fx,fy,nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im
-	common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit   
+	common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit,icode,
+     $  mrestart,frestart,nrestart
 	common/five/tol,tol2,bmu,bignum,step1,gridno,igrid2
 	dimension x(n),y(n),yy(nn,nt),xx(nn,nt,nr),ob(n),gb(n)
 	data pi/3.1415926/ 

@@ -10,7 +10,7 @@
 
 \usage{
 frontierQuad( yName, xNames, shifterNames = NULL, zNames = NULL,
-   data, quadHalf = TRUE, \dots )
+   data, \dots )
 }
 
 \arguments{
@@ -29,16 +29,13 @@ frontierQuad( yName, xNames, shifterNames = NULL, zNames = NULL,
       if \code{data} is a panel data frame
       (created with \code{\link[plm]{plm.data}}),
       it is assumed that these are panel data.}
-   \item{quadHalf}{logical. Multiply the quadratic terms by one half?}
    \item{\ldots}{further arguments passed to \code{\link{frontier}}.}
 }
 
 \value{
    \code{frontierQuad} returns a list of class \code{frontierQuad}
    (and \code{frontier})
-   containing the same elements as returned by \code{\link{frontier}}
-   and additionally the element \code{quadHalf}
-   which is equal to the argument \code{quadHalf}.
+   containing the same elements as returned by \code{\link{frontier}}.
 }
 
 \seealso{\code{\link{frontier}}.}

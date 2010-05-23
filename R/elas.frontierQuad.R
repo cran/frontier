@@ -17,12 +17,6 @@ elas.frontierQuad <- function( object, data = NULL, dataLogged = TRUE,
 
    xNames <- eval( object$call$xNames )
 
-   if( is.null( object$call$quadHalf ) ) {
-      quadHalf <- TRUE
-   } else {
-      quadHalf <- object$call$quadHalf
-   }
-
    nExog <- length( xNames )
    nCoef <- 1 + nExog + nExog * ( nExog + 1 ) / 2
 
@@ -31,7 +25,7 @@ elas.frontierQuad <- function( object, data = NULL, dataLogged = TRUE,
       result <- translogEla( xNames = xNames, data = data,
          coef = coef( object )[ 1:nCoef ],
          coefCov = vcov( object )[ 1:nCoef, 1:nCoef ],
-         quadHalf = quadHalf, dataLogged = TRUE )
+         dataLogged = TRUE )
    } else {
       # quadratic function
       stop( "sorry, the calculation of elasticities of a quadratic function",

@@ -1,6 +1,6 @@
 frontierQuad <- function(
       yName, xNames, shifterNames = NULL, zNames = NULL, data,
-      quadHalf = TRUE, ...  ) {
+      ...  ) {
 
    # check names of variables
    checkNames( c( yName, xNames, shifterNames ), names( data ) )
@@ -30,7 +30,7 @@ frontierQuad <- function(
       for( j in i:length( xNames ) ) {
          varName <- paste( "b", i, j, sep = "_" )
          dataQuad[[ varName ]] <-
-               ifelse( i == j, 1 , 2 ) * ifelse( quadHalf, 0.5, 1 ) *
+               ifelse( i == j, 1 , 2 ) * 0.5 *
                data[[ xNames[ i ] ]] * data[[ xNames[ j ] ]]
          xNamesAll <- c( xNamesAll, varName )
       }
@@ -70,7 +70,6 @@ frontierQuad <- function(
    names( result$mleParam ) <- allParNames
    rownames( result$mleCov ) <- allParNames
    colnames( result$mleCov ) <- allParNames
-   result$quadHalf <- quadHalf
 
    class( result ) <- c( "frontierQuad", class( result ) )
 

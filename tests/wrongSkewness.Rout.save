@@ -1,6 +1,6 @@
 
-R version 2.10.1 (2009-12-14)
-Copyright (C) 2009 The R Foundation for Statistical Computing
+R version 2.11.0 (2010-04-22)
+Copyright (C) 2010 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -28,33 +28,23 @@ Loading required package: MASS
 Loading required package: sandwich
 Loading required package: zoo
 Loading required package: micEcon
-Loading required package: systemfit
-Loading required package: Matrix
-Loading required package: car
-Loading required package: lmtest
 Loading required package: np
 Loading required package: boot
 
 Attaching package: 'boot'
 
+The following object(s) are masked from 'package:lattice':
 
-	The following object(s) are masked from package:car :
+    melanoma
 
-	 logit 
+The following object(s) are masked from 'package:survival':
 
-
-	The following object(s) are masked from package:lattice :
-
-	 melanoma 
-
-
-	The following object(s) are masked from package:survival :
-
-	 aml 
+    aml
 
 Loading required package: cubature
-Nonparametric Kernel Methods for Mixed Datatypes (version 0.30-7)
+Nonparametric Kernel Methods for Mixed Datatypes (version 0.30-9)
 Loading required package: miscTools
+Loading required package: lmtest
 > 
 > ## example data included in FRONTIER 4.1 (cross-section data)
 > data( front41Data )
@@ -73,15 +63,17 @@ In sfa(log(output) ~ log(capital) + log(labour), ineffDecrease = FALSE,  :
 Error Components Frontier (see Battese & Coelli 1992)
 Inefficiency increases the endogenous variable (as in a cost function
 The dependent variable is logged
-convergence achieved after 55 iterations
+Iterative ML estimation terminated after 55 iterations:
+log likelihood values and parameters of two successive iterations
+are within the tolerance limit
 
 final maximum likelihood estimates
                Estimate Std. Error z value  Pr(>|z|)    
-(Intercept)  2.4428e-01 4.2886e-01  0.5696    0.5689    
-log(capital) 2.8049e-01 4.6591e-02  6.0203 1.741e-09 ***
-log(labour)  5.3331e-01 4.8346e-02 11.0311 < 2.2e-16 ***
-sigmaSq      1.0829e-01 1.9295e-02  5.6120 2.000e-08 ***
-gamma        5.3981e-06 9.0022e-03  0.0006    0.9995    
+(Intercept)  2.4439e-01 8.5269e-01  0.2866    0.7744    
+log(capital) 2.8049e-01 4.6949e-02  5.9745 2.308e-09 ***
+log(labour)  5.3331e-01 4.8533e-02 10.9885 < 2.2e-16 ***
+sigmaSq      1.0829e-01 1.8985e-02  5.7036 1.173e-08 ***
+gamma        3.8226e-06 1.2552e-02  0.0003    0.9998    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
 log likelihood value: -18.44684 
@@ -89,7 +81,7 @@ log likelihood value: -18.44684
 cross-sectional data
 total number of observations = 60 
 
-mean efficiency: 1.000610 
+mean efficiency: 1.000514 
 > lrtest( a1 )
 Likelihood ratio test
 
@@ -97,7 +89,7 @@ Model 1: OLS (no inefficiency)
 Model 2: Error Components Frontier (ECF)
   #Df  LogLik Df     Chisq Pr(>Chisq)
 1   4 -18.447                        
-2   5 -18.447  1 2.852e-06     0.4993
+2   5 -18.447  1 2.865e-06     0.4993
 > 
 > ## front41Data, truncNorm
 > a2 <- sfa( log( output ) ~ log( capital ) + log( labour ),
@@ -109,7 +101,9 @@ In sfa(log(output) ~ log(capital) + log(labour), ineffDecrease = FALSE,  :
 Error Components Frontier (see Battese & Coelli 1992)
 Inefficiency increases the endogenous variable (as in a cost function
 The dependent variable is logged
-convergence achieved after 12 iterations
+Iterative ML estimation terminated after 12 iterations:
+cannot find a parameter vector that results in a log-likelihood value
+larger than the log-likelihood value obtained in the previous step
 
 final maximum likelihood estimates
                Estimate Std. Error z value  Pr(>|z|)    
@@ -146,16 +140,18 @@ In sfa(log(PROD) ~ log(AREA) + log(LABOR) + log(NPK), ineffDecrease = FALSE,  :
 Error Components Frontier (see Battese & Coelli 1992)
 Inefficiency increases the endogenous variable (as in a cost function
 The dependent variable is logged
-convergence achieved after 51 iterations
+Iterative ML estimation terminated after 45 iterations:
+log likelihood values and parameters of two successive iterations
+are within the tolerance limit
 
 final maximum likelihood estimates
                Estimate  Std. Error z value  Pr(>|z|)    
-(Intercept) -1.6702e+00  3.0872e-01 -5.4101 6.297e-08 ***
-log(AREA)    3.2977e-01  6.1256e-02  5.3834 7.309e-08 ***
-log(LABOR)   3.8374e-01  6.5100e-02  5.8947 3.754e-09 ***
-log(NPK)     2.8292e-01  3.9372e-02  7.1857 6.684e-13 ***
-sigmaSq      1.0775e-01  7.3155e-03 14.7290 < 2.2e-16 ***
-gamma        5.1896e-06  3.7030e-03  0.0014    0.9989    
+(Intercept) -1.6705e+00  3.3760e-01 -4.9481 7.493e-07 ***
+log(AREA)    3.2977e-01  6.1052e-02  5.4015 6.610e-08 ***
+log(LABOR)   3.8374e-01  6.5033e-02  5.9007 3.619e-09 ***
+log(NPK)     2.8292e-01  3.9343e-02  7.1911 6.428e-13 ***
+sigmaSq      1.0775e-01  7.7109e-03 13.9738 < 2.2e-16 ***
+gamma        1.1194e-05  6.0303e-03  0.0019    0.9985    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
 log likelihood value: -104.9068 
@@ -163,7 +159,7 @@ log likelihood value: -104.9068
 cross-sectional data
 total number of observations = 344 
 
-mean efficiency: 1.000597 
+mean efficiency: 1.000877 
 > lrtest( b1 )
 Likelihood ratio test
 
@@ -171,7 +167,7 @@ Model 1: OLS (no inefficiency)
 Model 2: Error Components Frontier (ECF)
   #Df  LogLik Df     Chisq Pr(>Chisq)
 1   5 -104.91                        
-2   6 -104.91  1 1.618e-05     0.4984
+2   6 -104.91  1 1.549e-05     0.4984
 > 
 > ## riceProdPhil, truncNorm
 > b2 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ),
@@ -183,7 +179,9 @@ In sfa(log(PROD) ~ log(AREA) + log(LABOR) + log(NPK), ineffDecrease = FALSE,  :
 Error Components Frontier (see Battese & Coelli 1992)
 Inefficiency increases the endogenous variable (as in a cost function
 The dependent variable is logged
-convergence achieved after 12 iterations
+Iterative ML estimation terminated after 12 iterations:
+cannot find a parameter vector that results in a log-likelihood value
+larger than the log-likelihood value obtained in the previous step
 
 final maximum likelihood estimates
               Estimate Std. Error z value  Pr(>|z|)    
@@ -223,25 +221,27 @@ In sfa(log(cost) ~ log(PROD) + log(AREA) + log(LABORP) + log(NPKP),  :
 Error Components Frontier (see Battese & Coelli 1992)
 Inefficiency decreases the endogenous variable (as in a production function)
 The dependent variable is logged
-convergence achieved after 56 iterations
+Iterative ML estimation terminated after 59 iterations:
+log likelihood values and parameters of two successive iterations
+are within the tolerance limit
 
 final maximum likelihood estimates
               Estimate Std. Error z value Pr(>|z|)    
-(Intercept) 6.0607e+00 2.5076e-01 24.1693   <2e-16 ***
-log(PROD)   4.4030e-01 2.6387e-02 16.6859   <2e-16 ***
-log(AREA)   5.2216e-01 2.8682e-02 18.2051   <2e-16 ***
-log(LABORP) 4.1806e-01 3.2205e-02 12.9810   <2e-16 ***
-log(NPKP)   6.0238e-02 5.3310e-02  1.1299   0.2585    
-sigmaSq     4.6667e-02 3.7134e-03 12.5672   <2e-16 ***
-gamma       7.1893e-05 1.6944e-02  0.0042   0.9966    
+(Intercept) 6.0607e+00 2.4923e-01 24.3178   <2e-16 ***
+log(PROD)   4.4031e-01 2.6059e-02 16.8966   <2e-16 ***
+log(AREA)   5.2214e-01 2.8313e-02 18.4416   <2e-16 ***
+log(LABORP) 4.1805e-01 3.2109e-02 13.0198   <2e-16 ***
+log(NPKP)   6.0227e-02 5.3211e-02  1.1318   0.2577    
+sigmaSq     4.6667e-02 3.7224e-03 12.5368   <2e-16 ***
+gamma       6.3879e-05 1.8525e-02  0.0034   0.9972    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
-log likelihood value: 39.02473 
+log likelihood value: 39.02474 
 
 cross-sectional data
 total number of observations = 344 
 
-mean efficiency: 0.9985402 
+mean efficiency: 0.9986239 
 > lrtest( d1 )
 Likelihood ratio test
 
@@ -249,7 +249,7 @@ Model 1: OLS (no inefficiency)
 Model 2: Error Components Frontier (ECF)
   #Df LogLik Df     Chisq Pr(>Chisq)
 1   6 39.025                        
-2   7 39.025  1 1.394e-05     0.4985
+2   7 39.025  1 1.448e-05     0.4985
 > 
 > ## riceProdPhil, truncNorm
 > d2 <- sfa( log( cost ) ~ log( PROD ) + log( AREA ) + log( LABORP ) +
@@ -261,7 +261,9 @@ In sfa(log(cost) ~ log(PROD) + log(AREA) + log(LABORP) + log(NPKP),  :
 Error Components Frontier (see Battese & Coelli 1992)
 Inefficiency decreases the endogenous variable (as in a production function)
 The dependent variable is logged
-convergence achieved after 14 iterations
+Iterative ML estimation terminated after 14 iterations:
+cannot find a parameter vector that results in a log-likelihood value
+larger than the log-likelihood value obtained in the previous step
 
 final maximum likelihood estimates
              Estimate Std. Error z value  Pr(>|z|)    

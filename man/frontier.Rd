@@ -21,7 +21,8 @@ sfa( formula, data = sys.frame( sys.parent() ),
    timeEffect = FALSE, startVal = NULL,
    tol = 0.00001, maxit = 1000, muBound = 2, bignum = 1.0E+16,
    searchStep = 0.00001, searchTol = 0.001, searchScale = NA,
-   gridSize = 0.1, gridDouble = TRUE, printIter = 0 )
+   gridSize = 0.1, gridDouble = TRUE,
+   restartMax = 10, restartFactor = 0.999, printIter = 0 )
 
 frontier( yName, xNames = NULL, zNames = NULL, data,
    zIntercept = FALSE, \dots )
@@ -86,6 +87,17 @@ frontier( yName, xNames = NULL, zNames = NULL, data,
       a second phase grid search on \eqn{\gamma}{gamma} is conducted
       around the \dQuote{best} value obtained in the first phase
       with an increment of \code{gridSize/10}.}
+   \item{restartMax}{integer: maximum number of restarts of the search procedure
+      when it cannot find a parameter vector
+      that results in a log-likelihood value
+      larger than the log-likelihood value of the initial parameters.}
+   \item{restartFactor}{numeric scalar: if the search procedure
+      cannot find a parameter vector that results in a log-likelihood value
+      larger than the log-likelihood value of the initial parameters,
+      the initial values
+      (provided by argument \code{startVal} or obtained by the grid serach)
+      are multiplied by this number before the search procedure
+      is restarted.}
    \item{printIter}{numeric. Print info every \code{printIter} iterations;
       if this argument is 0, do not print.}
    \item{yName}{string: name of the endogenous variable.}
@@ -198,6 +210,13 @@ frontier( yName, xNames = NULL, zNames = NULL, data,
    \item{gridDouble}{logical. Argument \code{gridDouble} (see above).}
    \item{gridSize}{numeric. Argument \code{gridSize} (see above).}
    \item{maxit}{numeric.  Argument \code{maxit} (see above).}
+   \item{muBound}{numeric.  Argument \code{muBound} (see above).}
+   \item{restartMax}{numeric.  Argument \code{restartMax} (see above).}
+   \item{restartFactor}{numeric.  Argument \code{restartFactor} (see above).}
+   \item{nRestart}{numeric.  Number of restarts of the search procedure
+      when it cannot find a parameter vector
+      that results in a log-likelihood value
+      larger than the log-likelihood value of the initial parameters.}
    \item{startVal}{numeric vector. Argument \code{startVal}
       (only if specified by user).}
    \item{call}{the matched call.}
@@ -222,6 +241,14 @@ frontier( yName, xNames = NULL, zNames = NULL, data,
       from the OLS estimation.}
    \item{mleLogl}{numeric. Log likelihood value of the ML estimation.}
    \item{nIter}{numeric. Number of iterations of the ML estimation.}
+   \item{code}{integer indication the reason for determination:
+      \code{1} = log likelihood values and parameters
+         of two successive iterations are within the tolerance limits;
+      \code{5} = cannot find a parameter vector that results
+         in a log-likelihood value larger than
+         the log-likelihood value obtained in the previous step;
+      \code{6} = search failed on gradient step;
+      \code{10} = maximum number of iterations reached.}
    \item{resid}{matrix. Residuals:
       each row corresponds to a cross-section;
       each column corresponds to a time period.}

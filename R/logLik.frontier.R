@@ -31,7 +31,6 @@ logLik.frontier <- function( object, which = "mle", newParam = NULL, ... ) {
             shifterNames = eval( object$call$shifterNames ),
             zNames = eval( object$call$zNames ),
             data = eval( object$call$data ),
-            quadHalf = object$quadHalf,
             ineffDecrease = object$ineffDecrease,
             truncNorm = object$truncNorm,
             zIntercept = object$zIntercept,
