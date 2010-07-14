@@ -245,10 +245,50 @@ sfa <- function(
    dataTable <- dataTable[ validObs, ]
    # number of (valid) observations
    nob <- sum( validObs )
+
+   # make sure that the cross-section units are numbered continously
+   firmId <- sort( unique( dataTable[ , 1 ] ) )
    # number of cross-section units
-   nn <- length( unique( dataTable[ , 1 ] ) )
+   nn <- length( firmId )
+   firmNo <- rep( NA, nrow( dataTable ) )
+   for( i in 1:nn ) {
+      firmNo[ dataTable[ , 1 ] == firmId[ i ] ] <- i
+   }
+   dataTable[ , 1 ] <- firmNo
+
+   # check consistency of firm numbers
+   if( any( is.na( dataTable[ , 1 ] ) ) ) {
+      stop( "internal error: at least one firm number is NA" )
+   }
+   if( min( dataTable[ , 1 ] ) != 1 ) {
+      stop( "internal error: the smallest firm number must be one" )
+   }
+   if( max( dataTable[ , 1 ] ) > nn ) {
+      stop( "internal error: a firm number is larger than the number of firms" )
+   }
+
+   # make sure that the time periods are numbered continously
+   timeId <- sort( unique( dataTable[ , 2 ] ) )
    # number of time periods
    nt <- length( unique( dataTable[ , 2 ] ) )
+   timeNo <- rep( NA, nrow( dataTable ) )
+   for( i in 1:nt ) {
+      timeNo[ dataTable[ , 2 ] == timeId[ i ] ] <- i
+   }
+   dataTable[ , 2 ] <- timeNo
+
+   # check consistency of time period numbers
+   if( any( is.na( dataTable[ , 2 ] ) ) ) {
+      stop( "internal error: at least one time period number is NA" )
+   }
+   if( min( dataTable[ , 2 ] ) != 1 ) {
+      stop( "internal error: the smallest time period number must be one" )
+   }
+   if( max( dataTable[ , 2 ] ) > nt ) {
+      stop( "internal error: a time period number is larger",
+         " than the number of time periods" )
+   }
+
 
    # mu: truncNorm, zIntercept
    if( modelType == 1 ) {
@@ -451,10 +491,10 @@ sfa <- function(
    }
    # assign row names and column names to residuals
    if( "plm.dim" %in% class( data ) ) {
-      rownames( returnObj$resid ) <- levels( data[[ 1 ]] )
-      colnames( returnObj$resid ) <- levels( data[[ 2 ]] )
+      rownames( returnObj$resid ) <- levels( data[[ 1 ]] )[ firmId ]
+      colnames( returnObj$resid ) <- levels( data[[ 2 ]] )[ timeId ]
    } else {
-      rownames( returnObj$resid ) <- obsNames
+      rownames( returnObj$resid ) <- obsNames[ validObs ]
       colnames( returnObj$resid ) <- "residuals"
    }
    if( modelType == 2 ) {

@@ -5,6 +5,20 @@ A full ChangeLog is available in the log messages of the SVN repository
 on R-Forge.
 
 
+            CHANGES IN VERSION 0.996-10
+
+* bug fix: it now possible to estimate stochastic frontier models
+with cross-sectional data sets that have NA or infinite values
+
+* bug fix: it now possible to estimate stochastic frontier models
+with panel data sets, where some firms have NA or infinite values
+in all time periods
+
+* bug fix: it now possible to estimate stochastic frontier models
+with panel data sets, where some time periods have NA or infinite
+values for all firms
+
+
             CHANGES IN VERSION 0.996-8
 
 * function sfa() (and hence, all functions that are based on sfa()) now return
