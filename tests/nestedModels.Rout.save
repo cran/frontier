@@ -1,7 +1,8 @@
 
-R version 2.11.1 (2010-05-31)
+R version 2.12.1 (2010-12-16)
 Copyright (C) 2010 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
+Platform: i486-pc-linux-gnu (32-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -42,7 +43,7 @@ The following object(s) are masked from 'package:survival':
     aml
 
 Loading required package: cubature
-Nonparametric Kernel Methods for Mixed Datatypes (version 0.40-1)
+Nonparametric Kernel Methods for Mixed Datatypes (version 0.40-3)
 Loading required package: miscTools
 Loading required package: lmtest
 > 
@@ -78,6 +79,10 @@ Loading required package: lmtest
 +    zNames = NA )
 > all.equal( sbb5eef[-38], bb5eef[-38] )
 [1] TRUE
+> tmp <- efficiencies( sbb5eef, margEff = TRUE )
+Warning message:
+In efficiencies.frontier(sbb5eef, margEff = TRUE) :
+  cannot calculate marginal effects of z variables for a model that does not have z variables
 > 
 > # Comparisons
 > rbind( coef( bb5ecf ), coef( bb5eef ) )
@@ -110,6 +115,10 @@ Loading required package: lmtest
 +    zIntercept = TRUE, zNames = NA )
 > all.equal( sbb6eef[-38], bb6eef[-38] )
 [1] TRUE
+> tmp <- efficiencies( sbb6eef, margEff = TRUE )
+Warning message:
+In efficiencies.frontier(sbb6eef, margEff = TRUE) :
+  cannot calculate marginal effects of z variables for a model that does not have z variables
 > 
 > # Comparisons
 > rbind( coef( bb6ecf ), coef( bb6eef )[ c( 1:4, 6:7, 5 ) ] )

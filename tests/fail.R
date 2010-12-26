@@ -57,7 +57,7 @@ summary( a2 )
 ## no convergence, L(MLE) < L(OLS), wrong skewness
 a3 <- sfa( log( output ) ~ log( capital ) + log( labour ),
    data = front41Data, maxit = 2, ineffDecrease = FALSE )
-summary( a3 )
+summary( a3, farrell = FALSE )
 
 ## L(MLE) < L(OLS)
 a4 <- sfa( log( output ) ~ log( capital ) + log( labour ),

@@ -1,7 +1,8 @@
 
-R version 2.11.1 (2010-05-31)
+R version 2.12.1 (2010-12-16)
 Copyright (C) 2010 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
+Platform: i486-pc-linux-gnu (32-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -42,7 +43,7 @@ The following object(s) are masked from 'package:survival':
     aml
 
 Loading required package: cubature
-Nonparametric Kernel Methods for Mixed Datatypes (version 0.40-1)
+Nonparametric Kernel Methods for Mixed Datatypes (version 0.40-3)
 Loading required package: miscTools
 Loading required package: lmtest
 > 
@@ -59,7 +60,7 @@ Loading required package: lmtest
 Warning message:
 In sfa(log(output) ~ log(capital) + log(labour), ineffDecrease = FALSE,  :
   the residuals of the OLS estimates are left-skewed; this might indicate that there is no inefficiency or that the model is misspecified
-> summary( a1 )
+> summary( a1, farrell = FALSE )
 Error Components Frontier (see Battese & Coelli 1992)
 Inefficiency increases the endogenous variable (as in a cost function
 The dependent variable is logged
@@ -87,9 +88,9 @@ Likelihood ratio test
 
 Model 1: OLS (no inefficiency)
 Model 2: Error Components Frontier (ECF)
-  #Df  LogLik Df     Chisq Pr(>Chisq)
-1   4 -18.447                        
-2   5 -18.447  1 2.865e-06     0.4993
+  #Df  LogLik Df Chisq Pr(>Chisq)
+1   4 -18.447                    
+2   5 -18.447  1     0     0.4993
 > 
 > ## front41Data, truncNorm
 > a2 <- sfa( log( output ) ~ log( capital ) + log( labour ),
@@ -97,7 +98,7 @@ Model 2: Error Components Frontier (ECF)
 Warning message:
 In sfa(log(output) ~ log(capital) + log(labour), ineffDecrease = FALSE,  :
   the residuals of the OLS estimates are left-skewed and the likelihood value of the ML estimation is less than that obtained using OLS; this usually indicates that there is no inefficiency or that the model is misspecified
-> summary( a2 )
+> summary( a2, farrell = FALSE )
 Error Components Frontier (see Battese & Coelli 1992)
 Inefficiency increases the endogenous variable (as in a cost function
 The dependent variable is logged
@@ -136,7 +137,7 @@ Model 2: Error Components Frontier (ECF)
 Warning message:
 In sfa(log(PROD) ~ log(AREA) + log(LABOR) + log(NPK), ineffDecrease = FALSE,  :
   the residuals of the OLS estimates are left-skewed; this might indicate that there is no inefficiency or that the model is misspecified
-> summary( b1 )
+> summary( b1, farrell = FALSE )
 Error Components Frontier (see Battese & Coelli 1992)
 Inefficiency increases the endogenous variable (as in a cost function
 The dependent variable is logged
@@ -165,9 +166,9 @@ Likelihood ratio test
 
 Model 1: OLS (no inefficiency)
 Model 2: Error Components Frontier (ECF)
-  #Df  LogLik Df     Chisq Pr(>Chisq)
-1   5 -104.91                        
-2   6 -104.91  1 1.549e-05     0.4984
+  #Df  LogLik Df Chisq Pr(>Chisq)
+1   5 -104.91                    
+2   6 -104.91  1     0     0.4984
 > 
 > ## riceProdPhil, truncNorm
 > b2 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ),
@@ -175,7 +176,7 @@ Model 2: Error Components Frontier (ECF)
 Warning message:
 In sfa(log(PROD) ~ log(AREA) + log(LABOR) + log(NPK), ineffDecrease = FALSE,  :
   the residuals of the OLS estimates are left-skewed and the likelihood value of the ML estimation is less than that obtained using OLS; this usually indicates that there is no inefficiency or that the model is misspecified
-> summary( b2 )
+> summary( b2, farrell = FALSE )
 Error Components Frontier (see Battese & Coelli 1992)
 Inefficiency increases the endogenous variable (as in a cost function
 The dependent variable is logged
@@ -247,9 +248,9 @@ Likelihood ratio test
 
 Model 1: OLS (no inefficiency)
 Model 2: Error Components Frontier (ECF)
-  #Df LogLik Df     Chisq Pr(>Chisq)
-1   6 39.025                        
-2   7 39.025  1 1.448e-05     0.4985
+  #Df LogLik Df Chisq Pr(>Chisq)
+1   6 39.025                    
+2   7 39.025  1     0     0.4985
 > 
 > ## riceProdPhil, truncNorm
 > d2 <- sfa( log( cost ) ~ log( PROD ) + log( AREA ) + log( LABORP ) +

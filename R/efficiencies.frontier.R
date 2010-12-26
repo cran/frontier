@@ -1,6 +1,6 @@
 # efficiencies of frontier models
 efficiencies.frontier <- function( object, asInData = FALSE,
-      logDepVar = TRUE, ... ) {
+      logDepVar = TRUE, farrell = TRUE, margEff = FALSE, ... ) {
 
    resid <- residuals( object )
    fitted <- - resid
@@ -12,12 +12,24 @@ efficiencies.frontier <- function( object, asInData = FALSE,
    sigmaSq <- coef( object )[ "sigmaSq" ]
    gamma <- coef( object )[ "gamma" ]
    lambda <- sqrt( gamma / ( 1 - gamma ) )
-   if( object$ineffDecrease ) {
+   if( farrell ) {
       dir <- 1
    } else {
       dir <- -1
    }
+   
+   if( object$ineffDecrease != farrell ) {
+      resid <- -resid
+      fitted <- -fitted
+   }
+   
    if( object$modelType == 1 ) {
+      if( margEff ) {
+         warning( "cannot calculate marginal effects of z variables",
+            " for an error components frontier,",
+            " because this model does not have z variables" )
+         margEff <- FALSE
+      }
       if( object$timeEffect ) {
          eta <- coef( object )[ "time" ]
          etaStar <- exp( - eta * ( 1:object$nt - object$nt ) )
@@ -50,23 +62,29 @@ efficiencies.frontier <- function( object, asInData = FALSE,
          ncol = object$nt^object$timeEffect )
       if( logDepVar ) {
          for( j in 1:ncol( result ) ) {
-            result[ , j ] <- (
-               pnorm( - dir * sigmaStar * etaStar[j] + muStar / sigmaStar ) /
-               pnorm( muStar / sigmaStar ) ) *
+            result[ , j ] <- exp(
+               pnorm( - dir * sigmaStar * etaStar[j] + muStar / sigmaStar, 
+                  log.p = TRUE ) - pnorm( muStar / sigmaStar, log.p = TRUE ) ) *
                exp( - dir * muStar * etaStar[j] + 0.5 * sigmaStarSq * etaStar[j]^2 )
          }
       } else {
-         fittedStar <- rep( NA, object$nn )
-         tInd <- rep( NA, object$nn )
-         for( i in 1:object$nn ) {
-            fittedStar[ i ] <- sum( fitted[ i, ], na.rm = TRUE )
-            tInd[ i ] <- sum( !is.na( resid[ i, ] ) )
-         }
-         for( j in 1:ncol( result ) ) {
-            result[ , j ] <- 1 - dir * etaStar[ j ] * ( muStar + sigmaStar *
-               exp( dnorm( muStar / sigmaStar, log = TRUE ) -
-                  pnorm( muStar / sigmaStar, log = TRUE ) ) ) /
-               ( fittedStar / tInd )
+         if( object$ineffDecrease == farrell ) {
+            fittedStar <- rep( NA, object$nn )
+            tInd <- rep( NA, object$nn )
+            for( i in 1:object$nn ) {
+               fittedStar[ i ] <- sum( fitted[ i, ], na.rm = TRUE )
+               tInd[ i ] <- sum( !is.na( resid[ i, ] ) )
+            }
+            for( j in 1:ncol( result ) ) {
+               result[ , j ] <- 1 - dir * etaStar[ j ] * ( muStar + sigmaStar *
+                  exp( dnorm( muStar / sigmaStar, log = TRUE ) -
+                     pnorm( muStar / sigmaStar, log = TRUE ) ) ) /
+                  ( fittedStar / tInd )
+            }
+         } else {
+            warning( "currently, the efficiency estimates based on models",
+               " with non-logged dependent variable can be calculated only",
+               " if 'ineffDecrease' is equal to 'farrell'" )
          }
       }
       # set efficiency estimates of missing observations to NA
@@ -98,21 +116,61 @@ efficiencies.frontier <- function( object, asInData = FALSE,
       sigmaBar <- sqrt( sigmaBarSq )
       muBar <- ( 1 - gamma ) * zDeltaMat - dir * gamma * resid
       if( logDepVar ) {
-         result <- ( pnorm( - dir * sigmaBar + muBar / sigmaBar ) /
-               pnorm( muBar / sigmaBar ) ) *
+         result <- exp( pnorm( - dir * sigmaBar + muBar / sigmaBar, log.p = TRUE ) -
+               pnorm( muBar / sigmaBar, log.p = TRUE ) ) *
                exp( - dir * muBar + 0.5 * sigmaBarSq )
+            
+         if( margEff ) {
+            if( nz < 1 ) {
+               warning( "cannot calculate marginal effects of z variables",
+                  " for a model that does not have z variables" )
+               margEff <- FALSE
+            } else {
+               margEffectsBase <- ( ( exp( 
+                     dnorm( - dir * sigmaBar + muBar / sigmaBar, log = TRUE ) -
+                     pnorm( muBar / sigmaBar, log.p = TRUE ) ) / sigmaBar ) *
+                  exp( - dir * muBar + 0.5 * sigmaBarSq ) +
+                  exp( pnorm( - dir * sigmaBar + muBar / sigmaBar, log.p = TRUE ) -
+                     pnorm( muBar / sigmaBar, log.p = TRUE ) ) *
+                  exp( - dir * muBar + 0.5 * sigmaBarSq ) * ( - dir ) -
+                  exp( dnorm( muBar / sigmaBar, log = TRUE ) +
+                     pnorm( - dir * sigmaBar + muBar / sigmaBar, log.p = TRUE ) -
+                     2 * pnorm( muBar / sigmaBar, log.p = TRUE ) ) *
+                  ( exp( - dir * muBar + 0.5 * sigmaBarSq ) / sigmaBar ) ) *
+                  ( 1 - gamma )
+               margEffects <- array( NA, 
+                  c( nrow( margEffectsBase ), ncol( margEffectsBase ), nz ) )
+               for( i in 1:nz ) {
+                  margEffects[ , , i ] <- margEffectsBase *
+                     coef( object )[ object$nb + object$zIntercept + 1 + i  ]
+               }
+            }
+         }
       } else {
-         result <- 1 - dir * ( muBar + sigmaBar *
-            exp( dnorm( muBar / sigmaBar, log = TRUE ) -
-               pnorm( muBar / sigmaBar, log = TRUE ) ) ) /
-            fitted
+         if( object$ineffDecrease == farrell ) {
+            result <- 1 - dir * ( muBar + sigmaBar *
+               exp( dnorm( muBar / sigmaBar, log = TRUE ) -
+                  pnorm( muBar / sigmaBar, log = TRUE ) ) ) /
+               fitted
+         } else {
+            result <- matrix( NA, nrow = nrow( fitted ), ncol = ncol( fitted ) )
+            warning( "currently, the efficiency estimates based on models",
+               " with non-logged dependent variable can be calculated only",
+               " if 'ineffDecrease' is equal to 'farrell'" )
+         }
+         if( margEff ) {
+            warning( "calculation of marginal effects of z variables",
+               " has not been implemented for models with non-logged",
+               " dependent variables yet" )
+            margEff <- FALSE
+         }
       }
    } else {
       stop( "internal error: unknow model type '",
          object$modelType, "'" )
    }
 
-   if( object$ineffDecrease ) {
+   if( farrell ) {
       result[ result > 1 ] <- 1
    } else {
       result[ result < 1 ] <- 1
@@ -123,6 +181,13 @@ efficiencies.frontier <- function( object, asInData = FALSE,
       colnames( result ) <- colnames( resid )
    } else {
       colnames( result ) <- "efficiency"
+   }
+
+   if( margEff ) {
+      dimnames( margEffects ) <- list( rownames( resid ),
+         if( ncol( result ) > 1 ){ colnames( resid ) } else { "efficiency" },
+         names( coef( object ) )[ ( object$nb + object$zIntercept + 2 ):( 
+            object$nb + object$zIntercept + 1 + nz ) ] )
    }
 
    if( asInData ) {
@@ -137,6 +202,24 @@ efficiencies.frontier <- function( object, asInData = FALSE,
       }
       result <- effic
       names( result ) <- names( object$validObs )
+      if( margEff ) {
+         margEffects2 <- matrix( NA, nrow = length( object$validObs ), ncol = nz )
+         for( i in 1:nrow( object$dataTable ) ) {
+            for( k in 1:nz ) { 
+               margEffects2[ object$validObs, k ][ i ] <- 
+                  margEffects[ object$dataTable[ i , 1 ],
+                  min( object$dataTable[ i , 2 ], ncol( result ) ), k ]
+            }
+         }
+         rownames( margEffects2 ) <- names( object$validObs )
+         colnames( margEffects2 ) <- dimnames( margEffects )[[ 3 ]]
+         margEffects <- margEffects2
+      }
    }
+
+   if( margEff ) {
+      attr( result, "margEff" ) <- margEffects
+   }
+
    return( result )
 }

@@ -30,6 +30,7 @@ bb5eef <- frontier( data = as.data.frame( riceProdPhil ),
    yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ),
    zNames = NA )
 all.equal( sbb5eef[-38], bb5eef[-38] )
+tmp <- efficiencies( sbb5eef, margEff = TRUE )
 
 # Comparisons
 rbind( coef( bb5ecf ), coef( bb5eef ) )
@@ -54,6 +55,7 @@ bb6eef <- frontier( data = as.data.frame( riceProdPhil ),
    yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ),
    zIntercept = TRUE, zNames = NA )
 all.equal( sbb6eef[-38], bb6eef[-38] )
+tmp <- efficiencies( sbb6eef, margEff = TRUE )
 
 # Comparisons
 rbind( coef( bb6ecf ), coef( bb6eef )[ c( 1:4, 6:7, 5 ) ] )

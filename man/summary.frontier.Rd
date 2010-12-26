@@ -10,7 +10,7 @@ returned by \code{\link{frontier}}.
 
 \usage{
 \method{summary}{frontier}( object, effic = FALSE,
-   logDepVar = TRUE, \dots )
+   logDepVar = TRUE, farrell = TRUE, \dots )
 \method{print}{summary.frontier}( x, effic = x$printEffic, \dots )
 }
 
@@ -21,6 +21,13 @@ returned by \code{\link{frontier}}.
       (returned by the function \code{summary.frontier}).}
    \item{effic}{logical. Print the individual efficiency estimates?}
    \item{logDepVar}{logical. Is the dependent variable logged?}
+   \item{farrell}{logical. If \code{TRUE}, Farrel-type efficiencies
+      that have values between 0 and 1 are used for calculating 
+      mean elasticities.
+      If \code{FALSE}, efficiencies that have values larger than 
+      or equal to one are used for calculating the mean efficiencies.
+      The conversion between the two efficiency measures is done by taking
+      the inverse (before taking the mean).}
    \item{\dots}{currently unused.}
 }
 

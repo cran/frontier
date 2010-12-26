@@ -1,7 +1,8 @@
 
-R version 2.11.1 (2010-05-31)
+R version 2.12.1 (2010-12-16)
 Copyright (C) 2010 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
+Platform: i486-pc-linux-gnu (32-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -42,7 +43,7 @@ The following object(s) are masked from 'package:survival':
     aml
 
 Loading required package: cubature
-Nonparametric Kernel Methods for Mixed Datatypes (version 0.40-1)
+Nonparametric Kernel Methods for Mixed Datatypes (version 0.40-3)
 Loading required package: miscTools
 Loading required package: lmtest
 > 
@@ -179,7 +180,7 @@ Warning messages:
   the residuals of the OLS estimates are left-skewed and the likelihood value of the ML estimation is less than that obtained using OLS; this usually indicates that there is no inefficiency or that the model is misspecified
 2: In sfa(log(output) ~ log(capital) + log(labour), data = front41Data,  :
   the maximum number of iterations has been reached; please try again using different starting values and/or increase the maximum number of iterations
-> summary( a3 )
+> summary( a3, farrell = FALSE )
 Error Components Frontier (see Battese & Coelli 1992)
 Inefficiency increases the endogenous variable (as in a cost function
 The dependent variable is logged

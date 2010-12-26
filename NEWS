@@ -5,6 +5,29 @@ A full ChangeLog is available in the log messages of the SVN repository
 on R-Forge.
 
 
+            CHANGES IN VERSION 0.997-0  (2010-12-26)
+
+* methods efficiencies() and summary() for objects of class "frontier" have 
+an additional argument "farrell" now that indicates whether Farrell-type 
+efficiencies (that have values between 0 and 1) or efficiencies with values 
+equal to or larger than one should be returned and used for calculating 
+mean efficiencies, respectively; 
+WARNING: as the default value of "farrell" is always TRUE, the type of 
+efficiencies returned by default for models, where inefficiency decreases 
+the dependent variable, has changed!
+
+* the efficiencies() method for objects of class "frontier" has an additional 
+argument "margEff" (defaults to FALSE) now: if it is TRUE, the marginal effects
+of the z variables (of an Efficiency Effects Frontier, EEF) on the efficiency 
+measure are returned as an 'attribute' to the returned object (i.e. the 
+efficiency estimates). Currently, this feature is implemented only for models 
+with logged dependent variables.
+
+* the efficiencies() method for objects of class "frontier" calculates
+some efficiency estimates in a way that is numerically more stable now
+(similar to the second item in the list for changes in version 0.991-2)
+
+
             CHANGES IN VERSION 0.996-10
 
 * bug fix: it now possible to estimate stochastic frontier models

@@ -28,9 +28,12 @@ logLik( a1, which = "ols" )
 logLik( a1, which = "grid" )
 logLik( a1 )
 print( summary( a1 ) )
+print( summary( a1, farrell = FALSE ) )
 lrtest( a1 )
-efficiencies( a1 )
+efficiencies( a1, margEff = TRUE )
 efficiencies( a1, asInData = TRUE )
+efficiencies( a1, farrell = FALSE )
+efficiencies( a1, asInData = TRUE, farrell = FALSE )
 residuals( a1 )
 residuals( a1, asInData = TRUE )
 print.default( a1 )
@@ -100,9 +103,23 @@ coef( summary( aa1 ), which = "ols" )
 coef( summary( aa1 ) )
 vcov( aa1 )
 print( summary( aa1 ) )
+print( summary( aa1, farrell = FALSE ) )
 lrtest( aa1 )
-efficiencies( aa1 )
-efficiencies( aa1, asInData = TRUE )
+print( aa1eff <- efficiencies( aa1, margEff = TRUE ) )
+print( aa1effD <- efficiencies( aa1, asInData = TRUE, margEff = TRUE ) ) 
+print( aa1effF <- efficiencies( aa1, farrell = FALSE, margEff = TRUE ) )
+print( aa1effDF <- efficiencies( aa1, asInData = TRUE, farrell = FALSE, 
+   margEff = TRUE ) )
+aa1m <- aa1
+aa1m$dataTable[ , "firmNo" ] <- aa1m$dataTable[ , "firmNo" ] + 1e-6
+all.equal( attr( aa1eff, "margEff" )[ , 1, 1 ], 
+   ( efficiencies( aa1m ) - aa1eff )[ , 1 ] / 1e-6 )
+all.equal( attr( aa1effD, "margEff" )[ , 1 ], 
+   c( efficiencies( aa1m, asInData = TRUE ) - aa1effD ) / 1e-6 )
+all.equal( attr( aa1effF, "margEff" )[ , 1, 1 ], 
+   ( efficiencies( aa1m, farrell = FALSE ) - aa1effF )[ , 1 ] / 1e-6 )
+all.equal( attr( aa1effDF, "margEff" )[ , 1 ],
+   c( efficiencies( aa1m, asInData = TRUE, farrell = FALSE ) - aa1effDF ) / 1e-6 )
 residuals( aa1 )
 residuals( aa1, asInData = TRUE )
 print.default( aa1 )
@@ -221,9 +238,12 @@ coef( summary( bb2 ), which = "ols" )
 coef( summary( bb2 ) )
 vcov( bb2 )
 print( summary( bb2 ) )
+print( summary( bb2, farrell = FALSE ) )
 lrtest( bb2 )
 efficiencies( bb2 )
 efficiencies( bb2, asInData = TRUE )
+efficiencies( bb2, farrell = FALSE )
+efficiencies( bb2, asInData = TRUE, farrell = FALSE )
 residuals( bb2 )
 residuals( bb2, asInData = TRUE )
 print.default( bb2 )
@@ -270,9 +290,33 @@ coef( summary( bb6 ), which = "ols" )
 coef( summary( bb6 ) )
 vcov( bb6 )
 print( summary( bb6 ) )
+print( summary( bb6, farrell = FALSE ) )
 lrtest( bb6 )
-efficiencies( bb6 )
-efficiencies( bb6, asInData = TRUE )
+print( bb6eff <- efficiencies( bb6, margEff = TRUE ) )
+print( bb6effD <- efficiencies( bb6, asInData = TRUE, margEff = TRUE ) )
+print( bb6effF <- efficiencies( bb6, farrell = FALSE, margEff = TRUE ) )
+print( bb6effDF <- efficiencies( bb6, asInData = TRUE, farrell = FALSE, 
+   margEff = TRUE ) )
+bb6m1 <- bb6
+bb6m1$dataTable[ , "EDYRS" ] <- bb6m1$dataTable[ , "EDYRS" ] + 1e-6
+all.equal( attr( bb6eff, "margEff" )[ , 1, 1 ], 
+   ( efficiencies( bb6m1 ) - bb6eff )[ , 1 ] / 1e-6 )
+all.equal( attr( bb6effD, "margEff" )[ , 1 ], 
+   c( efficiencies( bb6m1, asInData = TRUE ) - bb6effD ) / 1e-6 )
+all.equal( attr( bb6effF, "margEff" )[ , 1, 1 ], 
+   ( efficiencies( bb6m1, farrell = FALSE ) - bb6effF )[ , 1 ] / 1e-6 )
+all.equal( attr( bb6effDF, "margEff" )[ , 1 ],
+   c( efficiencies( bb6m1, asInData = TRUE, farrell = FALSE ) - bb6effDF ) / 1e-6 )
+bb6m2 <- bb6
+bb6m2$dataTable[ , "BANRAT" ] <- bb6m2$dataTable[ , "BANRAT" ] + 1e-6
+all.equal( attr( bb6eff, "margEff" )[ , 1, 2 ], 
+   ( efficiencies( bb6m2 ) - bb6eff )[ , 1 ] / 1e-6 )
+all.equal( attr( bb6effD, "margEff" )[ , 2 ], 
+   c( efficiencies( bb6m2, asInData = TRUE ) - bb6effD ) / 1e-6 )
+all.equal( attr( bb6effF, "margEff" )[ , 1, 2 ], 
+   ( efficiencies( bb6m2, farrell = FALSE ) - bb6effF )[ , 1 ] / 1e-6 )
+all.equal( attr( bb6effDF, "margEff" )[ , 2 ],
+   c( efficiencies( bb6m2, asInData = TRUE, farrell = FALSE ) - bb6effDF ) / 1e-6 )
 residuals( bb6 )
 residuals( bb6, asInData = TRUE )
 print.default( bb6 )
@@ -354,9 +398,12 @@ coef( summary( dd1 ), which = "ols" )
 coef( summary( dd1 ) )
 vcov( dd1 )
 print( summary( dd1 ) )
+print( summary( dd1, farrell = FALSE ) )
 lrtest( dd1 )
 efficiencies( dd1 )
 efficiencies( dd1, asInData = TRUE )
+efficiencies( dd1, farrell = FALSE )
+efficiencies( dd1, asInData = TRUE, farrell = FALSE )
 residuals( dd1 )
 residuals( dd1, asInData = TRUE )
 print.default( dd1 )
@@ -375,10 +422,10 @@ coef( dd2 )
 coef( summary( dd2 ), which = "ols" )
 coef( summary( dd2 ) )
 vcov( dd2 )
-print( summary( dd2 ) )
+print( summary( dd2, farrell = FALSE ) )
 lrtest( dd2 )
-efficiencies( dd2 )
-efficiencies( dd2, asInData = TRUE )
+efficiencies( dd2, farrell = FALSE )
+efficiencies( dd2, asInData = TRUE, farrell = FALSE )
 residuals( dd2 )
 residuals( dd2, asInData = TRUE )
 print.default( dd2 )
@@ -402,9 +449,33 @@ coef( summary( dd5 ), which = "ols" )
 coef( summary( dd5 ) )
 vcov( dd5 )
 print( summary( dd5 ) )
+print( summary( dd5, farrell = FALSE ) )
 lrtest( dd5 )
-efficiencies( dd5 )
-efficiencies( dd5, asInData = TRUE )
+print( dd5eff <- efficiencies( dd5, margEff = TRUE ) )
+print( dd5effD <- efficiencies( dd5, asInData = TRUE, margEff = TRUE ) )
+print( dd5effF <- efficiencies( dd5, farrell = FALSE, margEff = TRUE ) )
+print( dd5effDF <- efficiencies( dd5, asInData = TRUE, farrell = FALSE, 
+   margEff = TRUE ) )
+dd5m1 <- dd5
+dd5m1$dataTable[ , "EDYRS" ] <- dd5m1$dataTable[ , "EDYRS" ] + 1e-6
+all.equal( attr( dd5eff, "margEff" )[ , 1, 1 ], 
+   ( efficiencies( dd5m1 ) - dd5eff )[ , 1 ] / 1e-6 )
+all.equal( attr( dd5effD, "margEff" )[ , 1 ], 
+   c( efficiencies( dd5m1, asInData = TRUE ) - dd5effD ) / 1e-6 )
+all.equal( attr( dd5effF, "margEff" )[ , 1, 1 ], 
+   ( efficiencies( dd5m1, farrell = FALSE ) - dd5effF )[ , 1 ] / 1e-6 )
+all.equal( attr( dd5effDF, "margEff" )[ , 1 ],
+   c( efficiencies( dd5m1, asInData = TRUE, farrell = FALSE ) - dd5effDF ) / 1e-6 )
+dd5m2 <- dd5
+dd5m2$dataTable[ , "BANRAT" ] <- dd5m2$dataTable[ , "BANRAT" ] + 1e-6
+all.equal( attr( dd5eff, "margEff" )[ , 1, 2 ], 
+   ( efficiencies( dd5m2 ) - dd5eff )[ , 1 ] / 1e-6 )
+all.equal( attr( dd5effD, "margEff" )[ , 2 ], 
+   c( efficiencies( dd5m2, asInData = TRUE ) - dd5effD ) / 1e-6 )
+all.equal( attr( dd5effF, "margEff" )[ , 1, 2 ], 
+   ( efficiencies( dd5m2, farrell = FALSE ) - dd5effF )[ , 1 ] / 1e-6 )
+all.equal( attr( dd5effDF, "margEff" )[ , 2 ],
+   c( efficiencies( dd5m2, asInData = TRUE, farrell = FALSE ) - dd5effDF ) / 1e-6 )
 residuals( dd5 )
 residuals( dd5, asInData = TRUE )
 print.default( dd5 )
@@ -424,10 +495,10 @@ coef( dd6 )
 coef( summary( dd6 ), which = "ols" )
 coef( summary( dd6 ) )
 vcov( dd6 )
-print( summary( dd6 ) )
+print( summary( dd6, farrell = FALSE ) )
 lrtest( dd6 )
-efficiencies( dd6 )
-efficiencies( dd6, asInData = TRUE )
+efficiencies( dd6, farrell = FALSE )
+efficiencies( dd6, asInData = TRUE, farrell = FALSE )
 residuals( dd6 )
 residuals( dd6, asInData = TRUE )
 print.default( dd6 )
@@ -435,7 +506,7 @@ print.default( dd6 )
 ## cross-section rice data, efficiency effects cost frontier: no Z vars
 dd9 <- sfa( log( cost ) ~ log( PROD ) + log( AREA ) + log( LABORP ) +
    log( NPKP ) | - 1, data = riceProdPhil, ineffDecrease = FALSE )
-summary( dd9 )
+summary( dd9, farrell = FALSE )
 lrtest( dd9 )
 
 
@@ -464,9 +535,12 @@ vcov( b1 )
 logLik( b1, which = "ols" )
 logLik( b1 )
 print( summary( b1 ) )
+print( summary( b1, farrell = FALSE ) )
 lrtest( b1 )
 efficiencies( b1 )
 efficiencies( b1, asInData = TRUE )
+efficiencies( b1, farrell = FALSE )
+efficiencies( b1, asInData = TRUE, farrell = FALSE )
 residuals( b1 )
 residuals( b1, asInData = TRUE )
 print.default( b1 )
@@ -567,9 +641,33 @@ vcov( b5 )
 logLik( b5, which = "ols" )
 logLik( b5 )
 print( summary( b5 ) )
+print( summary( b5, farrell = FALSE ) )
 lrtest( b5 )
-efficiencies( b5 )
-efficiencies( b5, asInData = TRUE )
+print( b5eff <- efficiencies( b5, margEff = TRUE ) )
+print( b5effD <- efficiencies( b5, asInData = TRUE , margEff = TRUE) )
+print( b5effF <- efficiencies( b5, farrell = FALSE, margEff = TRUE ) )
+print( b5effDF <- efficiencies( b5, asInData = TRUE, farrell = FALSE, 
+   margEff = TRUE ) )
+b5m1 <- b5
+b5m1$dataTable[ , "EDYRS" ] <- b5m1$dataTable[ , "EDYRS" ] + 1e-6
+all.equal( attr( b5eff, "margEff" )[ , , 1 ], 
+   ( efficiencies( b5m1 ) - b5eff )[ , ] / 1e-6 )
+all.equal( attr( b5effD, "margEff" )[ , 1 ], 
+   c( efficiencies( b5m1, asInData = TRUE ) - b5effD ) / 1e-6 )
+all.equal( attr( b5effF, "margEff" )[ , , 1 ], 
+   ( efficiencies( b5m1, farrell = FALSE ) - b5effF )[ ,  ] / 1e-6 )
+all.equal( attr( b5effDF, "margEff" )[ , 1 ],
+   c( efficiencies( b5m1, asInData = TRUE, farrell = FALSE ) - b5effDF ) / 1e-6 )
+b5m2 <- b5
+b5m2$dataTable[ , "BANRAT" ] <- b5m2$dataTable[ , "BANRAT" ] + 1e-6
+all.equal( attr( b5eff, "margEff" )[ , , 2 ], 
+   ( efficiencies( b5m2 ) - b5eff )[ , ] / 1e-6 )
+all.equal( attr( b5effD, "margEff" )[ , 2 ], 
+   c( efficiencies( b5m2, asInData = TRUE ) - b5effD ) / 1e-6 )
+all.equal( attr( b5effF, "margEff" )[ , , 2 ], 
+   ( efficiencies( b5m2, farrell = FALSE ) - b5effF )[ , ] / 1e-6 )
+all.equal( attr( b5effDF, "margEff" )[ , 2 ],
+   c( efficiencies( b5m2, asInData = TRUE, farrell = FALSE ) - b5effDF ) / 1e-6 )
 residuals( b5 )
 residuals( b5, asInData = TRUE )
 print.default( b5 )
@@ -675,9 +773,12 @@ coef( summary( d1 ), which = "ols" )
 coef( summary( d1 ) )
 vcov( d1 )
 print( summary( d1 ) )
+print( summary( d1, farrell = FALSE ) )
 lrtest( d1 )
 efficiencies( d1 )
 efficiencies( d1, asInData = TRUE )
+efficiencies( d1, farrell = FALSE )
+efficiencies( d1, asInData = TRUE, farrell = FALSE )
 residuals( d1 )
 residuals( d1, asInData = TRUE )
 print.default( d1 )
@@ -696,10 +797,10 @@ coef( d2 )
 coef( summary( d2 ), which = "ols" )
 coef( summary( d2 ) )
 vcov( d2 )
-print( summary( d2 ) )
+print( summary( d2, farrell = FALSE ) )
 lrtest( d2 )
-efficiencies( d2 )
-efficiencies( d2, asInData = TRUE )
+efficiencies( d2, farrell = FALSE )
+efficiencies( d2, asInData = TRUE, farrell = FALSE )
 residuals( d2 )
 residuals( d2, asInData = TRUE )
 print.default( d2 )
@@ -718,10 +819,10 @@ coef( d3 )
 coef( summary( d3 ), which = "ols" )
 coef( summary( d3 ) )
 vcov( d3 )
-print( summary( d3 ) )
+print( summary( d3, farrell = FALSE ) )
 lrtest( d3 )
-efficiencies( d3 )
-efficiencies( d3, asInData = TRUE )
+efficiencies( d3, farrell = FALSE )
+efficiencies( d3, asInData = TRUE, farrell = FALSE )
 residuals( d3 )
 residuals( d3, asInData = TRUE )
 print.default( d3 )
@@ -741,10 +842,10 @@ coef( d4 )
 coef( summary( d4 ), which = "ols" )
 coef( summary( d4 ) )
 vcov( d4 )
-print( summary( d4 ) )
+print( summary( d4, farrell = FALSE ) )
 lrtest( d4 )
-efficiencies( d4 )
-efficiencies( d4, asInData = TRUE )
+efficiencies( d4, farrell = FALSE )
+efficiencies( d4, asInData = TRUE, farrell = FALSE )
 residuals( d4 )
 residuals( d4, asInData = TRUE )
 print.default( d4 )
@@ -769,9 +870,33 @@ coef( summary( d5 ), which = "ols" )
 coef( summary( d5 ) )
 vcov( d5 )
 print( summary( d5 ) )
+print( summary( d5, farrell = FALSE ) )
 lrtest( d5 )
-efficiencies( d5 )
-efficiencies( d5, asInData = TRUE )
+print( d5eff <- efficiencies( d5, margEff = TRUE ) )
+print( d5effD <- efficiencies( d5, asInData = TRUE, margEff = TRUE ) )
+print( d5effF <- efficiencies( d5, farrell = FALSE, margEff = TRUE ) )
+print( d5effDF <- efficiencies( d5, asInData = TRUE, farrell = FALSE, 
+   margEff = TRUE ) )
+d5m1 <- d5
+d5m1$dataTable[ , "EDYRS" ] <- d5m1$dataTable[ , "EDYRS" ] + 1e-6
+all.equal( attr( d5eff, "margEff" )[ , , 1 ], 
+   ( efficiencies( d5m1 ) - d5eff )[ , ] / 1e-6 )
+all.equal( attr( d5effD, "margEff" )[ , 1 ], 
+   c( efficiencies( d5m1, asInData = TRUE ) - d5effD ) / 1e-6 )
+all.equal( attr( d5effF, "margEff" )[ , , 1 ], 
+   ( efficiencies( d5m1, farrell = FALSE ) - d5effF )[ ,  ] / 1e-6 )
+all.equal( attr( d5effDF, "margEff" )[ , 1 ],
+   c( efficiencies( d5m1, asInData = TRUE, farrell = FALSE ) - d5effDF ) / 1e-6 )
+d5m2 <- d5
+d5m2$dataTable[ , "BANRAT" ] <- d5m2$dataTable[ , "BANRAT" ] + 1e-6
+all.equal( attr( d5eff, "margEff" )[ , , 2 ], 
+   ( efficiencies( d5m2 ) - d5eff )[ , ] / 1e-6 )
+all.equal( attr( d5effD, "margEff" )[ , 2 ], 
+   c( efficiencies( d5m2, asInData = TRUE ) - d5effD ) / 1e-6 )
+all.equal( attr( d5effF, "margEff" )[ , , 2 ], 
+   ( efficiencies( d5m2, farrell = FALSE ) - d5effF )[ , ] / 1e-6 )
+all.equal( attr( d5effDF, "margEff" )[ , 2 ],
+   c( efficiencies( d5m2, asInData = TRUE, farrell = FALSE ) - d5effDF ) / 1e-6 )
 residuals( d5 )
 residuals( d5, asInData = TRUE )
 print.default( d5 )
@@ -791,10 +916,10 @@ coef( d6 )
 coef( summary( d6 ), which = "ols" )
 coef( summary( d6 ) )
 vcov( d6 )
-print( summary( d6 ) )
+print( summary( d6, farrell = FALSE ) )
 lrtest( d6 )
-efficiencies( d6 )
-efficiencies( d6, asInData = TRUE )
+efficiencies( d6, farrell = FALSE )
+efficiencies( d6, asInData = TRUE, farrell = FALSE )
 residuals( d6 )
 residuals( d6, asInData = TRUE )
 print.default( d6 )
@@ -802,7 +927,7 @@ print.default( d6 )
 ## panel rice data, efficiency effects cost frontier: no Z vars
 d9 <- sfa( log( cost ) ~ log( PROD ) + log( AREA ) + log( LABORP ) +
    log( NPKP ) | - 1, data = riceProdPhilPanel, ineffDecrease = FALSE )
-summary( d9 )
+summary( d9, farrell = FALSE )
 lrtest( d9 )
 
 
@@ -854,9 +979,12 @@ b4u <- sfa( lPROD ~ lAREA + lLABOR + lNPK, data = riceProdPhilPanelUnb,
    truncNorm = TRUE, timeEffect = TRUE )
 print( b4u )
 print( summary( b4u ) )
+print( summary( b4u, farrell = FALSE ) )
 lrtest( b4u )
 efficiencies( b4u )
 efficiencies( b4u, asInData = TRUE )
+efficiencies( b4u, farrell = FALSE )
+efficiencies( b4u, asInData = TRUE, farrell = FALSE )
 residuals( b4u )
 residuals( b4u, asInData = TRUE )
 print.default( b4u )
@@ -878,9 +1006,33 @@ b6u <- sfa( lPROD ~ lAREA + lLABOR + lNPK | EDYRS + BANRAT,
    data = riceProdPhilPanelUnb )
 print( b6u )
 print( summary( b6u ) )
+print( summary( b6u, farrell = FALSE ) )
 lrtest( b6u )
-efficiencies( b6u )
-efficiencies( b6u, asInData = TRUE )
+print( b6ueff <- efficiencies( b6u, margEff = TRUE ) )
+print( b6ueffD <- efficiencies( b6u, asInData = TRUE, margEff = TRUE ) )
+print( b6ueffF <- efficiencies( b6u, farrell = FALSE, margEff = TRUE ) )
+print( b6ueffDF <- efficiencies( b6u, asInData = TRUE, farrell = FALSE, 
+   margEff = TRUE ) )
+b6um1 <- b6u
+b6um1$dataTable[ , "EDYRS" ] <- b6um1$dataTable[ , "EDYRS" ] + 1e-6
+all.equal( attr( b6ueff, "margEff" )[ , , 1 ], 
+   ( efficiencies( b6um1 ) - b6ueff )[ , ] / 1e-6 )
+all.equal( attr( b6ueffD, "margEff" )[ , 1 ], 
+   c( efficiencies( b6um1, asInData = TRUE ) - b6ueffD ) / 1e-6 )
+all.equal( attr( b6ueffF, "margEff" )[ , , 1 ], 
+   ( efficiencies( b6um1, farrell = FALSE ) - b6ueffF )[ ,  ] / 1e-6 )
+all.equal( attr( b6ueffDF, "margEff" )[ , 1 ],
+   c( efficiencies( b6um1, asInData = TRUE, farrell = FALSE ) - b6ueffDF ) / 1e-6 )
+b6um2 <- b6u
+b6um2$dataTable[ , "BANRAT" ] <- b6um2$dataTable[ , "BANRAT" ] + 1e-6
+all.equal( attr( b6ueff, "margEff" )[ , , 2 ], 
+   ( efficiencies( b6um2 ) - b6ueff )[ , ] / 1e-6 )
+all.equal( attr( b6ueffD, "margEff" )[ , 2 ], 
+   c( efficiencies( b6um2, asInData = TRUE ) - b6ueffD ) / 1e-6 )
+all.equal( attr( b6ueffF, "margEff" )[ , , 2 ], 
+   ( efficiencies( b6um2, farrell = FALSE ) - b6ueffF )[ , ] / 1e-6 )
+all.equal( attr( b6ueffDF, "margEff" )[ , 2 ],
+   c( efficiencies( b6um2, asInData = TRUE, farrell = FALSE ) - b6ueffDF ) / 1e-6 )
 residuals( b6u )
 residuals( b6u, asInData = TRUE )
 print.default( b6u )
@@ -890,9 +1042,12 @@ d1u <- sfa( lCost ~ lPROD + lAREA + lLABORP + lNPKP, data = riceProdPhilPanelUnb
    ineffDecrease = FALSE )
 print( d1u )
 print( summary( d1u ) )
+print( summary( d1u, farrell = FALSE ) )
 lrtest( d1u )
 efficiencies( d1u )
 efficiencies( d1u, asInData = TRUE )
+efficiencies( d1u, farrell = FALSE )
+efficiencies( d1u, asInData = TRUE, farrell = FALSE )
 residuals( d1u )
 residuals( d1u, asInData = TRUE )
 print.default( d1u )
@@ -901,10 +1056,10 @@ print.default( d1u )
 d2u <- sfa( lCost ~ lPROD + lAREA + lLABORP + lNPKP, data = riceProdPhilPanelUnb,
    ineffDecrease = FALSE, truncNorm = TRUE )
 print( d2u )
-print( summary( d2u ) )
+print( summary( d2u, farrell = FALSE ) )
 lrtest( d2u )
-efficiencies( d2u )
-efficiencies( d2u, asInData = TRUE )
+efficiencies( d2u, farrell = FALSE )
+efficiencies( d2u, asInData = TRUE, farrell = FALSE )
 residuals( d2u )
 residuals( d2u, asInData = TRUE )
 print.default( d2u )
@@ -913,10 +1068,10 @@ print.default( d2u )
 d3u <- sfa( lCost ~ lPROD + lAREA + lLABORP + lNPKP, data = riceProdPhilPanelUnb,
    ineffDecrease = FALSE, timeEffect = TRUE )
 print( d3u )
-print( summary( d3u ) )
+print( summary( d3u, farrell = FALSE ) )
 lrtest( d3u )
-efficiencies( d3u )
-efficiencies( d3u, asInData = TRUE )
+efficiencies( d3u, farrell = FALSE )
+efficiencies( d3u, asInData = TRUE, farrell = FALSE )
 residuals( d3u )
 residuals( d3u, asInData = TRUE )
 print.default( d3u )
@@ -925,10 +1080,10 @@ print.default( d3u )
 d4u <- sfa( lCost ~ lPROD + lAREA + lLABORP + lNPKP, data = riceProdPhilPanelUnb,
    ineffDecrease = FALSE, truncNorm = TRUE, timeEffect = TRUE )
 print( d4u )
-print( summary( d4u ) )
+print( summary( d4u, farrell = FALSE ) )
 lrtest( d4u )
-efficiencies( d4u )
-efficiencies( d4u, asInData = TRUE )
+efficiencies( d4u, farrell = FALSE )
+efficiencies( d4u, asInData = TRUE, farrell = FALSE )
 residuals( d4u )
 residuals( d4u, asInData = TRUE )
 print.default( d4u )
@@ -936,11 +1091,14 @@ print.default( d4u )
 ## unbalanced panel rice data, efficiency effects cost frontier
 d5u <- sfa( lCost ~ lPROD + lAREA + lLABORP + lNPKP | EDYRS + BANRAT - 1,
    data = riceProdPhilPanelUnb, ineffDecrease = FALSE )
-print( d5u )
+print( d5u, farrell = FALSE )
 print( summary( d5u ) )
+print( summary( d5u, farrell = FALSE ) )
 lrtest( d5u )
 efficiencies( d5u )
 efficiencies( d5u, asInData = TRUE )
+efficiencies( d5u, farrell = FALSE )
+efficiencies( d5u, asInData = TRUE, farrell = FALSE )
 residuals( d5u )
 residuals( d5u, asInData = TRUE )
 print.default( d5u )
@@ -949,10 +1107,10 @@ print.default( d5u )
 d6u <- sfa( lCost ~ lPROD + lAREA + lLABORP + lNPKP | EDYRS + BANRAT,
    data = riceProdPhilPanelUnb, ineffDecrease = FALSE )
 print( d6u )
-print( summary( d6u ) )
+print( summary( d6u, farrell = FALSE ) )
 lrtest( d6u )
-efficiencies( d6u )
-efficiencies( d6u, asInData = TRUE )
+efficiencies( d6u, farrell = FALSE )
+efficiencies( d6u, asInData = TRUE, farrell = FALSE )
 residuals( d6u )
 residuals( d6u, asInData = TRUE )
 print.default( d6u )
@@ -1085,9 +1243,12 @@ vcov( translog )
 logLik( translog, which = "ols" )
 logLik( translog )
 print( summary( translog ) )
+print( summary( translog, farrell = FALSE ) )
 lrtest( translog )
 efficiencies( translog )
 efficiencies( translog, asInData = TRUE )
+efficiencies( translog, farrell = FALSE )
+efficiencies( translog, asInData = TRUE, farrell = FALSE )
 residuals( translog )
 residuals( translog, asInData = TRUE )
 translogEla <- elas( translog )
@@ -1137,9 +1298,12 @@ vcov( translogZvar )
 logLik( translogZvar, which = "ols" )
 logLik( translogZvar )
 print( summary( translogZvar ) )
+print( summary( translogZvar, farrell = FALSE ) )
 lrtest( translogZvar )
-efficiencies( translogZvar )
-efficiencies( translogZvar, asInData = TRUE )
+efficiencies( translogZvar, margEff = TRUE )
+efficiencies( translogZvar, asInData = TRUE, margEff = TRUE )
+efficiencies( translogZvar, farrell = FALSE, margEff = TRUE )
+efficiencies( translogZvar, asInData = TRUE, farrell = FALSE, margEff = TRUE )
 residuals( translogZvar )
 residuals( translogZvar, asInData = TRUE )
 translogZvarEla <- elas( translogZvar )
@@ -1156,8 +1320,11 @@ print.default( translogZvar )
 ## example data included in FRONTIER 4.1 (cross-section data)
 ## cross-section data, error components frontier
 summary( Sa1, logDepVar = FALSE )
+summary( Sa1, logDepVar = FALSE, farrell = FALSE )
 efficiencies( a1, logDepVar = FALSE )
 efficiencies( a1, asInData = TRUE, logDepVar = FALSE )
+efficiencies( a1, logDepVar = FALSE, farrell = FALSE )
+efficiencies( a1, asInData = TRUE, logDepVar = FALSE, farrell = FALSE )
 
 ## cross-section data, error components frontier, truncNorm
 summary( a2, logDepVar = FALSE )
@@ -1166,8 +1333,11 @@ efficiencies( a2, asInData = TRUE, logDepVar = FALSE )
 
 ## cross-section data, efficiency effects frontier
 summary( Saa1, logDepVar = FALSE )
-efficiencies( aa1, logDepVar = FALSE )
+summary( Saa1, logDepVar = FALSE, farrell = FALSE )
+efficiencies( aa1, logDepVar = FALSE, margEff = TRUE )
 efficiencies( aa1, asInData = TRUE, logDepVar = FALSE )
+efficiencies( aa1, logDepVar = FALSE, farrell = FALSE )
+efficiencies( aa1, asInData = TRUE, logDepVar = FALSE, farrell = FALSE )
 
 ## cross-section data, efficiency effects frontier, zIntercept
 summary( aa2, logDepVar = FALSE )
@@ -1175,24 +1345,30 @@ efficiencies( aa2, logDepVar = FALSE )
 efficiencies( aa2, asInData = TRUE, logDepVar = FALSE )
 
 ## cross-section rice data, error components cost frontier
-summary( Sdd1, logDepVar = FALSE )
-efficiencies( dd1, logDepVar = FALSE )
-efficiencies( dd1, asInData = TRUE, logDepVar = FALSE )
+summary( Sdd1, logDepVar = FALSE, farrell = FALSE )
+efficiencies( dd1, logDepVar = FALSE, farrell = FALSE )
+efficiencies( dd1, asInData = TRUE, logDepVar = FALSE, farrell = FALSE )
 
 ## cross-section rice data, error components cost frontier, truncNorm
 summary( dd2, logDepVar = FALSE )
+summary( dd2, logDepVar = FALSE, farrell = FALSE )
 efficiencies( dd2, logDepVar = FALSE )
 efficiencies( dd2, asInData = TRUE, logDepVar = FALSE )
+efficiencies( dd2, logDepVar = FALSE, farrell = FALSE )
+efficiencies( dd2, asInData = TRUE, logDepVar = FALSE, farrell = FALSE )
 
 ## cross-section rice data, efficiency effects cost frontier
-summary( Sdd5, logDepVar = FALSE )
-efficiencies( dd5, logDepVar = FALSE )
-efficiencies( dd5, asInData = TRUE, logDepVar = FALSE )
+summary( Sdd5, logDepVar = FALSE, farrell = FALSE )
+efficiencies( dd5, logDepVar = FALSE, farrell = FALSE )
+efficiencies( dd5, asInData = TRUE, logDepVar = FALSE, farrell = FALSE )
 
 ## cross-section rice data, efficiency effects cost frontier, zIntercept
 summary( dd6, logDepVar = FALSE )
+summary( dd6, logDepVar = FALSE, farrell = FALSE )
 efficiencies( dd6, logDepVar = FALSE )
-efficiencies( dd6, asInData = TRUE , logDepVar = FALSE)
+efficiencies( dd6, asInData = TRUE , logDepVar = FALSE )
+efficiencies( dd6, logDepVar = FALSE, farrell = FALSE )
+efficiencies( dd6, asInData = TRUE , logDepVar = FALSE, farrell = FALSE )
 
 ## panel data, error components frontier
 summary( Sb1, logDepVar = FALSE )
@@ -1211,8 +1387,11 @@ efficiencies( b3, asInData = TRUE, logDepVar = FALSE )
 
 ## panel data, error components frontier, truncNorm, timeEffect
 summary( b4, logDepVar = FALSE )
+summary( b4, logDepVar = FALSE, farrell = FALSE )
 efficiencies( b4, logDepVar = FALSE )
 efficiencies( b4, asInData = TRUE, logDepVar = FALSE )
+efficiencies( b4, logDepVar = FALSE, farrell = FALSE )
+efficiencies( b4, asInData = TRUE, logDepVar = FALSE, farrell = FALSE )
 
 ## panel data, efficiency effects frontier
 summary( Sb5, logDepVar = FALSE )
@@ -1221,38 +1400,47 @@ efficiencies( b5, asInData = TRUE, logDepVar = FALSE )
 
 ## panel data, efficiency effects frontier, zIntercept
 summary( b6, logDepVar = FALSE )
+summary( b6, logDepVar = FALSE, farrell = FALSE )
 efficiencies( b6, logDepVar = FALSE )
 efficiencies( b6, asInData = TRUE, logDepVar = FALSE )
+efficiencies( b6, logDepVar = FALSE, farrell = FALSE )
+efficiencies( b6, asInData = TRUE, logDepVar = FALSE, farrell = FALSE )
 
 ## panel rice data, error components cost frontier
-summary( Sd1, logDepVar = FALSE )
-efficiencies( d1, logDepVar = FALSE )
-efficiencies( d1, asInData = TRUE, logDepVar = FALSE )
+summary( Sd1, logDepVar = FALSE, farrell = FALSE )
+efficiencies( d1, logDepVar = FALSE, farrell = FALSE )
+efficiencies( d1, asInData = TRUE, logDepVar = FALSE, farrell = FALSE )
 
 ## panel rice data, error components cost frontier, truncNorm
 summary( d2, logDepVar = FALSE )
+summary( d2, logDepVar = FALSE, farrell = FALSE )
 efficiencies( d2, logDepVar = FALSE )
 efficiencies( d2, asInData = TRUE, logDepVar = FALSE )
+efficiencies( d2, logDepVar = FALSE, farrell = FALSE )
+efficiencies( d2, asInData = TRUE, logDepVar = FALSE, farrell = FALSE )
 
 ## panel rice data, error components cost frontier, timeEffect
-summary( d3, logDepVar = FALSE )
-efficiencies( d3, logDepVar = FALSE )
-efficiencies( d3, asInData = TRUE, logDepVar = FALSE )
+summary( d3, logDepVar = FALSE, farrell = FALSE )
+efficiencies( d3, logDepVar = FALSE, farrell = FALSE )
+efficiencies( d3, asInData = TRUE, logDepVar = FALSE, farrell = FALSE )
 
 ## panel rice data, error components cost frontier, truncNorm, timeEffect
-summary( d4, logDepVar = FALSE )
-efficiencies( d4, logDepVar = FALSE )
-efficiencies( d4, asInData = TRUE, logDepVar = FALSE )
+summary( d4, logDepVar = FALSE, farrell = FALSE )
+efficiencies( d4, logDepVar = FALSE, farrell = FALSE )
+efficiencies( d4, asInData = TRUE, logDepVar = FALSE, farrell = FALSE )
 
 ## panel rice data, efficiency effects cost frontier
-summary( Sd5, logDepVar = FALSE )
-efficiencies( d5, logDepVar = FALSE )
-efficiencies( d5, asInData = TRUE, logDepVar = FALSE )
+summary( Sd5, logDepVar = FALSE, farrell = FALSE )
+efficiencies( d5, logDepVar = FALSE, farrell = FALSE )
+efficiencies( d5, asInData = TRUE, logDepVar = FALSE, farrell = FALSE )
 
 ## panel rice data, efficiency effects cost frontier, zIntercept
 summary( d6, logDepVar = FALSE )
+summary( d6, logDepVar = FALSE, farrell = FALSE )
 efficiencies( d6, logDepVar = FALSE )
 efficiencies( d6, asInData = TRUE, logDepVar = FALSE )
+efficiencies( d6, logDepVar = FALSE, farrell = FALSE )
+efficiencies( d6, asInData = TRUE, logDepVar = FALSE, farrell = FALSE )
 
 ## unbalanced panel data, error components frontier
 summary( b1u, logDepVar = FALSE )
@@ -1285,34 +1473,34 @@ efficiencies( b6u, logDepVar = FALSE )
 efficiencies( b6u, asInData = TRUE, logDepVar = FALSE )
 
 ## unbalanced panel rice data, error components cost frontier
-summary( d1u, logDepVar = FALSE )
-efficiencies( d1u, logDepVar = FALSE )
-efficiencies( d1u, asInData = TRUE, logDepVar = FALSE )
+summary( d1u, logDepVar = FALSE, farrell = FALSE )
+efficiencies( d1u, logDepVar = FALSE, farrell = FALSE )
+efficiencies( d1u, asInData = TRUE, logDepVar = FALSE, farrell = FALSE )
 
 ## unbalanced panel rice data, error components cost frontier, truncNorm
-summary( d2u, logDepVar = FALSE )
-efficiencies( d2u, logDepVar = FALSE )
-efficiencies( d2u, asInData = TRUE, logDepVar = FALSE )
+summary( d2u, logDepVar = FALSE, farrell = FALSE )
+efficiencies( d2u, logDepVar = FALSE, farrell = FALSE )
+efficiencies( d2u, asInData = TRUE, logDepVar = FALSE, farrell = FALSE )
 
 ## unbalanced panel rice data, error components cost frontier, timeEffect
-summary( d3u, logDepVar = FALSE )
-efficiencies( d3u, logDepVar = FALSE )
-efficiencies( d3u, asInData = TRUE, logDepVar = FALSE )
+summary( d3u, logDepVar = FALSE, farrell = FALSE )
+efficiencies( d3u, logDepVar = FALSE, farrell = FALSE )
+efficiencies( d3u, asInData = TRUE, logDepVar = FALSE, farrell = FALSE )
 
 ## unbalanced panel rice data, error components cost frontier, truncNorm, timeEffect
-summary( d4u, logDepVar = FALSE )
-efficiencies( d4u, logDepVar = FALSE )
-efficiencies( d4u, asInData = TRUE, logDepVar = FALSE )
+summary( d4u, logDepVar = FALSE, farrell = FALSE )
+efficiencies( d4u, logDepVar = FALSE, farrell = FALSE )
+efficiencies( d4u, asInData = TRUE, logDepVar = FALSE, farrell = FALSE )
 
 ## unbalanced panel rice data, efficiency effects cost frontier
-summary( d5u, logDepVar = FALSE )
-efficiencies( d5u, logDepVar = FALSE )
-efficiencies( d5u, asInData = TRUE, logDepVar = FALSE )
+summary( d5u, logDepVar = FALSE, farrell = FALSE )
+efficiencies( d5u, logDepVar = FALSE, farrell = FALSE )
+efficiencies( d5u, asInData = TRUE, logDepVar = FALSE, farrell = FALSE )
 
 ## unbalanced panel rice data, efficiency effects cost frontier, zIntercept
-summary( d6u, logDepVar = FALSE )
-efficiencies( d6u, logDepVar = FALSE )
-efficiencies( d6u, asInData = TRUE, logDepVar = FALSE )
+summary( d6u, logDepVar = FALSE, farrell = FALSE )
+efficiencies( d6u, logDepVar = FALSE, farrell = FALSE )
+efficiencies( d6u, asInData = TRUE, logDepVar = FALSE, farrell = FALSE )
 
 
 ##############################################
