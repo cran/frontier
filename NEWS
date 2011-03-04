@@ -5,6 +5,14 @@ A full ChangeLog is available in the log messages of the SVN repository
 on R-Forge.
 
 
+            CHANGES IN VERSION 0.997-2  (2011-03-04)
+
+* improved documentation of the calculation of the marginal effects 
+of the z variables in efficiencies.frontier()
+
+* some internal not user-visible improvements
+
+
             CHANGES IN VERSION 0.997-0  (2010-12-26)
 
 * methods efficiencies() and summary() for objects of class "frontier" have 

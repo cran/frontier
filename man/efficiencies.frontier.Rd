@@ -30,6 +30,9 @@
       of the \eqn{z} variables (of an Efficiency Effects Frontier, EEF)
       on the efficiency measure are returned as an \sQuote{attribute} 
       to the returned object (i.e. the efficiency estimates).
+      These marginal effects are calculated by the formula derived in
+      Olsen and Henningsen (2011),
+      which was slightly adjusted for the differing model specifications.
       Currently, this feature is implemented only for models 
       with logged dependent variables.}
    \item{\dots}{currently ignored.}
@@ -55,6 +58,37 @@
    the returned efficiency estimates have an attribute \code{"margEff"}
    that contains the marginal effects of the \eqn{z} variables
    on the efficiency measure.
+   
+   If the dependent variable is logged, 
+   the marginal effect of the \eqn{k}th \eqn{z} variable on the efficiency is
+   \deqn{\frac{\partial E[ \exp( - \kappa \, u ) ]}{\partial z_{kit}}
+   = \frac{  \delta_{k} ( 1 - \gamma ) 
+      \exp \left( - \kappa \, \bar{\mu}_{it} 
+         + \frac{1}{2} \bar{\sigma}^{2} \right) }{ 
+            \Phi \left( \frac{\bar{\mu}_{it}}{ \bar{\sigma} } \right) }}
+   \deqn{ \cdot \left( \frac{ \phi \left( -\kappa \, \bar{\sigma} 
+         + \frac{ \bar{\mu}_{it} }{ \bar{\sigma} } \right) }{ \bar{\sigma} }
+      - \frac{ \Phi \left( -\kappa \, \bar{\sigma} 
+               + \frac{ \bar{\mu}_{it} }{ \bar{\sigma} } \right) \,
+            \phi \left( \frac{ \bar{\mu}_{it} }{ \bar{\sigma} } \right)}{ 
+         \bar{\sigma} \, 
+            \Phi \left( \frac{ \bar{\mu}_{it} }{ \bar{\sigma}}\right) }
+            - \kappa \, \Phi \left( -\kappa \, \bar{\sigma} 
+               + \frac{ \bar{\mu}_{it} }{ \bar{\sigma} } \right) \right), }
+   where
+   \deqn{ \bar{\mu}_{it} 
+      = ( 1 - \gamma ) \, z_{it} ' \delta 
+         - \lambda \, \gamma \, \epsilon_{it},}
+   \deqn{ \bar{\sigma}^{2}
+      = \gamma \, ( 1 - \gamma ) \, \sigma^{2},}
+   \eqn{\kappa = 1} in case of Farrell efficiencies
+   (i.e. efficiencies have values between between 0 and 1),
+   whereas \eqn{\kappa = -1} otherwise 
+   (i.e. efficiencies have values larger than 1),
+   and \eqn{\lambda = 1} if inefficiency decreases the dependent variable,
+   whereas \eqn{\lambda = -1} otherwise
+   (see Olsen and Henningsen 2011).
+
    If argument \code{asInData} is \code{FALSE},
    this attribute is a 3-dimensional array,
    where the first dimension represents the individual firm,
@@ -64,6 +98,13 @@
    this attribute is a matrix,
    where the rows represent the observations
    and the columns represent the \eqn{z} variables.
+}
+
+
+\references{
+   Olsen, Jakob V. and Arne Henningsen (2011):
+   Investment Utilisation and Farm Efficiency in Danish Agriculture.
+   Knowledge Centre for Agriculture, Agro Food Park, Aarhus, Denmark.
 }
 
 \author{Arne Henningsen \email{arne.henningsen@gmail.com}}
@@ -87,6 +128,12 @@
       data = riceProdPhil, timeEffect = TRUE )
    efficiencies( riceTime )
    riceProdPhil$efficienciesTime <- efficiencies( riceTime, asInData = TRUE )
+   
+   # Technical Efficiency Effects Frontier (Battese & Coelli 1995)
+   rice2 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ) |
+      EDYRS + BANRAT - 1, data = riceProdPhil )
+   eff <- efficiencies( rice2, margEff = TRUE )
+   attr( eff, "margEff" )   # marginal effects
 }
 
 \keyword{methods}

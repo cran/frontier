@@ -18,11 +18,12 @@ efficiencies.frontier <- function( object, asInData = FALSE,
       dir <- -1
    }
    
-   if( object$ineffDecrease != farrell ) {
-      resid <- -resid
-      fitted <- -fitted
+   if( object$ineffDecrease ) {
+      lambda <- 1
+   } else {
+      lambda <- -1
    }
-   
+
    if( object$modelType == 1 ) {
       if( margEff ) {
          warning( "cannot calculate marginal effects of z variables",
@@ -53,7 +54,7 @@ efficiencies.frontier <- function( object, asInData = FALSE,
       } else {
          mu <- 0
       }
-      muStar <- ( - dir * gamma * residStar + mu * ( 1 - gamma ) ) /
+      muStar <- ( - lambda * gamma * residStar + mu * ( 1 - gamma ) ) /
          ( 1 + ( tStar - 1 ) * gamma )
       sigmaStarSq <- sigmaSq * gamma * ( 1 - gamma ) /
          ( 1 + ( tStar - 1 ) * gamma )
@@ -76,9 +77,9 @@ efficiencies.frontier <- function( object, asInData = FALSE,
                tInd[ i ] <- sum( !is.na( resid[ i, ] ) )
             }
             for( j in 1:ncol( result ) ) {
-               result[ , j ] <- 1 - dir * etaStar[ j ] * ( muStar + sigmaStar *
+               result[ , j ] <- 1 - lambda * etaStar[ j ] * ( muStar + sigmaStar *
                   exp( dnorm( muStar / sigmaStar, log = TRUE ) -
-                     pnorm( muStar / sigmaStar, log = TRUE ) ) ) /
+                     pnorm( muStar / sigmaStar, log.p = TRUE ) ) ) /
                   ( fittedStar / tInd )
             }
          } else {
@@ -114,7 +115,7 @@ efficiencies.frontier <- function( object, asInData = FALSE,
       }
       sigmaBarSq <- gamma * ( 1 - gamma ) * sigmaSq
       sigmaBar <- sqrt( sigmaBarSq )
-      muBar <- ( 1 - gamma ) * zDeltaMat - dir * gamma * resid
+      muBar <- ( 1 - gamma ) * zDeltaMat - lambda * gamma * resid
       if( logDepVar ) {
          result <- exp( pnorm( - dir * sigmaBar + muBar / sigmaBar, log.p = TRUE ) -
                pnorm( muBar / sigmaBar, log.p = TRUE ) ) *
@@ -148,9 +149,9 @@ efficiencies.frontier <- function( object, asInData = FALSE,
          }
       } else {
          if( object$ineffDecrease == farrell ) {
-            result <- 1 - dir * ( muBar + sigmaBar *
+            result <- 1 - lambda * ( muBar + sigmaBar *
                exp( dnorm( muBar / sigmaBar, log = TRUE ) -
-                  pnorm( muBar / sigmaBar, log = TRUE ) ) ) /
+                  pnorm( muBar / sigmaBar, log.p = TRUE ) ) ) /
                fitted
          } else {
             result <- matrix( NA, nrow = nrow( fitted ), ncol = ncol( fitted ) )
