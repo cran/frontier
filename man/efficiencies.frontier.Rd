@@ -78,15 +78,15 @@
    where
    \deqn{ \bar{\mu}_{it} 
       = ( 1 - \gamma ) \, z_{it} ' \delta 
-         - \lambda \, \gamma \, \epsilon_{it},}
+         - \tau \, \gamma \, \epsilon_{it},}
    \deqn{ \bar{\sigma}^{2}
       = \gamma \, ( 1 - \gamma ) \, \sigma^{2},}
    \eqn{\kappa = 1} in case of Farrell efficiencies
    (i.e. efficiencies have values between between 0 and 1),
    whereas \eqn{\kappa = -1} otherwise 
    (i.e. efficiencies have values larger than 1),
-   and \eqn{\lambda = 1} if inefficiency decreases the dependent variable,
-   whereas \eqn{\lambda = -1} otherwise
+   and \eqn{\tau = 1} if inefficiency decreases the dependent variable,
+   whereas \eqn{\tau = -1} otherwise
    (see Olsen and Henningsen 2011).
 
    If argument \code{asInData} is \code{FALSE},

@@ -162,7 +162,7 @@ frontier( yName, xNames = NULL, zNames = NULL, data,
    an \sQuote{Error Components Frontier} (ECF, see Battese and Coelli 1992)
    is estimated.
    If argument \code{formula} is a two-part formula
-   (or \code{zNames}) is not \code{NULL}),
+   (or \code{zNames} is not \code{NULL}),
    an \sQuote{Efficiency Effects Frontier} (EEF, see Battese and Coelli 1995)
    is estimated.
    In this case, the first part of the formula

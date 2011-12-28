@@ -289,6 +289,16 @@ sfa <- function(
          " than the number of time periods" )
    }
 
+   # check for double entries for firm/period combinations
+   for( i in 1:nn ) {
+      for( j in 1:nt ) {
+         if( sum( dataTable[ , 1 ] == i & dataTable[ , 2 ] == j ) > 1 ){
+            stop( "more than one observation for firm '", firmId[ i ],
+               "' in period '", timeId[ j ], "'" )
+         }
+      }
+   }
+
 
    # mu: truncNorm, zIntercept
    if( modelType == 1 ) {
@@ -387,6 +397,33 @@ sfa <- function(
       mleLogl = as.double( 0 ),
       nIter = as.integer( 0 ),
       code = as.integer( 0 ) )
+
+   # check if the return code indicates an error
+   if( returnObj$code == 101 ) {
+      stop( "the total number of observations exceeds the product of",
+         " the number of firms by the number of years" )
+   } else if( returnObj$code == 102 ) {
+      stop( "internal error: calculated variable 'n'",
+         " is not equal to argument 'nParamTotal'.",
+         " Please contact the maintainer of the 'frontier' package",
+         " (arne.henningsen@gmail.com)" )
+   } else if( returnObj$code == 103 ) {
+      stop( "wrong number of starting values" )
+   } else if( returnObj$code == 104 ) {
+      stop( "a firm number is < 1" )
+   } else if( returnObj$code == 105 ) {
+      stop( "a firm number is > number of firms" )
+   } else if( returnObj$code == 106 ) {
+      stop( "a period number is < 1" )
+   } else if( returnObj$code == 107 ) {
+      stop( "a period number is > number of periods" )
+   } else if( returnObj$code == 108 ) {
+      stop( "there are no observations on at least one firm" )
+   } else if( returnObj$code > 100 ) {
+      stop( "unknown error.",
+         " Please contact the maintainer of the 'frontier' package",
+         " (arne.henningsen@gmail.com)" )
+   }
    returnObj$nStartVal <- NULL
    returnObj$nRowData <- NULL
    returnObj$nColData <- NULL

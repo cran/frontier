@@ -5,6 +5,28 @@ A full ChangeLog is available in the log messages of the SVN repository
 on R-Forge.
 
 
+            CHANGES IN VERSION 0.997-4  (2011-12-28)
+
+* the function frontierTranslogRay() now can estimate models with
+more than two outputs
+
+* replaced all "write" commands in the Fortran code by "intpr" or
+"dblepr" commands so that messages from the Fortran code (e.g. when
+using argument "printIter") should also appear on R GUIs now
+
+* removed all "stop" commands in the Fortran code so that the Fortran
+code should no longer terminate the R session if a problem occurs
+
+* improved Fortran code (e.g. fixed possible problems indicated by
+"ftnchek")
+
+* fixed bug: argument "restartMax" of sfa() was previously ignored
+(the maximum number of restarts was always 10)
+
+* sfa() now checks whether a firm has more than one observation 
+in a specific time period
+
+
             CHANGES IN VERSION 0.997-2  (2011-03-04)
 
 * improved documentation of the calculation of the marginal effects 

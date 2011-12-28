@@ -40,10 +40,10 @@ print.default( a1 )
 
 ## cross-section data, error components frontier, truncNorm
 sa2 <- sfa( logOutput ~ logCapital + logLabour, data = front41Data,
-   truncNorm = TRUE )
+   truncNorm = TRUE, printIter = 4 )
 a2 <- frontier( data = front41Data, "logOutput",
    c( "logCapital", "logLabour" ), truncNorm = TRUE )
-all.equal( sa2[-38], a2[-38] )
+all.equal( sa2[-c(7,38)], a2[-c(7,38)] )
 print( a2 )
 coef( a2, which = "start" )
 coef( a2, which = "ols" )
@@ -89,8 +89,8 @@ print.default( a5 )
 saa1 <- sfa( logOutput ~ logCapital + logLabour | firmNo - 1,
    data = front41Data )
 Saa1 <- sfa( log( output ) ~ log( capital ) + log( labour ) | firmNo - 1,
-   data = front41Data )
-all.equal( Saa1[-38], saa1[-38], check.attributes = FALSE )
+   data = front41Data, printIter = 3 )
+all.equal( Saa1[-c(7,38)], saa1[-c(7,38)], check.attributes = FALSE )
 aa1 <- frontier( data = front41Data, "logOutput",
    c( "logCapital", "logLabour" ), zNames = "firmNo" )
 all.equal( saa1[-38], aa1[-38] )
@@ -517,13 +517,14 @@ riceProdPhil$year <- riceProdPhil$YEARDUM + 1998
 riceProdPhilPanel <- plm.data( riceProdPhil, c( "farm", "year" ) )
 
 ## panel data, error components frontier
-sb1 <- sfa( lPROD ~ lAREA + lLABOR + lNPK, data = riceProdPhilPanel )
+sb1 <- sfa( lPROD ~ lAREA + lLABOR + lNPK, data = riceProdPhilPanel,
+   printIter = 2 )
 Sb1 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ),
    data = riceProdPhilPanel )
-all.equal( Sb1[-38], sb1[-38], check.attributes = FALSE )
+all.equal( Sb1[-c(7,38)], sb1[-c(7,38)], check.attributes = FALSE )
 b1 <- frontier( data = riceProdPhilPanel,
    yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ) )
-all.equal( sb1[-38], b1[-38] )
+all.equal( sb1[-c(7,38)], b1[-c(7,38)] )
 print( b1 )
 coef( b1, which = "start" )
 coef( b1, which = "ols" )
@@ -624,8 +625,8 @@ print.default( b4 )
 sb5 <- sfa( lPROD ~ lAREA + lLABOR + lNPK | EDYRS + BANRAT - 1,
    data = riceProdPhilPanel )
 Sb5 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ) |
-   EDYRS + BANRAT - 1, data = riceProdPhilPanel )
-all.equal( Sb5[-38], sb5[-38], check.attributes = FALSE )
+   EDYRS + BANRAT - 1, data = riceProdPhilPanel, printIter = 5 )
+all.equal( Sb5[-c(7,38)], sb5[-c(7,38)], check.attributes = FALSE )
 b5 <- frontier( data = riceProdPhilPanel,
    yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ),
    zNames = c( "EDYRS", "BANRAT" ) )

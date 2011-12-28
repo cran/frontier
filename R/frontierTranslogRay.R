@@ -3,9 +3,11 @@ frontierTranslogRay <- function( yNames, xNames, shifterNames = NULL,
 
    checkNames( c( yNames, xNames, shifterNames, zNames ), names( data ) )
 
-   if( length( yNames ) != 2 ) {
-      stop( "the estimation of translog ray frontiers has not been implemented",
-         " with more than two endogenous variables yet" )
+   nOutput <- length( yNames )
+
+   if( nOutput < 2 ) {
+      stop( "the argument 'yNames' must include the names of",
+         "at least two output variables" )
    }
 
    if( any( c( "distance", "theta" ) %in% c( xNames, shifterNames ) ) ) {
@@ -17,11 +19,20 @@ frontierTranslogRay <- function( yNames, xNames, shifterNames = NULL,
 
    logData <- logDataSet( data = data, varNames = xNames )
 
-   distance <- sqrt( data[[ yNames[ 1 ] ]]^2 + data[[ yNames[ 2 ] ]]^2 )
+   distance <- 0
+   for( i in 1:nOutput ) {
+      distance <- distance + data[[ yNames[ i ] ]]^2
+   }
+   distance <- sqrt( distance )
 
    logData$distance <- log( distance )
 
-   logData$theta <- acos( data[[ yNames[ 1 ] ]] / distance )
+   sinProd <- 1
+   for( i in 1:( nOutput - 1 ) ) {
+      logData[[ paste( "theta", i, sep = "_" ) ]] <-
+         acos( data[[ yNames[ i ] ]] / ( distance * sinProd ) )
+      sinProd <- sinProd * sin( logData[[ paste( "theta", i, sep = "_" ) ]] )
+   }
 
    # shifter variables
    for( i in seq( along = shifterNames ) ) {
@@ -34,7 +45,8 @@ frontierTranslogRay <- function( yNames, xNames, shifterNames = NULL,
    }
 
    result <- frontierQuad( yName = "distance",
-      xNames = c( xNames, "theta" ), shifterNames = shifterNames,
+      xNames = c( xNames, paste( "theta", 1:( nOutput - 1 ), sep = "_" ) ), 
+      shifterNames = shifterNames,
       zNames = zNames, data = logData, ... )
 
    result$call <- match.call()
@@ -43,15 +55,21 @@ frontierTranslogRay <- function( yNames, xNames, shifterNames = NULL,
    result$xNames        <- xNames
    result$shifterNames  <- shifterNames
    result$distance      <- distance
-   result$theta         <- logData$theta
+   for( i in 1:( nOutput - 1 ) ) {
+      result[[ paste( "theta", i, sep = "_" ) ]] <- 
+         logData[[ paste( "theta", i, sep = "_" ) ]]
+   }
 
    coefNames <- names( result$mleParam )[
-      1:( 1 + ( nInput + 1 ) + ( nInput + 2 ) * ( nInput + 1 ) / 2 ) ]
+      1:( 1 + ( nInput + nOutput - 1 ) + 
+         ( nInput + nOutput ) * ( nInput + nOutput - 1 ) / 2 ) ]
 
-   coefNames[ coefNames ==
-      paste( "b", nInput + 1, nInput + 1, sep = "_" ) ] <- "b_t_t"
-   coefNames <- sub( paste( "_", nInput + 1, "$", sep = "" ), "_t",
-      coefNames )
+   for( i in 1:( nOutput - 1 ) ) {
+      coefNames <- gsub( paste( "_", nInput + i, "$", sep = "" ), 
+         paste( "_t", i, sep = "" ), coefNames )
+      coefNames <- gsub( paste( "_", nInput + i, "_", sep = "" ), 
+         paste( "_t", i, "_", sep = "" ), coefNames )
+   }
    names( result$olsParam )[ 1:length( coefNames ) ] <- coefNames
    names( result$olsStdEr )[ 1:length( coefNames ) ] <- coefNames
    if( ! is.null( result$gridParam ) ) {

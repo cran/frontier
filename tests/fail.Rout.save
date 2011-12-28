@@ -1,8 +1,8 @@
 
-R version 2.12.1 (2010-12-16)
-Copyright (C) 2010 The R Foundation for Statistical Computing
+R version 2.14.1 (2011-12-22)
+Copyright (C) 2011 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
-Platform: i486-pc-linux-gnu (32-bit)
+Platform: i686-pc-linux-gnu (32-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -18,32 +18,27 @@ Type 'q()' to quit R.
 
 > library( frontier )
 Loading required package: plm
-Loading required package: kinship
-Loading required package: survival
-Loading required package: splines
+Loading required package: bdsmatrix
+
+Attaching package: 'bdsmatrix'
+
+The following object(s) are masked from 'package:base':
+
+    backsolve
+
 Loading required package: nlme
-Loading required package: lattice
-[1] "kinship is loaded"
 Loading required package: Formula
 Loading required package: MASS
 Loading required package: sandwich
 Loading required package: zoo
+
+Attaching package: 'zoo'
+
+The following object(s) are masked from 'package:base':
+
+    as.Date, as.Date.numeric
+
 Loading required package: micEcon
-Loading required package: np
-Loading required package: boot
-
-Attaching package: 'boot'
-
-The following object(s) are masked from 'package:lattice':
-
-    melanoma
-
-The following object(s) are masked from 'package:survival':
-
-    aml
-
-Loading required package: cubature
-Nonparametric Kernel Methods for Mixed Datatypes (version 0.40-3)
 Loading required package: miscTools
 Loading required package: lmtest
 > 
@@ -229,5 +224,436 @@ log likelihood value: -162.9074
 cross-sectional data
 total number of observations = 60 
 
-mean efficiency: 0.999543 
+mean efficiency: 0.9995429 
+> 
+> ## too many starting values 
+> try( sfa( log( output) ~ log( capital ) + log( labour ), data = front41Data,
++    truncNorm = TRUE, startVal = c( 0.5, 0.3, 0.5, 0.5, 0.9, -1, 0.3 ) ) )
+Error in sfa(log(output) ~ log(capital) + log(labour), data = front41Data,  : 
+  wrong number of starting values (you provided 7 starting values but the model has 6 parameters)
+> 
+> ## too few starting values 
+> try( sfa( log( output) ~ log( capital ) + log( labour ), data = front41Data,
++    truncNorm = TRUE, startVal = c( 0.5, 0.3, 0.5, 0.5, 0.9 ) ) )
+Error in sfa(log(output) ~ log(capital) + log(labour), data = front41Data,  : 
+  wrong number of starting values (you provided 5 starting values but the model has 6 parameters)
+> 
+> ## load data abour rice production in the Phillipines
+> data( "riceProdPhil")
+> 
+> ## nobs > nn * nt 
+> rd <- riceProdPhil
+> rd <- rbind( rd, rd[ 11, ] )
+> rd <- plm.data( rd, c( "FMERCODE", "YEARDUM" ) )
+> try( sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ), data = rd ) )
+Error in sfa(log(PROD) ~ log(AREA) + log(LABOR) + log(NPK), data = rd) : 
+  more than one observation for firm '11' in period '1'
+> 
+> ## non-positive firm number (works now)
+> rd <- riceProdPhil
+> rd$FMERCODE <- rd$FMERCODE - 2
+> rd <- plm.data( rd, c( "FMERCODE", "YEARDUM" ) )
+> b1 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ), data = rd )
+> summary( b1 )
+Error Components Frontier (see Battese & Coelli 1992)
+Inefficiency decreases the endogenous variable (as in a production function)
+The dependent variable is logged
+Iterative ML estimation terminated after 11 iterations:
+log likelihood values and parameters of two successive iterations
+are within the tolerance limit
+
+final maximum likelihood estimates
+             Estimate Std. Error z value  Pr(>|z|)    
+(Intercept) -0.832169   0.275249 -3.0233    0.0025 ** 
+log(AREA)    0.453897   0.063801  7.1143 1.125e-12 ***
+log(LABOR)   0.288924   0.063639  4.5400 5.625e-06 ***
+log(NPK)     0.227544   0.040859  5.5690 2.562e-08 ***
+sigmaSq      0.155377   0.024202  6.4201 1.362e-10 ***
+gamma        0.464312   0.088023  5.2749 1.328e-07 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+log likelihood value: -86.43042 
+
+panel data
+number of cross-sections = 43 
+number of time periods = 8 
+total number of observations = 344 
+thus there are 0 observations not in the panel
+
+mean efficiency: 0.8187968 
+> efficiencies( b1 )
+   efficiency
+-1  0.7348838
+0   0.9335358
+1   0.7356669
+2   0.9047961
+3   0.8646110
+4   0.8084379
+5   0.9231276
+6   0.8150041
+7   0.8722820
+8   0.8539424
+9   0.6021630
+10  0.9491698
+11  0.7820029
+12  0.8703560
+13  0.7123153
+14  0.9058007
+15  0.8788236
+16  0.9238596
+17  0.8586420
+18  0.9046036
+19  0.8014665
+20  0.8277730
+21  0.7080684
+22  0.7073893
+23  0.8363073
+24  0.8557391
+25  0.8002148
+26  0.9382601
+27  0.7072642
+28  0.6075254
+29  0.9152860
+30  0.8476270
+31  0.8877271
+32  0.4978360
+33  0.9083843
+34  0.6955584
+35  0.9265961
+36  0.9333733
+37  0.7423341
+38  0.6689979
+39  0.9361506
+40  0.8994492
+41  0.7249107
+> 
+> ## firm number > number of firms (works now)
+> rd <- riceProdPhil
+> rd$FMERCODE[ rd$FMERCODE == 9 ] <- 47
+> rd <- plm.data( rd, c( "FMERCODE", "YEARDUM" ) )
+> b2 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ), data = rd )
+> summary( b2 )
+Error Components Frontier (see Battese & Coelli 1992)
+Inefficiency decreases the endogenous variable (as in a production function)
+The dependent variable is logged
+Iterative ML estimation terminated after 11 iterations:
+cannot find a parameter vector that results in a log-likelihood value
+larger than the log-likelihood value obtained in the previous step
+
+final maximum likelihood estimates
+             Estimate Std. Error z value  Pr(>|z|)    
+(Intercept) -0.832169   0.275249 -3.0233    0.0025 ** 
+log(AREA)    0.453897   0.063801  7.1143 1.125e-12 ***
+log(LABOR)   0.288924   0.063639  4.5400 5.625e-06 ***
+log(NPK)     0.227544   0.040859  5.5690 2.562e-08 ***
+sigmaSq      0.155377   0.024202  6.4201 1.362e-10 ***
+gamma        0.464312   0.088023  5.2749 1.328e-07 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+log likelihood value: -86.43042 
+
+panel data
+number of cross-sections = 43 
+number of time periods = 8 
+total number of observations = 344 
+thus there are 0 observations not in the panel
+
+mean efficiency: 0.8187968 
+> efficiencies( b2 )
+   efficiency
+1   0.7348838
+2   0.9335358
+3   0.7356669
+4   0.9047961
+5   0.8646110
+6   0.8084379
+7   0.9231276
+8   0.8150041
+10  0.8539424
+11  0.6021630
+12  0.9491698
+13  0.7820029
+14  0.8703560
+15  0.7123153
+16  0.9058007
+17  0.8788236
+18  0.9238596
+19  0.8586420
+20  0.9046036
+21  0.8014665
+22  0.8277730
+23  0.7080684
+24  0.7073893
+25  0.8363073
+26  0.8557391
+27  0.8002148
+28  0.9382601
+29  0.7072642
+30  0.6075254
+31  0.9152860
+32  0.8476270
+33  0.8877271
+34  0.4978360
+35  0.9083843
+36  0.6955584
+37  0.9265961
+38  0.9333733
+39  0.7423341
+40  0.6689979
+41  0.9361506
+42  0.8994492
+43  0.7249107
+47  0.8722820
+> # now with NA
+> rd <- riceProdPhil
+> rd$PROD[ rd$FMERCODE == 22 ] <- NA
+> rd <- plm.data( rd, c( "FMERCODE", "YEARDUM" ) )
+> b2b <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ), data = rd )
+> summary( b2b )
+Error Components Frontier (see Battese & Coelli 1992)
+Inefficiency decreases the endogenous variable (as in a production function)
+The dependent variable is logged
+Iterative ML estimation terminated after 11 iterations:
+cannot find a parameter vector that results in a log-likelihood value
+larger than the log-likelihood value obtained in the previous step
+
+final maximum likelihood estimates
+             Estimate Std. Error z value  Pr(>|z|)    
+(Intercept) -0.842153   0.280874 -2.9983  0.002715 ** 
+log(AREA)    0.450672   0.064915  6.9425 3.852e-12 ***
+log(LABOR)   0.285796   0.064278  4.4462 8.740e-06 ***
+log(NPK)     0.233441   0.041334  5.6477 1.626e-08 ***
+sigmaSq      0.157598   0.025116  6.2749 3.499e-10 ***
+gamma        0.470714   0.088371  5.3266 1.001e-07 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+log likelihood value: -85.17126 
+
+panel data
+number of cross-sections = 42 
+number of time periods = 8 
+total number of observations = 336 
+thus there are 0 observations not in the panel
+
+mean efficiency: 0.8165251 
+> efficiencies( b2b )
+   efficiency
+1   0.7308186
+2   0.9324852
+3   0.7328815
+4   0.9038798
+5   0.8636100
+6   0.8060085
+7   0.9208511
+8   0.8113468
+9   0.8708925
+10  0.8512174
+11  0.6001272
+12  0.9482966
+13  0.7799417
+14  0.8690503
+15  0.7089815
+16  0.9045021
+17  0.8757604
+18  0.9225494
+19  0.8562944
+20  0.9025468
+21  0.8002269
+23  0.7039618
+24  0.7051033
+25  0.8330220
+26  0.8525642
+27  0.7961635
+28  0.9369309
+29  0.7056269
+30  0.6058409
+31  0.9141893
+32  0.8444661
+33  0.8856545
+34  0.4969315
+35  0.9069437
+36  0.6930521
+37  0.9248520
+38  0.9323318
+39  0.7411548
+40  0.6658996
+41  0.9363297
+42  0.8978171
+43  0.7229498
+> 
+> ## non-positive period number (works now)
+> rd <- riceProdPhil
+> rd$YEARDUM <- rd$YEARDUM - 2
+> rd <- plm.data( rd, c( "FMERCODE", "YEARDUM" ) )
+> b3 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ), data = rd )
+> summary( b3 )
+Error Components Frontier (see Battese & Coelli 1992)
+Inefficiency decreases the endogenous variable (as in a production function)
+The dependent variable is logged
+Iterative ML estimation terminated after 11 iterations:
+log likelihood values and parameters of two successive iterations
+are within the tolerance limit
+
+final maximum likelihood estimates
+             Estimate Std. Error z value  Pr(>|z|)    
+(Intercept) -0.832169   0.275249 -3.0233    0.0025 ** 
+log(AREA)    0.453897   0.063801  7.1143 1.125e-12 ***
+log(LABOR)   0.288924   0.063639  4.5400 5.625e-06 ***
+log(NPK)     0.227544   0.040859  5.5690 2.562e-08 ***
+sigmaSq      0.155377   0.024202  6.4201 1.362e-10 ***
+gamma        0.464312   0.088023  5.2749 1.328e-07 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+log likelihood value: -86.43042 
+
+panel data
+number of cross-sections = 43 
+number of time periods = 8 
+total number of observations = 344 
+thus there are 0 observations not in the panel
+
+mean efficiency: 0.8187968 
+> 
+> ## period number > number of periods (works now)
+> rd <- riceProdPhil
+> rd$YEARDUM[ rd$YEARDUM == 4 ] <- 10
+> rd <- plm.data( rd, c( "FMERCODE", "YEARDUM" ) )
+> b4 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ), data = rd )
+> summary( b4 )
+Error Components Frontier (see Battese & Coelli 1992)
+Inefficiency decreases the endogenous variable (as in a production function)
+The dependent variable is logged
+Iterative ML estimation terminated after 11 iterations:
+cannot find a parameter vector that results in a log-likelihood value
+larger than the log-likelihood value obtained in the previous step
+
+final maximum likelihood estimates
+             Estimate Std. Error z value  Pr(>|z|)    
+(Intercept) -0.832169   0.275249 -3.0233    0.0025 ** 
+log(AREA)    0.453897   0.063801  7.1143 1.125e-12 ***
+log(LABOR)   0.288924   0.063639  4.5400 5.625e-06 ***
+log(NPK)     0.227544   0.040859  5.5690 2.562e-08 ***
+sigmaSq      0.155377   0.024202  6.4201 1.362e-10 ***
+gamma        0.464312   0.088023  5.2749 1.328e-07 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+log likelihood value: -86.43042 
+
+panel data
+number of cross-sections = 43 
+number of time periods = 8 
+total number of observations = 344 
+thus there are 0 observations not in the panel
+
+mean efficiency: 0.8187968 
+> # now with NA
+> rd <- riceProdPhil
+> rd$AREA[ rd$YEARDUM == 4 ] <- NA
+> rd <- plm.data( rd, c( "FMERCODE", "YEARDUM" ) )
+> b4b <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ), data = rd )
+> summary( b4b )
+Error Components Frontier (see Battese & Coelli 1992)
+Inefficiency decreases the endogenous variable (as in a production function)
+The dependent variable is logged
+Iterative ML estimation terminated after 11 iterations:
+log likelihood values and parameters of two successive iterations
+are within the tolerance limit
+
+final maximum likelihood estimates
+             Estimate Std. Error z value  Pr(>|z|)    
+(Intercept) -0.760829   0.302907 -2.5118 0.0120130 *  
+log(AREA)    0.480747   0.070684  6.8013 1.037e-11 ***
+log(LABOR)   0.254009   0.071247  3.5652 0.0003636 ***
+log(NPK)     0.241750   0.045800  5.2784 1.304e-07 ***
+sigmaSq      0.164394   0.026545  6.1929 5.907e-10 ***
+gamma        0.474952   0.090036  5.2752 1.326e-07 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+log likelihood value: -83.11038 
+
+panel data
+number of cross-sections = 43 
+number of time periods = 7 
+total number of observations = 301 
+thus there are 0 observations not in the panel
+
+mean efficiency: 0.8140633 
+> 
+> ## firm without valid observations (works now)
+> rd <- riceProdPhil
+> rd$PROD[ rd$FMERCODE == 12 ] <- NA
+> rd <- plm.data( rd, c( "FMERCODE", "YEARDUM" ) )
+> b5 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ), data = rd )
+> summary( b5 )
+Error Components Frontier (see Battese & Coelli 1992)
+Inefficiency decreases the endogenous variable (as in a production function)
+The dependent variable is logged
+Iterative ML estimation terminated after 11 iterations:
+log likelihood values and parameters of two successive iterations
+are within the tolerance limit
+
+final maximum likelihood estimates
+             Estimate Std. Error z value  Pr(>|z|)    
+(Intercept) -0.875499   0.276310 -3.1685  0.001532 ** 
+log(AREA)    0.483802   0.067924  7.1227 1.059e-12 ***
+log(LABOR)   0.288752   0.064485  4.4778 7.542e-06 ***
+log(NPK)     0.229625   0.041232  5.5691 2.561e-08 ***
+sigmaSq      0.148836   0.022694  6.5583 5.442e-11 ***
+gamma        0.436913   0.089974  4.8560 1.198e-06 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+log likelihood value: -84.07888 
+
+panel data
+number of cross-sections = 42 
+number of time periods = 8 
+total number of observations = 336 
+thus there are 0 observations not in the panel
+
+mean efficiency: 0.8264732 
+> efficiencies( b5 )
+   efficiency
+1   0.7419644
+2   0.9315086
+3   0.7338868
+4   0.9146976
+5   0.8637704
+6   0.8462147
+7   0.9264396
+8   0.8281034
+9   0.8736959
+10  0.8552512
+11  0.6244419
+13  0.8028443
+14  0.8783871
+15  0.7619267
+16  0.9242957
+17  0.8759211
+18  0.9168844
+19  0.8547899
+20  0.9029992
+21  0.8016928
+22  0.8446395
+23  0.6994537
+24  0.7131334
+25  0.8300090
+26  0.8743074
+27  0.8126710
+28  0.9452883
+29  0.7206817
+30  0.6410176
+31  0.9295866
+32  0.8734211
+33  0.9042422
+34  0.5190838
+35  0.9122770
+36  0.7108405
+37  0.9359993
+38  0.9362245
+39  0.7786173
+40  0.6831035
+41  0.9426658
+42  0.9042910
+43  0.7406045
+> 
 > 

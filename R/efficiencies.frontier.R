@@ -19,9 +19,9 @@ efficiencies.frontier <- function( object, asInData = FALSE,
    }
    
    if( object$ineffDecrease ) {
-      lambda <- 1
+      tau <- 1
    } else {
-      lambda <- -1
+      tau <- -1
    }
 
    if( object$modelType == 1 ) {
@@ -54,7 +54,7 @@ efficiencies.frontier <- function( object, asInData = FALSE,
       } else {
          mu <- 0
       }
-      muStar <- ( - lambda * gamma * residStar + mu * ( 1 - gamma ) ) /
+      muStar <- ( - tau * gamma * residStar + mu * ( 1 - gamma ) ) /
          ( 1 + ( tStar - 1 ) * gamma )
       sigmaStarSq <- sigmaSq * gamma * ( 1 - gamma ) /
          ( 1 + ( tStar - 1 ) * gamma )
@@ -77,7 +77,7 @@ efficiencies.frontier <- function( object, asInData = FALSE,
                tInd[ i ] <- sum( !is.na( resid[ i, ] ) )
             }
             for( j in 1:ncol( result ) ) {
-               result[ , j ] <- 1 - lambda * etaStar[ j ] * ( muStar + sigmaStar *
+               result[ , j ] <- 1 - tau * etaStar[ j ] * ( muStar + sigmaStar *
                   exp( dnorm( muStar / sigmaStar, log = TRUE ) -
                      pnorm( muStar / sigmaStar, log.p = TRUE ) ) ) /
                   ( fittedStar / tInd )
@@ -115,7 +115,7 @@ efficiencies.frontier <- function( object, asInData = FALSE,
       }
       sigmaBarSq <- gamma * ( 1 - gamma ) * sigmaSq
       sigmaBar <- sqrt( sigmaBarSq )
-      muBar <- ( 1 - gamma ) * zDeltaMat - lambda * gamma * resid
+      muBar <- ( 1 - gamma ) * zDeltaMat - tau * gamma * resid
       if( logDepVar ) {
          result <- exp( pnorm( - dir * sigmaBar + muBar / sigmaBar, log.p = TRUE ) -
                pnorm( muBar / sigmaBar, log.p = TRUE ) ) *
@@ -149,7 +149,7 @@ efficiencies.frontier <- function( object, asInData = FALSE,
          }
       } else {
          if( object$ineffDecrease == farrell ) {
-            result <- 1 - lambda * ( muBar + sigmaBar *
+            result <- 1 - tau * ( muBar + sigmaBar *
                exp( dnorm( muBar / sigmaBar, log = TRUE ) -
                   pnorm( muBar / sigmaBar, log.p = TRUE ) ) ) /
                fitted

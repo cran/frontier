@@ -63,3 +63,72 @@ summary( a3, farrell = FALSE )
 a4 <- sfa( log( output ) ~ log( capital ) + log( labour ),
    data = front41Data, start = c( 1, 0, 0, 1, 0.999995 ) )
 summary( a4 )
+
+## too many starting values 
+try( sfa( log( output) ~ log( capital ) + log( labour ), data = front41Data,
+   truncNorm = TRUE, startVal = c( 0.5, 0.3, 0.5, 0.5, 0.9, -1, 0.3 ) ) )
+
+## too few starting values 
+try( sfa( log( output) ~ log( capital ) + log( labour ), data = front41Data,
+   truncNorm = TRUE, startVal = c( 0.5, 0.3, 0.5, 0.5, 0.9 ) ) )
+
+## load data abour rice production in the Phillipines
+data( "riceProdPhil")
+
+## nobs > nn * nt 
+rd <- riceProdPhil
+rd <- rbind( rd, rd[ 11, ] )
+rd <- plm.data( rd, c( "FMERCODE", "YEARDUM" ) )
+try( sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ), data = rd ) )
+
+## non-positive firm number (works now)
+rd <- riceProdPhil
+rd$FMERCODE <- rd$FMERCODE - 2
+rd <- plm.data( rd, c( "FMERCODE", "YEARDUM" ) )
+b1 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ), data = rd )
+summary( b1 )
+efficiencies( b1 )
+
+## firm number > number of firms (works now)
+rd <- riceProdPhil
+rd$FMERCODE[ rd$FMERCODE == 9 ] <- 47
+rd <- plm.data( rd, c( "FMERCODE", "YEARDUM" ) )
+b2 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ), data = rd )
+summary( b2 )
+efficiencies( b2 )
+# now with NA
+rd <- riceProdPhil
+rd$PROD[ rd$FMERCODE == 22 ] <- NA
+rd <- plm.data( rd, c( "FMERCODE", "YEARDUM" ) )
+b2b <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ), data = rd )
+summary( b2b )
+efficiencies( b2b )
+
+## non-positive period number (works now)
+rd <- riceProdPhil
+rd$YEARDUM <- rd$YEARDUM - 2
+rd <- plm.data( rd, c( "FMERCODE", "YEARDUM" ) )
+b3 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ), data = rd )
+summary( b3 )
+
+## period number > number of periods (works now)
+rd <- riceProdPhil
+rd$YEARDUM[ rd$YEARDUM == 4 ] <- 10
+rd <- plm.data( rd, c( "FMERCODE", "YEARDUM" ) )
+b4 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ), data = rd )
+summary( b4 )
+# now with NA
+rd <- riceProdPhil
+rd$AREA[ rd$YEARDUM == 4 ] <- NA
+rd <- plm.data( rd, c( "FMERCODE", "YEARDUM" ) )
+b4b <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ), data = rd )
+summary( b4b )
+
+## firm without valid observations (works now)
+rd <- riceProdPhil
+rd$PROD[ rd$FMERCODE == 12 ] <- NA
+rd <- plm.data( rd, c( "FMERCODE", "YEARDUM" ) )
+b5 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ), data = rd )
+summary( b5 )
+efficiencies( b5 )
+
