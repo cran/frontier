@@ -22,10 +22,18 @@
       used for the estimation
       (see section \sQuote{value} below).}
    \item{logDepVar}{logical. Is the dependent variable logged?}
-   \item{farrell}{logical. If \code{TRUE}, Farrel-type efficiencies
-      that have values between 0 and 1 are returned.
-      If \code{FALSE}, the returned efficiencies have values larger than 
-      or equal to one.}
+   \item{farrell}{logical. If \code{TRUE} (the default), 
+      Farrel-type efficiencies are returned for input-oriented models and
+      Shepard-type efficiencies are returned for output-oriented models,
+      i.e.\ the returned efficiency estimates have values 
+      between zero and one,
+      where a one indicates a fully efficient firm.
+      If \code{FALSE}, 
+      Shepard-type efficiencies are returned for input-oriented models and
+      Farrell-type efficiencies are returned for output-oriented models,
+      i.e.\ the returned efficiency estimates have values larger than 
+      or equal to one,
+      where a one indicates a fully efficient firm.}
    \item{margEff}{logical. If \code{TRUE}, the marginal effects
       of the \eqn{z} variables (of an Efficiency Effects Frontier, EEF)
       on the efficiency measure are returned as an \sQuote{attribute} 

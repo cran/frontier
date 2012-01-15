@@ -1,7 +1,7 @@
-da0d0b7faaef24cfdf523f746903527d *DESCRIPTION
+aa93b9f37aae10d5d4a3bb334e21a8b5 *DESCRIPTION
 4d18cb8517645f81cc228c7ca119e873 *INDEX
 27bb7c0594b9ff00b5f2b6fed86d2cec *NAMESPACE
-30f5da7960569e8c2195f7ed4c3c13b9 *NEWS
+18546e6dd242bf054987959fbfeb6cd2 *NEWS
 e3babd76fec6b1c5ab4604f68d45ef1c *R/checkNames.R
 174d508729e50941c3b60977654cfb18 *R/coef.front41Output.R
 e1bfac94afad2d5efbca71150631ccdd *R/coef.frontier.R
@@ -34,7 +34,7 @@ bc519504f50eedf446f69a398aea3d03 *man/coef.front41Output.Rd
 0d26d039dbec4c1c1731b7585e4c4cc4 *man/coef.frontier.Rd
 6982365b58e5e29b71c91b9f8ebf6ca1 *man/coef.summary.frontier.Rd
 50f97df0422f68153ad75c3609dcdd23 *man/efficiencies.Rd
-8a2a84f6101d37835b316ddaaffb27e5 *man/efficiencies.frontier.Rd
+ece10fe4c209ad51685f4ac5724f9da6 *man/efficiencies.frontier.Rd
 33b8222fc78fd7456a62f09cff070b70 *man/elas.frontierQuad.Rd
 4f61dcd9c3136080a4f4e9097931788b *man/front41Data.Rd
 8bc6885fa91ade5a0b12b0f6624d7d02 *man/front41Est.Rd

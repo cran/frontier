@@ -5,6 +5,12 @@ A full ChangeLog is available in the log messages of the SVN repository
 on R-Forge.
 
 
+            CHANGES IN VERSION 0.997-6  (2012-01-15)
+
+* corrected documentation of the argument "farrell" of the
+efficiencies() method for objects of class "frontier"
+
+
             CHANGES IN VERSION 0.997-4  (2011-12-28)
 
 * the function frontierTranslogRay() now can estimate models with
