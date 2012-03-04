@@ -1,8 +1,8 @@
 
-R version 2.14.1 (2011-12-22)
-Copyright (C) 2011 The R Foundation for Statistical Computing
+R version 2.14.2 (2012-02-29)
+Copyright (C) 2012 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
-Platform: i686-pc-linux-gnu (32-bit)
+Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -82,32 +82,44 @@ In efficiencies.frontier(sbb5eef, margEff = TRUE) :
 > # Comparisons
 > rbind( coef( bb5ecf ), coef( bb5eef ) )
      (Intercept)     lAREA    lLABOR      lNPK   sigmaSq     gamma
-[1,]   -1.043244 0.3555118 0.3332984 0.2712777 0.2386278 0.8853821
+[1,]   -1.043183 0.3555197 0.3332875 0.2712756 0.2386335 0.8853908
 [2,]   -1.043244 0.3555118 0.3332984 0.2712777 0.2386278 0.8853821
 > all.equal( coef( bb5ecf ), coef( bb5eef ) )
-[1] TRUE
+[1] "Mean relative difference: 3.060561e-05"
 > all.equal( vcov( bb5ecf ), vcov( bb5eef ) )
-[1] TRUE
+[1] "Mean relative difference: 0.0400652"
 > all.equal( efficiencies( bb5ecf ), efficiencies( bb5eef ) )
-[1] TRUE
+[1] "Mean relative difference: 5.756125e-06"
 > 
 > 
 > ## with mu / zIntercept
 > # Error Components Frontier (ECF)
 > sbb6ecf <- sfa( lPROD ~ lAREA + lLABOR + lNPK,
 +    data = as.data.frame( riceProdPhil ), truncNorm = TRUE, muBound = 0 )
+Warning message:
+In sfa(lPROD ~ lAREA + lLABOR + lNPK, data = as.data.frame(riceProdPhil),  :
+  the parameter 'gamma' is close to the boundary of the parameter space [0,1]: this can cause convergence problems and can negatively affect the validity and reliability of statistical tests and might be caused by model misspecification
 > bb6ecf <- frontier( data = as.data.frame( riceProdPhil ),
 +    yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ),
 +    truncNorm = TRUE, muBound = 0 )
+Warning message:
+In sfa(formula = sfaFormula, data = data, ...) :
+  the parameter 'gamma' is close to the boundary of the parameter space [0,1]: this can cause convergence problems and can negatively affect the validity and reliability of statistical tests and might be caused by model misspecification
 > all.equal( sbb6ecf[-38], bb6ecf[-38] )
 [1] TRUE
 > 
 > # Efficiency Effects Frontier (EEF)
 > sbb6eef <- sfa( lPROD ~ lAREA + lLABOR + lNPK | 1,
 +    data = as.data.frame( riceProdPhil ) )
+Warning message:
+In sfa(lPROD ~ lAREA + lLABOR + lNPK | 1, data = as.data.frame(riceProdPhil)) :
+  the parameter 'gamma' is close to the boundary of the parameter space [0,1]: this can cause convergence problems and can negatively affect the validity and reliability of statistical tests and might be caused by model misspecification
 > bb6eef <- frontier( data = as.data.frame( riceProdPhil ),
 +    yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ),
 +    zIntercept = TRUE, zNames = NA )
+Warning message:
+In sfa(formula = sfaFormula, data = data, ...) :
+  the parameter 'gamma' is close to the boundary of the parameter space [0,1]: this can cause convergence problems and can negatively affect the validity and reliability of statistical tests and might be caused by model misspecification
 > all.equal( sbb6eef[-38], bb6eef[-38] )
 [1] TRUE
 > tmp <- efficiencies( sbb6eef, margEff = TRUE )
@@ -117,11 +129,11 @@ In efficiencies.frontier(sbb6eef, margEff = TRUE) :
 > 
 > # Comparisons
 > rbind( coef( bb6ecf ), coef( bb6eef )[ c( 1:4, 6:7, 5 ) ] )
-     (Intercept)    lAREA    lLABOR      lNPK  sigmaSq     gamma        mu
-[1,]   -1.144621 0.353968 0.3343644 0.2728852 16.29753 0.9977963 -59.51317
-[2,]   -1.145025 0.353982 0.3344024 0.2728637 21.60905 0.9983359 -79.23243
+     (Intercept)     lAREA    lLABOR      lNPK  sigmaSq     gamma        mu
+[1,]   -1.144470 0.3539895 0.3343568 0.2728672 16.07956 0.9977670 -58.69639
+[2,]   -1.145041 0.3539829 0.3343985 0.2728673 22.36429 0.9983918 -82.02906
 > all.equal( efficiencies( bb6ecf ), efficiencies( bb6eef ) )
-[1] "Mean relative difference: 0.0003003621"
+[1] "Mean relative difference: 0.0003552787"
 > 
 > 
 > ############ panel data ###############
@@ -146,23 +158,29 @@ In efficiencies.frontier(sbb6eef, margEff = TRUE) :
 > # Comparisons
 > rbind( coef( b5ecf ), coef( b5eef ) )
      (Intercept)     lAREA    lLABOR      lNPK   sigmaSq     gamma
-[1,]   -1.043244 0.3555118 0.3332984 0.2712777 0.2386278 0.8853821
+[1,]   -1.043183 0.3555197 0.3332875 0.2712756 0.2386335 0.8853908
 [2,]   -1.043244 0.3555118 0.3332984 0.2712777 0.2386278 0.8853821
 > all.equal( coef( b5ecf ), coef( b5eef ) )
-[1] TRUE
+[1] "Mean relative difference: 3.060561e-05"
 > all.equal( vcov( b5ecf ), vcov( b5eef ) )
-[1] TRUE
+[1] "Mean relative difference: 0.0400652"
 > all.equal( c( efficiencies( b5ecf ) ), c( t( efficiencies( b5eef ) ) ) )
-[1] TRUE
+[1] "Mean relative difference: 5.756125e-06"
 > 
 > 
 > ## without mu / zIntercept
 > # Error Components Frontier (ECF)
 > sb6ecf <- sfa( lPROD ~ lAREA + lLABOR + lNPK,
 +    data = as.data.frame( riceProdPhil ), truncNorm = TRUE, muBound = Inf )
+Warning message:
+In sfa(lPROD ~ lAREA + lLABOR + lNPK, data = as.data.frame(riceProdPhil),  :
+  the parameter 'gamma' is close to the boundary of the parameter space [0,1]: this can cause convergence problems and can negatively affect the validity and reliability of statistical tests and might be caused by model misspecification
 > b6ecf <- frontier( data = as.data.frame( riceProdPhil ),
 +    yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ),
 +    truncNorm = TRUE, muBound = Inf )
+Warning message:
+In sfa(formula = sfaFormula, data = data, ...) :
+  the parameter 'gamma' is close to the boundary of the parameter space [0,1]: this can cause convergence problems and can negatively affect the validity and reliability of statistical tests and might be caused by model misspecification
 > all.equal( sb6ecf[-38], b6ecf[-38] )
 [1] TRUE
 > all.equal( b6ecf[-38], bb6ecf[-38] )
@@ -171,26 +189,32 @@ In efficiencies.frontier(sbb6eef, margEff = TRUE) :
 > # Efficiency Effects Frontier (EEF)
 > sb6eef <- sfa( lPROD ~ lAREA + lLABOR + lNPK | 1,
 +    data = riceProdPhil )
+Warning message:
+In sfa(lPROD ~ lAREA + lLABOR + lNPK | 1, data = riceProdPhil) :
+  the parameter 'gamma' is close to the boundary of the parameter space [0,1]: this can cause convergence problems and can negatively affect the validity and reliability of statistical tests and might be caused by model misspecification
 > b6eef <- frontier( data = riceProdPhil,
 +    yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ),
 +    zIntercept = TRUE, zNames = NA )
+Warning message:
+In sfa(formula = sfaFormula, data = data, ...) :
+  the parameter 'gamma' is close to the boundary of the parameter space [0,1]: this can cause convergence problems and can negatively affect the validity and reliability of statistical tests and might be caused by model misspecification
 > all.equal( sb6eef[-38], b6eef[-38] )
 [1] TRUE
 > all.equal( b6eef[ -c( 3, 4, 19, 30, 38 ) ], bb6eef[ -c( 3, 4, 19, 30, 38 ) ] )
 [1] TRUE
 > all.equal( c( efficiencies( b6ecf ) ), c( efficiencies( bb6eef ) ) )
-[1] "Mean relative difference: 0.0003003621"
+[1] "Mean relative difference: 0.0003552787"
 > all.equal( c( residuals( b6ecf ) ), c( residuals( bb6eef ) ) )
-[1] "Mean relative difference: 0.001061498"
+[1] "Mean relative difference: 0.001240301"
 > 
 > # Comparisons
 > rbind( coef( b6ecf ), coef( b6eef )[ c( 1:4, 6:7, 5 ) ] )
-     (Intercept)    lAREA    lLABOR      lNPK  sigmaSq     gamma        mu
-[1,]   -1.144621 0.353968 0.3343644 0.2728852 16.29753 0.9977963 -59.51317
-[2,]   -1.145025 0.353982 0.3344024 0.2728637 21.60905 0.9983359 -79.23243
+     (Intercept)     lAREA    lLABOR      lNPK  sigmaSq     gamma        mu
+[1,]   -1.144470 0.3539895 0.3343568 0.2728672 16.07956 0.9977670 -58.69639
+[2,]   -1.145041 0.3539829 0.3343985 0.2728673 22.36429 0.9983918 -82.02906
 > all.equal( c( efficiencies( b6ecf ) ), c( t( efficiencies( b6eef ) ) ) )
-[1] "Mean relative difference: 0.0003003621"
+[1] "Mean relative difference: 0.0003552787"
 > all.equal( c( residuals( b6ecf ) ), c( t( residuals( b6eef ) ) ) )
-[1] "Mean relative difference: 0.001061498"
+[1] "Mean relative difference: 0.001240301"
 > 
 > 

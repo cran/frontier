@@ -571,6 +571,35 @@ sfa <- function(
    returnObj$call <- match.call()
    returnObj$validObs <- validObs
 
+   if( maxit > 0 ) {
+      if( ( returnObj$mleParam[ "gamma" ] < 0.01 || 
+            returnObj$mleParam[ "gamma" ] > 0.99 ) ) {
+         warning( "the parameter 'gamma' is close to the boundary",
+                  " of the parameter space [0,1]:",
+                  " this can cause convergence problems and",
+                  " can negatively affect the validity and reliability",
+                  " of statistical tests",
+                  " and might be caused by model misspecification" )
+      }
+   
+      if( !semidefiniteness( returnObj$mleCov ) ) {
+         warning( "the covariance matrix of the maximum likelihood estimates",
+            " is not positive semidefinite" )
+      } else {
+         testSingularCov <- try( solve( returnObj$mleCov ), silent = TRUE )
+         if( class( testSingularCov ) == "try-error" ) {
+            if( grepl( "singular", testSingularCov[1] ) ) {
+               warning( "the covariance matrix of the maximum likelihood estimates",
+                  " is singular" )
+            } else {
+               warning( "the covariance matrix of the maximum likelihood estimates",
+                  " is not invertible" )
+            }
+         }
+      }
+   }
+   
+   
    class( returnObj ) <- "frontier"
    return( returnObj )
 }

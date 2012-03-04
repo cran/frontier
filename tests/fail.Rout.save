@@ -1,8 +1,8 @@
 
-R version 2.14.1 (2011-12-22)
-Copyright (C) 2011 The R Foundation for Statistical Computing
+R version 2.14.2 (2012-02-29)
+Copyright (C) 2012 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
-Platform: i686-pc-linux-gnu (32-bit)
+Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -177,7 +177,7 @@ Warning messages:
   the maximum number of iterations has been reached; please try again using different starting values and/or increase the maximum number of iterations
 > summary( a3, farrell = FALSE )
 Error Components Frontier (see Battese & Coelli 1992)
-Inefficiency increases the endogenous variable (as in a cost function
+Inefficiency increases the endogenous variable (as in a cost function)
 The dependent variable is logged
 Iterative ML estimation terminated after 2 iterations:
 maximum number of iterations reached
@@ -199,9 +199,11 @@ mean efficiency: 1.061667
 > ## L(MLE) < L(OLS)
 > a4 <- sfa( log( output ) ~ log( capital ) + log( labour ),
 +    data = front41Data, start = c( 1, 0, 0, 1, 0.999995 ) )
-Warning message:
-In sfa(log(output) ~ log(capital) + log(labour), data = front41Data,  :
+Warning messages:
+1: In sfa(log(output) ~ log(capital) + log(labour), data = front41Data,  :
   the likelihood value of the ML estimation is less than that obtained using OLS; this indicates that the likelihood maximization did not converge to the global maximum or that there is no inefficiency (you could try again using different starting values)
+2: In sfa(log(output) ~ log(capital) + log(labour), data = front41Data,  :
+  the parameter 'gamma' is close to the boundary of the parameter space [0,1]: this can cause convergence problems and can negatively affect the validity and reliability of statistical tests and might be caused by model misspecification
 > summary( a4 )
 Error Components Frontier (see Battese & Coelli 1992)
 Inefficiency decreases the endogenous variable (as in a production function)
@@ -215,11 +217,11 @@ final maximum likelihood estimates
 (Intercept)  -5.5210e+00  3.7061e+00 -1.4897   0.1363    
 log(capital)  6.6312e-01  8.9159e-01  0.7437   0.4570    
 log(labour)   1.4994e+00  9.3547e-01  1.6028   0.1090    
-sigmaSq       3.2841e+01  2.6564e+00 12.3628   <2e-16 ***
+sigmaSq       3.2841e+01  2.6565e+00 12.3627   <2e-16 ***
 gamma         1.0000e-08  2.8544e-06  0.0035   0.9972    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
-log likelihood value: -162.9074 
+log likelihood value: -162.9073 
 
 cross-sectional data
 total number of observations = 60 
@@ -337,8 +339,8 @@ Error Components Frontier (see Battese & Coelli 1992)
 Inefficiency decreases the endogenous variable (as in a production function)
 The dependent variable is logged
 Iterative ML estimation terminated after 11 iterations:
-cannot find a parameter vector that results in a log-likelihood value
-larger than the log-likelihood value obtained in the previous step
+log likelihood values and parameters of two successive iterations
+are within the tolerance limit
 
 final maximum likelihood estimates
              Estimate Std. Error z value  Pr(>|z|)    
@@ -414,8 +416,8 @@ Error Components Frontier (see Battese & Coelli 1992)
 Inefficiency decreases the endogenous variable (as in a production function)
 The dependent variable is logged
 Iterative ML estimation terminated after 11 iterations:
-cannot find a parameter vector that results in a log-likelihood value
-larger than the log-likelihood value obtained in the previous step
+log likelihood values and parameters of two successive iterations
+are within the tolerance limit
 
 final maximum likelihood estimates
              Estimate Std. Error z value  Pr(>|z|)    
@@ -524,8 +526,8 @@ Error Components Frontier (see Battese & Coelli 1992)
 Inefficiency decreases the endogenous variable (as in a production function)
 The dependent variable is logged
 Iterative ML estimation terminated after 11 iterations:
-cannot find a parameter vector that results in a log-likelihood value
-larger than the log-likelihood value obtained in the previous step
+log likelihood values and parameters of two successive iterations
+are within the tolerance limit
 
 final maximum likelihood estimates
              Estimate Std. Error z value  Pr(>|z|)    

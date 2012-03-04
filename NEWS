@@ -5,6 +5,15 @@ A full ChangeLog is available in the log messages of the SVN repository
 on R-Forge.
 
 
+            CHANGES IN VERSION 0.997-8  (2012-03-04)
+
+* sfa() now issues a warning message if the covariance matrix of the ML estimates 
+is not positive semi-definite, singular, or not invertible for other reasons
+
+* sfa() now issues a warning message if the parameter "gamma" is close to the
+boundaries of the parameter space [0,1]
+
+
             CHANGES IN VERSION 0.997-6  (2012-01-15)
 
 * corrected documentation of the argument "farrell" of the

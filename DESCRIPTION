@@ -1,6 +1,6 @@
 Package: frontier
-Version: 0.997-6
-Date: 2012-01-15
+Version: 0.997-8
+Date: 2012-03-04
 Title: Stochastic Frontier Analysis
 Author: Tim Coelli, Arne Henningsen
 Maintainer: Arne Henningsen <arne.henningsen@gmail.com>
@@ -15,8 +15,7 @@ Description: Maximum Likelihood Estimation of Stochastic Frontier
         specification in which the firm effects are directly influenced
         by a number of variables (Battese and Coelli, 1995).
 License: GPL (>= 2)
-URL: http://www.uq.edu.au/economics/cepa/,
-        http://frontier.r-forge.r-project.org/
-Packaged: 2012-01-15 11:30:40 UTC; suapm095
+URL: http://frontier.r-forge.r-project.org/
+Packaged: 2012-03-04 11:14:37 UTC; arne
 Repository: CRAN
-Date/Publication: 2012-01-15 12:02:22
+Date/Publication: 2012-03-04 12:04:21

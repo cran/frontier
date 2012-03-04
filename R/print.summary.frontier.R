@@ -12,7 +12,7 @@ print.summary.frontier <- function( x, effic = x$printEffic, ... ) {
 	"(as in a production function)\n" )
    } else {
       cat( "Inefficiency increases the endogenous variable",
-	"(as in a cost function\n" )
+	"(as in a cost function)\n" )
    }
    if( x$logDepVar == 1 ) {
       cat( "The dependent variable is logged\n" )

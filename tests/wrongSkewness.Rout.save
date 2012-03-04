@@ -1,8 +1,8 @@
 
-R version 2.14.1 (2011-12-22)
-Copyright (C) 2011 The R Foundation for Statistical Computing
+R version 2.14.2 (2012-02-29)
+Copyright (C) 2012 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
-Platform: i686-pc-linux-gnu (32-bit)
+Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -52,24 +52,26 @@ Loading required package: lmtest
 > ## front41Data
 > a1 <- sfa( log( output ) ~ log( capital ) + log( labour ),
 +    ineffDecrease = FALSE, data = front41Data )
-Warning message:
-In sfa(log(output) ~ log(capital) + log(labour), ineffDecrease = FALSE,  :
+Warning messages:
+1: In sfa(log(output) ~ log(capital) + log(labour), ineffDecrease = FALSE,  :
   the residuals of the OLS estimates are left-skewed; this might indicate that there is no inefficiency or that the model is misspecified
+2: In sfa(log(output) ~ log(capital) + log(labour), ineffDecrease = FALSE,  :
+  the parameter 'gamma' is close to the boundary of the parameter space [0,1]: this can cause convergence problems and can negatively affect the validity and reliability of statistical tests and might be caused by model misspecification
 > summary( a1, farrell = FALSE )
 Error Components Frontier (see Battese & Coelli 1992)
-Inefficiency increases the endogenous variable (as in a cost function
+Inefficiency increases the endogenous variable (as in a cost function)
 The dependent variable is logged
-Iterative ML estimation terminated after 53 iterations:
+Iterative ML estimation terminated after 48 iterations:
 log likelihood values and parameters of two successive iterations
 are within the tolerance limit
 
 final maximum likelihood estimates
                Estimate Std. Error z value  Pr(>|z|)    
-(Intercept)  2.4406e-01 6.6471e-01  0.3672    0.7135    
-log(capital) 2.8049e-01 4.7121e-02  5.9526 2.639e-09 ***
-log(labour)  5.3331e-01 4.9362e-02 10.8040 < 2.2e-16 ***
-sigmaSq      1.0829e-01 1.9505e-02  5.5518 2.828e-08 ***
-gamma        1.0212e-05 1.6530e-02  0.0006    0.9995    
+(Intercept)  2.4411e-01 7.5293e-01  0.3242    0.7458    
+log(capital) 2.8049e-01 4.6873e-02  5.9841 2.176e-09 ***
+log(labour)  5.3331e-01 4.9077e-02 10.8666 < 2.2e-16 ***
+sigmaSq      1.0829e-01 1.9342e-02  5.5986 2.160e-08 ***
+gamma        9.0805e-06 1.7561e-02  0.0005    0.9996    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
 log likelihood value: -18.44684 
@@ -77,7 +79,7 @@ log likelihood value: -18.44684
 cross-sectional data
 total number of observations = 60 
 
-mean efficiency: 1.00084 
+mean efficiency: 1.000792 
 > lrtest( a1 )
 Likelihood ratio test
 
@@ -90,12 +92,14 @@ Model 2: Error Components Frontier (ECF)
 > ## front41Data, truncNorm
 > a2 <- sfa( log( output ) ~ log( capital ) + log( labour ),
 +    ineffDecrease = FALSE, truncNorm = TRUE, data = front41Data )
-Warning message:
-In sfa(log(output) ~ log(capital) + log(labour), ineffDecrease = FALSE,  :
+Warning messages:
+1: In sfa(log(output) ~ log(capital) + log(labour), ineffDecrease = FALSE,  :
   the residuals of the OLS estimates are left-skewed and the likelihood value of the ML estimation is less than that obtained using OLS; this usually indicates that there is no inefficiency or that the model is misspecified
+2: In sfa(log(output) ~ log(capital) + log(labour), ineffDecrease = FALSE,  :
+  the parameter 'gamma' is close to the boundary of the parameter space [0,1]: this can cause convergence problems and can negatively affect the validity and reliability of statistical tests and might be caused by model misspecification
 > summary( a2, farrell = FALSE )
 Error Components Frontier (see Battese & Coelli 1992)
-Inefficiency increases the endogenous variable (as in a cost function
+Inefficiency increases the endogenous variable (as in a cost function)
 The dependent variable is logged
 Iterative ML estimation terminated after 12 iterations:
 cannot find a parameter vector that results in a log-likelihood value
@@ -129,25 +133,27 @@ Model 2: Error Components Frontier (ECF)
 > ## riceProdPhil
 > b1 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ),
 +    ineffDecrease = FALSE, data = riceProdPhil )
-Warning message:
-In sfa(log(PROD) ~ log(AREA) + log(LABOR) + log(NPK), ineffDecrease = FALSE,  :
+Warning messages:
+1: In sfa(log(PROD) ~ log(AREA) + log(LABOR) + log(NPK), ineffDecrease = FALSE,  :
   the residuals of the OLS estimates are left-skewed; this might indicate that there is no inefficiency or that the model is misspecified
+2: In sfa(log(PROD) ~ log(AREA) + log(LABOR) + log(NPK), ineffDecrease = FALSE,  :
+  the parameter 'gamma' is close to the boundary of the parameter space [0,1]: this can cause convergence problems and can negatively affect the validity and reliability of statistical tests and might be caused by model misspecification
 > summary( b1, farrell = FALSE )
 Error Components Frontier (see Battese & Coelli 1992)
-Inefficiency increases the endogenous variable (as in a cost function
+Inefficiency increases the endogenous variable (as in a cost function)
 The dependent variable is logged
-Iterative ML estimation terminated after 50 iterations:
+Iterative ML estimation terminated after 42 iterations:
 log likelihood values and parameters of two successive iterations
 are within the tolerance limit
 
 final maximum likelihood estimates
                Estimate  Std. Error z value  Pr(>|z|)    
-(Intercept) -1.6703e+00  3.1470e-01 -5.3077 1.110e-07 ***
-log(AREA)    3.2976e-01  6.2094e-02  5.3107 1.092e-07 ***
-log(LABOR)   3.8375e-01  6.5578e-02  5.8517 4.865e-09 ***
-log(NPK)     2.8292e-01  3.9758e-02  7.1161 1.110e-12 ***
-sigmaSq      1.0775e-01  8.7559e-03 12.3060 < 2.2e-16 ***
-gamma        6.6182e-06  4.1129e-03  0.0016    0.9987    
+(Intercept) -1.6708e+00  2.9404e-01 -5.6820 1.331e-08 ***
+log(AREA)    3.2975e-01  5.9501e-02  5.5420 2.991e-08 ***
+log(LABOR)   3.8375e-01  6.4488e-02  5.9508 2.669e-09 ***
+log(NPK)     2.8292e-01  3.9233e-02  7.2114 5.537e-13 ***
+sigmaSq      1.0775e-01  6.3210e-03 17.0456 < 2.2e-16 ***
+gamma        1.6601e-05  7.0970e-03  0.0023    0.9981    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
 log likelihood value: -104.9068 
@@ -155,7 +161,7 @@ log likelihood value: -104.9068
 cross-sectional data
 total number of observations = 344 
 
-mean efficiency: 1.000674 
+mean efficiency: 1.001068 
 > lrtest( b1 )
 Likelihood ratio test
 
@@ -163,17 +169,19 @@ Model 1: OLS (no inefficiency)
 Model 2: Error Components Frontier (ECF)
   #Df  LogLik Df Chisq Pr(>Chisq)
 1   5 -104.91                    
-2   6 -104.91  1     0     0.4984
+2   6 -104.91  1     0     0.4985
 > 
 > ## riceProdPhil, truncNorm
 > b2 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ),
 +    ineffDecrease = FALSE, truncNorm = TRUE, data = riceProdPhil )
-Warning message:
-In sfa(log(PROD) ~ log(AREA) + log(LABOR) + log(NPK), ineffDecrease = FALSE,  :
+Warning messages:
+1: In sfa(log(PROD) ~ log(AREA) + log(LABOR) + log(NPK), ineffDecrease = FALSE,  :
   the residuals of the OLS estimates are left-skewed and the likelihood value of the ML estimation is less than that obtained using OLS; this usually indicates that there is no inefficiency or that the model is misspecified
+2: In sfa(log(PROD) ~ log(AREA) + log(LABOR) + log(NPK), ineffDecrease = FALSE,  :
+  the parameter 'gamma' is close to the boundary of the parameter space [0,1]: this can cause convergence problems and can negatively affect the validity and reliability of statistical tests and might be caused by model misspecification
 > summary( b2, farrell = FALSE )
 Error Components Frontier (see Battese & Coelli 1992)
-Inefficiency increases the endogenous variable (as in a cost function
+Inefficiency increases the endogenous variable (as in a cost function)
 The dependent variable is logged
 Iterative ML estimation terminated after 12 iterations:
 cannot find a parameter vector that results in a log-likelihood value
@@ -210,34 +218,36 @@ Model 2: Error Components Frontier (ECF)
 > ## riceProdPhil
 > d1 <- sfa( log( cost ) ~ log( PROD ) + log( AREA ) + log( LABORP ) +
 +    log( NPKP ), data = riceProdPhil )
-Warning message:
-In sfa(log(cost) ~ log(PROD) + log(AREA) + log(LABORP) + log(NPKP),  :
+Warning messages:
+1: In sfa(log(cost) ~ log(PROD) + log(AREA) + log(LABORP) + log(NPKP),  :
   the residuals of the OLS estimates are right-skewed; this might indicate that there is no inefficiency or that the model is misspecified
+2: In sfa(log(cost) ~ log(PROD) + log(AREA) + log(LABORP) + log(NPKP),  :
+  the parameter 'gamma' is close to the boundary of the parameter space [0,1]: this can cause convergence problems and can negatively affect the validity and reliability of statistical tests and might be caused by model misspecification
 > summary( d1 )
 Error Components Frontier (see Battese & Coelli 1992)
 Inefficiency decreases the endogenous variable (as in a production function)
 The dependent variable is logged
-Iterative ML estimation terminated after 54 iterations:
+Iterative ML estimation terminated after 53 iterations:
 log likelihood values and parameters of two successive iterations
 are within the tolerance limit
 
 final maximum likelihood estimates
               Estimate Std. Error z value Pr(>|z|)    
-(Intercept) 6.0605e+00 2.5098e-01 24.1472   <2e-16 ***
-log(PROD)   4.4031e-01 2.7270e-02 16.1463   <2e-16 ***
-log(AREA)   5.2214e-01 2.9687e-02 17.5882   <2e-16 ***
-log(LABORP) 4.1806e-01 3.2414e-02 12.8974   <2e-16 ***
-log(NPKP)   6.0231e-02 5.3861e-02  1.1183   0.2635    
-sigmaSq     4.6666e-02 3.7046e-03 12.5968   <2e-16 ***
-gamma       5.1762e-05 1.4492e-02  0.0036   0.9972    
+(Intercept) 6.06103573 0.22833961 26.5440   <2e-16 ***
+log(PROD)   0.44029675 0.02887792 15.2468   <2e-16 ***
+log(AREA)   0.52215522 0.03147961 16.5871   <2e-16 ***
+log(LABORP) 0.41806088 0.03281545 12.7398   <2e-16 ***
+log(NPKP)   0.06023744 0.05401746  1.1151   0.2648    
+sigmaSq     0.04666801 0.00368974 12.6480   <2e-16 ***
+gamma       0.00010713 0.01098918  0.0097   0.9922    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
-log likelihood value: 39.02474 
+log likelihood value: 39.02473 
 
 cross-sectional data
 total number of observations = 344 
 
-mean efficiency: 0.9987611 
+mean efficiency: 0.9982184 
 > lrtest( d1 )
 Likelihood ratio test
 
@@ -245,14 +255,16 @@ Model 1: OLS (no inefficiency)
 Model 2: Error Components Frontier (ECF)
   #Df LogLik Df Chisq Pr(>Chisq)
 1   6 39.025                    
-2   7 39.025  1     0     0.4985
+2   7 39.025  1     0     0.4986
 > 
 > ## riceProdPhil, truncNorm
 > d2 <- sfa( log( cost ) ~ log( PROD ) + log( AREA ) + log( LABORP ) +
 +    log( NPKP ), truncNorm = TRUE, data = riceProdPhil )
-Warning message:
-In sfa(log(cost) ~ log(PROD) + log(AREA) + log(LABORP) + log(NPKP),  :
+Warning messages:
+1: In sfa(log(cost) ~ log(PROD) + log(AREA) + log(LABORP) + log(NPKP),  :
   the residuals of the OLS estimates are right-skewed and the likelihood value of the ML estimation is less than that obtained using OLS; this usually indicates that there is no inefficiency or that the model is misspecified
+2: In sfa(log(cost) ~ log(PROD) + log(AREA) + log(LABORP) + log(NPKP),  :
+  the parameter 'gamma' is close to the boundary of the parameter space [0,1]: this can cause convergence problems and can negatively affect the validity and reliability of statistical tests and might be caused by model misspecification
 > summary( d2 )
 Error Components Frontier (see Battese & Coelli 1992)
 Inefficiency decreases the endogenous variable (as in a production function)
