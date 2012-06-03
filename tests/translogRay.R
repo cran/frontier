@@ -1,4 +1,5 @@
 library( frontier )
+options( digits = 5 )
 
 ## preparing data
 data( germanFarms )

@@ -5,6 +5,21 @@ A full ChangeLog is available in the log messages of the SVN repository
 on R-Forge.
 
 
+            CHANGES IN VERSION 0.997-12  (2012-06-03)
+
+* further arguments to print.summary.frontier() are forwarded to printCoefmat()
+
+* if the likelihood value of the ML estimation is less than that obtained using 
+OLS, there is no longer a warning issued if argument maxit is set to 0
+
+* minor improvements of the examples in the documentation
+
+
+            CHANGES IN VERSION 0.997-10  (2012-06-02)
+
+* added nobs() method for objects of class "frontier" 
+
+
             CHANGES IN VERSION 0.997-8  (2012-03-04)
 
 * sfa() now issues a warning message if the covariance matrix of the ML estimates 

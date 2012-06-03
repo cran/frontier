@@ -282,7 +282,7 @@ frontier( yName, xNames = NULL, zNames = NULL, data,
    \code{\link{efficiencies.frontier}} for calculating efficiency estimates,
    and \code{\link{lrtest.frontier}} for comparing models by LR tests.}
 
-\author{Tim Coelli and Arne Henningsen \email{arne.henningsen@gmail.com}}
+\author{Tim Coelli and Arne Henningsen}
 
 \examples{
    # example included in FRONTIER 4.1 (cross-section data)
@@ -326,8 +326,8 @@ frontier( yName, xNames = NULL, zNames = NULL, data,
    # Cobb-Douglas production frontier
    cobbDouglasFront <- frontier( yName = "logOutput",
       xNames = c( "logCapital", "logLabour" ), data = front41Data )
-   all.equal( cobbDouglasFront, cobbDouglas )   # only the call (element 34)
-      # and the names of the parameters are slightly different
+   all.equal( cobbDouglasFront, cobbDouglas, check.attributes = FALSE )
+         # only the call is different (element 38)
 
    # rice producers in the Philippines (panel data)
    riceProdPhil$lPROD  <- log( riceProdPhil$PROD )
@@ -338,15 +338,15 @@ frontier( yName, xNames = NULL, zNames = NULL, data,
    # Error Components Frontier (Battese & Coelli 1992)
    riceFront <- frontier( yName = "lPROD",
       xNames = c( "lAREA", "lLABOR", "lNPK" ), data = riceProdPhil )
-   all.equal( riceFront, rice )   # only the call (element 34)
-      # and the names of the parameters are slightly different
+   all.equal( riceFront, rice, check.attributes = FALSE )
+         # only the call is different (element 38)
 
    # Technical Efficiency Effects Frontier (Battese & Coelli 1995)
    rice2Front <- frontier( yName = "lPROD",
       xNames = c( "lAREA", "lLABOR", "lNPK" ),
       zNames = c( "EDYRS", "BANRAT" ), data = riceProdPhil )
-   all.equal( rice2Front, rice2 )   # only the call (element 34)
-      # and the names of the parameters are slightly different
+   all.equal( rice2Front, rice2, check.attributes = FALSE )
+         # only the call is different (element 38)
 }
 
 \keyword{models}

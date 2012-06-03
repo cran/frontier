@@ -61,7 +61,7 @@
    translog <- frontierQuad( yName = "logOutput",
       xNames = c( "logCapital", "logLabour" ),
       data = front41Data )
-   elas( translog )$ela
+   elas( translog )
 }
 
 \keyword{models}

@@ -53,7 +53,7 @@ print.summary.frontier <- function( x, effic = x$printEffic, ... ) {
    }
 
    cat( "\nfinal maximum likelihood estimates\n" )
-   printCoefmat( coef( x ) )
+   printCoefmat( coef( x ), ... )
    cat( "log likelihood value:", x$mleLogl, "\n" )
 
    if( x$nt == 1 ) {

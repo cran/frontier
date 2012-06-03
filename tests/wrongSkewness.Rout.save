@@ -1,5 +1,5 @@
 
-R version 2.14.2 (2012-02-29)
+R version 2.15.0 (2012-03-30)
 Copyright (C) 2012 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
 Platform: x86_64-pc-linux-gnu (64-bit)
@@ -41,6 +41,7 @@ The following object(s) are masked from 'package:base':
 Loading required package: micEcon
 Loading required package: miscTools
 Loading required package: lmtest
+> options( digits = 5 )
 > 
 > ## example data included in FRONTIER 4.1 (cross-section data)
 > data( front41Data )
@@ -66,28 +67,28 @@ log likelihood values and parameters of two successive iterations
 are within the tolerance limit
 
 final maximum likelihood estimates
-               Estimate Std. Error z value  Pr(>|z|)    
-(Intercept)  2.4411e-01 7.5293e-01  0.3242    0.7458    
-log(capital) 2.8049e-01 4.6873e-02  5.9841 2.176e-09 ***
-log(labour)  5.3331e-01 4.9077e-02 10.8666 < 2.2e-16 ***
-sigmaSq      1.0829e-01 1.9342e-02  5.5986 2.160e-08 ***
-gamma        9.0805e-06 1.7561e-02  0.0005    0.9996    
+             Estimate Std. Error z value Pr(>|z|)    
+(Intercept)  2.44e-01   7.53e-01    0.32     0.75    
+log(capital) 2.80e-01   4.69e-02    5.98  2.2e-09 ***
+log(labour)  5.33e-01   4.91e-02   10.87  < 2e-16 ***
+sigmaSq      1.08e-01   1.93e-02    5.60  2.2e-08 ***
+gamma        9.08e-06   1.76e-02    0.00     1.00    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
-log likelihood value: -18.44684 
+log likelihood value: -18.447 
 
 cross-sectional data
 total number of observations = 60 
 
-mean efficiency: 1.000792 
+mean efficiency: 1.0008 
 > lrtest( a1 )
 Likelihood ratio test
 
 Model 1: OLS (no inefficiency)
 Model 2: Error Components Frontier (ECF)
-  #Df  LogLik Df Chisq Pr(>Chisq)
-1   4 -18.447                    
-2   5 -18.447  1     0     0.4993
+  #Df LogLik Df Chisq Pr(>Chisq)
+1   4  -18.4                    
+2   5  -18.4  1     0        0.5
 > 
 > ## front41Data, truncNorm
 > a2 <- sfa( log( output ) ~ log( capital ) + log( labour ),
@@ -106,29 +107,29 @@ cannot find a parameter vector that results in a log-likelihood value
 larger than the log-likelihood value obtained in the previous step
 
 final maximum likelihood estimates
-               Estimate Std. Error z value  Pr(>|z|)    
-(Intercept)   0.2352850  0.3989503  0.5898    0.5554    
-log(capital)  0.2806616  0.0458909  6.1158 9.605e-10 ***
-log(labour)   0.5333579  0.0565884  9.4252 < 2.2e-16 ***
-sigmaSq       0.1088107  0.0253322  4.2953 1.744e-05 ***
-gamma         0.0057257  0.2257765  0.0254    0.9798    
-mu           -0.0499208  0.4947342 -0.1009    0.9196    
+             Estimate Std. Error z value Pr(>|z|)    
+(Intercept)   0.23528    0.39895    0.59     0.56    
+log(capital)  0.28066    0.04589    6.12  9.6e-10 ***
+log(labour)   0.53336    0.05659    9.43  < 2e-16 ***
+sigmaSq       0.10881    0.02533    4.30  1.7e-05 ***
+gamma         0.00573    0.22578    0.03     0.98    
+mu           -0.04992    0.49473   -0.10     0.92    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
-log likelihood value: -18.44699 
+log likelihood value: -18.447 
 
 cross-sectional data
 total number of observations = 60 
 
-mean efficiency: 1.009395 
+mean efficiency: 1.0094 
 > lrtest( a2 )
 Likelihood ratio test
 
 Model 1: OLS (no inefficiency)
 Model 2: Error Components Frontier (ECF)
-  #Df  LogLik Df  Chisq Pr(>Chisq)
-1   4 -18.447                     
-2   6 -18.447  2 -3e-04          1
+  #Df LogLik Df Chisq Pr(>Chisq)
+1   4  -18.4                    
+2   6  -18.4  2     0          1
 > 
 > ## riceProdPhil
 > b1 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ),
@@ -147,29 +148,29 @@ log likelihood values and parameters of two successive iterations
 are within the tolerance limit
 
 final maximum likelihood estimates
-               Estimate  Std. Error z value  Pr(>|z|)    
-(Intercept) -1.6708e+00  2.9404e-01 -5.6820 1.331e-08 ***
-log(AREA)    3.2975e-01  5.9501e-02  5.5420 2.991e-08 ***
-log(LABOR)   3.8375e-01  6.4488e-02  5.9508 2.669e-09 ***
-log(NPK)     2.8292e-01  3.9233e-02  7.2114 5.537e-13 ***
-sigmaSq      1.0775e-01  6.3210e-03 17.0456 < 2.2e-16 ***
-gamma        1.6601e-05  7.0970e-03  0.0023    0.9981    
+             Estimate Std. Error z value Pr(>|z|)    
+(Intercept) -1.67e+00   2.94e-01   -5.68  1.3e-08 ***
+log(AREA)    3.30e-01   5.95e-02    5.54  3.0e-08 ***
+log(LABOR)   3.84e-01   6.45e-02    5.95  2.7e-09 ***
+log(NPK)     2.83e-01   3.92e-02    7.21  5.5e-13 ***
+sigmaSq      1.08e-01   6.32e-03   17.05  < 2e-16 ***
+gamma        1.66e-05   7.10e-03    0.00        1    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
-log likelihood value: -104.9068 
+log likelihood value: -104.91 
 
 cross-sectional data
 total number of observations = 344 
 
-mean efficiency: 1.001068 
+mean efficiency: 1.0011 
 > lrtest( b1 )
 Likelihood ratio test
 
 Model 1: OLS (no inefficiency)
 Model 2: Error Components Frontier (ECF)
-  #Df  LogLik Df Chisq Pr(>Chisq)
-1   5 -104.91                    
-2   6 -104.91  1     0     0.4985
+  #Df LogLik Df Chisq Pr(>Chisq)
+1   5   -105                    
+2   6   -105  1     0        0.5
 > 
 > ## riceProdPhil, truncNorm
 > b2 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ),
@@ -188,30 +189,30 @@ cannot find a parameter vector that results in a log-likelihood value
 larger than the log-likelihood value obtained in the previous step
 
 final maximum likelihood estimates
-              Estimate Std. Error z value  Pr(>|z|)    
-(Intercept) -1.6775088  0.2630026 -6.3783 1.791e-10 ***
-log(AREA)    0.3291913  0.0621172  5.2995 1.161e-07 ***
-log(LABOR)   0.3834639  0.0657841  5.8291 5.572e-09 ***
-log(NPK)     0.2831189  0.0388498  7.2875 3.157e-13 ***
-sigmaSq      0.1082674  0.0106018 10.2122 < 2.2e-16 ***
-gamma        0.0051624  0.0825598  0.0625    0.9501    
-mu          -0.0472828  0.1849685 -0.2556    0.7982    
+            Estimate Std. Error z value Pr(>|z|)    
+(Intercept) -1.67751    0.26300   -6.38  1.8e-10 ***
+log(AREA)    0.32919    0.06212    5.30  1.2e-07 ***
+log(LABOR)   0.38346    0.06578    5.83  5.6e-09 ***
+log(NPK)     0.28312    0.03885    7.29  3.2e-13 ***
+sigmaSq      0.10827    0.01060   10.21  < 2e-16 ***
+gamma        0.00516    0.08256    0.06     0.95    
+mu          -0.04728    0.18497   -0.26     0.80    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
-log likelihood value: -104.9087 
+log likelihood value: -104.91 
 
 cross-sectional data
 total number of observations = 344 
 
-mean efficiency: 1.008894 
+mean efficiency: 1.0089 
 > lrtest( b2 )
 Likelihood ratio test
 
 Model 1: OLS (no inefficiency)
 Model 2: Error Components Frontier (ECF)
-  #Df  LogLik Df   Chisq Pr(>Chisq)
-1   5 -104.91                      
-2   7 -104.91  2 -0.0038          1
+  #Df LogLik Df Chisq Pr(>Chisq)
+1   5   -105                    
+2   7   -105  2     0          1
 > 
 > 
 > ###### right-skewed residuals but ineffDecrease = TRUE
@@ -232,30 +233,30 @@ log likelihood values and parameters of two successive iterations
 are within the tolerance limit
 
 final maximum likelihood estimates
-              Estimate Std. Error z value Pr(>|z|)    
-(Intercept) 6.06103573 0.22833961 26.5440   <2e-16 ***
-log(PROD)   0.44029675 0.02887792 15.2468   <2e-16 ***
-log(AREA)   0.52215522 0.03147961 16.5871   <2e-16 ***
-log(LABORP) 0.41806088 0.03281545 12.7398   <2e-16 ***
-log(NPKP)   0.06023744 0.05401746  1.1151   0.2648    
-sigmaSq     0.04666801 0.00368974 12.6480   <2e-16 ***
-gamma       0.00010713 0.01098918  0.0097   0.9922    
+            Estimate Std. Error z value Pr(>|z|)    
+(Intercept) 6.061036   0.228340   26.54   <2e-16 ***
+log(PROD)   0.440297   0.028878   15.25   <2e-16 ***
+log(AREA)   0.522155   0.031480   16.59   <2e-16 ***
+log(LABORP) 0.418061   0.032815   12.74   <2e-16 ***
+log(NPKP)   0.060237   0.054017    1.12     0.26    
+sigmaSq     0.046668   0.003690   12.65   <2e-16 ***
+gamma       0.000107   0.010989    0.01     0.99    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
-log likelihood value: 39.02473 
+log likelihood value: 39.025 
 
 cross-sectional data
 total number of observations = 344 
 
-mean efficiency: 0.9982184 
+mean efficiency: 0.99822 
 > lrtest( d1 )
 Likelihood ratio test
 
 Model 1: OLS (no inefficiency)
 Model 2: Error Components Frontier (ECF)
   #Df LogLik Df Chisq Pr(>Chisq)
-1   6 39.025                    
-2   7 39.025  1     0     0.4986
+1   6     39                    
+2   7     39  1     0        0.5
 > 
 > ## riceProdPhil, truncNorm
 > d2 <- sfa( log( cost ) ~ log( PROD ) + log( AREA ) + log( LABORP ) +
@@ -274,29 +275,32 @@ cannot find a parameter vector that results in a log-likelihood value
 larger than the log-likelihood value obtained in the previous step
 
 final maximum likelihood estimates
-             Estimate Std. Error z value  Pr(>|z|)    
-(Intercept)  6.064279   0.250721 24.1874 < 2.2e-16 ***
-log(PROD)    0.440526   0.029790 14.7875 < 2.2e-16 ***
-log(AREA)    0.521931   0.032811 15.9073 < 2.2e-16 ***
-log(LABORP)  0.418311   0.031662 13.2119 < 2.2e-16 ***
-log(NPKP)    0.060449   0.059750  1.0117    0.3117    
-sigmaSq      0.047070   0.010190  4.6191 3.854e-06 ***
-gamma        0.007577   0.183960  0.0412    0.9671    
-mu          -0.037770   0.201138 -0.1878    0.8510    
+            Estimate Std. Error z value Pr(>|z|)    
+(Intercept)  6.06428    0.25072   24.19  < 2e-16 ***
+log(PROD)    0.44053    0.02979   14.79  < 2e-16 ***
+log(AREA)    0.52193    0.03281   15.91  < 2e-16 ***
+log(LABORP)  0.41831    0.03166   13.21  < 2e-16 ***
+log(NPKP)    0.06045    0.05975    1.01     0.31    
+sigmaSq      0.04707    0.01019    4.62  3.9e-06 ***
+gamma        0.00758    0.18396    0.04     0.97    
+mu          -0.03777    0.20114   -0.19     0.85    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
-log likelihood value: 39.02398 
+log likelihood value: 39.024 
 
 cross-sectional data
 total number of observations = 344 
 
-mean efficiency: 0.9929969 
+mean efficiency: 0.993 
 > lrtest( d2 )
 Likelihood ratio test
 
 Model 1: OLS (no inefficiency)
 Model 2: Error Components Frontier (ECF)
-  #Df LogLik Df   Chisq Pr(>Chisq)
-1   6 39.025                      
-2   8 39.024  2 -0.0015          1
+  #Df LogLik Df Chisq Pr(>Chisq)
+1   6     39                    
+2   8     39  2     0          1
 > 
+> proc.time()
+   user  system elapsed 
+  1.320   0.032   1.354 

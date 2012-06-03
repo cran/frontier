@@ -61,7 +61,7 @@
    6, 247-268.
 }
 
-\author{Arne Henningsen \email{arne.henningsen@gmail.com}}
+\author{Arne Henningsen}
 
 \seealso{\code{\link{sfa}}, \code{\link[lmtest]{lrtest}}}
 

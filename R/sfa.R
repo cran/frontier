@@ -475,7 +475,7 @@ sfa <- function(
          " please try again using different starting values and/or",
          " increase the maximum number of iterations" )
       warnMaxit <- FALSE
-   } else if( returnObj$mleLogl < returnObj$olsLogl ) {
+   } else if( returnObj$mleLogl < returnObj$olsLogl && maxit > 0 ) {
       warning( "the likelihood value of the ML estimation is less",
          " than that obtained using OLS;",
          " this indicates that the likelihood maximization did not",

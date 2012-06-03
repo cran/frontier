@@ -1,5 +1,5 @@
 
-R version 2.14.2 (2012-02-29)
+R version 2.15.0 (2012-03-30)
 Copyright (C) 2012 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
 Platform: x86_64-pc-linux-gnu (64-bit)
@@ -941,3 +941,6 @@ $meanEfficiency
 [1] 0.7405677
 
 > 
+> proc.time()
+   user  system elapsed 
+  0.836   0.032   0.852 

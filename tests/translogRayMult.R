@@ -3,6 +3,7 @@
 library( "frontier" )
 library( "fdrtool" )  # for function rhalfnorm
 library( "MCMCpack" )  # for function rdirichlet
+options( digits = 5 )
 
 # seed for pseudo random number generator
 set.seed( 200 )

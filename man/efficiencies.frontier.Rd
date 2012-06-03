@@ -110,12 +110,14 @@
 
 
 \references{
-   Olsen, Jakob V. and Arne Henningsen (2011):
-   Investment Utilisation and Farm Efficiency in Danish Agriculture.
-   Knowledge Centre for Agriculture, Agro Food Park, Aarhus, Denmark.
+   Olsen, Jakob Vesterlund and Arne Henningsen (2011): 
+   Investment utilization and farm efficiency in Danish agriculture. 
+   FOI working paper 2011/13, Institute of Food and Resource Economics, 
+   University of Copenhagen, 
+   \url{http://econpapers.repec.org/RePEc:foi:wpaper:2011_13}.
 }
 
-\author{Arne Henningsen \email{arne.henningsen@gmail.com}}
+\author{Arne Henningsen}
 
 \seealso{\code{\link{sfa}}, \code{\link{summary.frontier}},
    and \code{\link{efficiencies}}.}

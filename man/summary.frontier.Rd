@@ -28,7 +28,10 @@ returned by \code{\link{frontier}}.
       or equal to one are used for calculating the mean efficiencies.
       The conversion between the two efficiency measures is done by taking
       the inverse (before taking the mean).}
-   \item{\dots}{currently unused.}
+   \item{\dots}{further arguments to the \code{summary} method 
+      are currently ignored;
+      further arguments to the \code{print} method
+      are forwarded to \code{\link[stats]{printCoefmat}}.}
 }
 
 \value{
@@ -51,7 +54,7 @@ returned by \code{\link{frontier}}.
       without time effects).}
 }
 
-\author{Arne Henningsen \email{arne.henningsen@gmail.com}}
+\author{Arne Henningsen}
 
 \seealso{\code{\link{sfa}}, \code{\link{efficiencies.frontier}},
    and \code{\link{lrtest.frontier}}.}
