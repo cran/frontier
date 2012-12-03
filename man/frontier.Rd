@@ -18,7 +18,7 @@
 \usage{
 sfa( formula, data = sys.frame( sys.parent() ),
    ineffDecrease = TRUE, truncNorm = FALSE,
-   timeEffect = FALSE, startVal = NULL,
+   timeEffect = FALSE, multErr = FALSE, startVal = NULL,
    tol = 0.00001, maxit = 1000, muBound = 2, bignum = 1.0E+16,
    searchStep = 0.00001, searchTol = 0.001, searchScale = NA,
    gridSize = 0.1, gridDouble = TRUE,
@@ -58,6 +58,11 @@ frontier( yName, xNames = NULL, zNames = NULL, data,
       if \code{TRUE}, time is allowed to have an effect on efficiency
       (this argument is ignored in case of an
       \sQuote{Efficiency Effects Frontier}).}
+   \item{multErr}{logical. If \code{FALSE} (default),
+      the error terms are additive;
+      if \code{TRUE}, the error terms are multiplicative,
+      i.e. \eqn{y = f( x ) * ( 1 + v +/- u)}
+      (not implemented yet).}
    \item{startVal}{numeric vector. Optional starting values for the ML
       estimation.}
    \item{tol}{numeric. Convergence tolerance (proportional).}

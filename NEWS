@@ -5,6 +5,14 @@ A full ChangeLog is available in the log messages of the SVN repository
 on R-Forge.
 
 
+            CHANGES IN VERSION 0.997-14  (2012-XX-XX)
+
+* fixed a bug in the Fortran code that could result in a segmentation fault 
+error when an efficiency effects frontier model with intercept is estimated 
+(many thanks to Simon Urbanek and Berend Hasselman for pointing this bug
+out to me!)
+
+
             CHANGES IN VERSION 0.997-12  (2012-06-03)
 
 * further arguments to print.summary.frontier() are forwarded to printCoefmat()

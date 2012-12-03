@@ -3,6 +3,7 @@ sfa <- function(
       ineffDecrease = TRUE,
       truncNorm = FALSE,
       timeEffect = FALSE,
+      multErr = FALSE,
       startVal = NULL,
       tol = 0.00001,
       maxit = 1000,
@@ -56,6 +57,13 @@ sfa <- function(
    if( timeEffect && ! "plm.dim" %in% class( data ) ) {
       warning( "argument 'timeEffect' is ignored in case of",
          " cross-sectional data" )
+   }
+   # multErr (imult)
+   if( !is.logical( multErr ) || length( multErr ) != 1 ) {
+      stop( "argument 'multErr' must be a single logical value" )
+   }
+   if( multErr ) {
+      stop( "multiplicative errors are not yet implemented" )
    }
    # printIter (iprint)
    if( !is.numeric( printIter ) ) {
@@ -363,6 +371,7 @@ sfa <- function(
    returnObj <- .Fortran( "front41",
       modelType = as.integer( modelType ),
       ineffDecrease = as.integer( ( !ineffDecrease ) + 1 ),
+      imult = as.integer( multErr ),
       nn = as.integer( nn ),
       nt = as.integer( nt ),
       nob = as.integer( nob ),
@@ -419,6 +428,11 @@ sfa <- function(
       stop( "a period number is > number of periods" )
    } else if( returnObj$code == 108 ) {
       stop( "there are no observations on at least one firm" )
+   } else if( returnObj$code == 109 ) {
+      stop( "internal error: 2 + nr - nmu * (im-1)",
+            " is not equal to argument 'nColData'.",
+            " Please contact the maintainer of the 'frontier' package",
+            " (arne.henningsen@gmail.com)" )
    } else if( returnObj$code > 100 ) {
       stop( "unknown error.",
          " Please contact the maintainer of the 'frontier' package",

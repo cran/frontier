@@ -1,6 +1,6 @@
  
       subroutine front41(
-     $  imArg, ipcArg,
+     $  imArg, ipcArg, imunltArg,
      $  nnArg, ntArg, nobArg, nbArg, nmuArg, netaArg,
      $  iprintArg, indicArg, tolArg, tol2Arg, bignumArg,
      $  step1Arg, igrid2Arg, gridnoArg, maxitArg, bmuArg,
@@ -33,6 +33,11 @@ c       last update = 25/April/2008
 c       Since version 4.1d, the user might specify the name of the
 c       instruction file by an (optional) argument at the command line.
 c       Hence, this programme can be run automatically (non-interactively) now.
+c
+c       nb = number of coefficients of the frontier model (slopes + 1)
+c       nz = number of coefficients (slopes + possibly intercept) 
+c            of the inefficiency model
+c       nr = nb + nz
       implicit double precision (a-h,o-z)
       dimension startVal(nStartVal)
       dimension dataTable(nRowData,nColData)
@@ -42,12 +47,13 @@ c       Hence, this programme can be run automatically (non-interactively) now.
       dimension h(nParamTotal,nParamTotal)
       common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit,icode
       common/four/frestart,mrestart,nrestart
-      common/one/nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im
+      common/one/nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im,imult
       common/two/fx,fy
       common/five/tol,tol2,bmu,bignum,step1,gridno,igrid2
 
       im=imArg
       ipc=ipcArg
+      imult=imunltArg
       nn=nnArg
       nt=ntArg
       nob=nobArg
@@ -82,7 +88,7 @@ c       Hence, this programme can be run automatically (non-interactively) now.
       subroutine mini(yy,xx,sv,ob,gb,fxs,y,h)
 c       contains the main loop of this iterative program. 
       implicit double precision (a-h,o-z)
-      common/one/nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im
+      common/one/nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im,imult
       common/two/fx,fy
       common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit,icode
       common/four/frestart,mrestart,nrestart
@@ -270,7 +276,7 @@ c       calculates the direction matrix (p).
 c       unidimensional search (coggin) to determine optimal step length
 c       determines the step length (t) using a unidimensional search. 
       implicit double precision (a-h,o-z)
-      common/one/nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im
+      common/one/nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im,imult
       common/two/fx,fy
       common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit,icode
       common/five/tol,tol2,bmu,bignum,step1,gridno,igrid2
@@ -430,7 +436,7 @@ c       determines the step length (t) using a unidimensional search.
       subroutine check(b)
 c       checks if params are out of bounds & adjusts if required. 
       implicit double precision (a-h,o-z)
-      common/one/nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im
+      common/one/nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im,imult
       common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit,icode
       common/five/tol,tol2,bmu,bignum,step1,gridno,igrid2
       dimension b(n)
@@ -453,7 +459,7 @@ c       checks if params are out of bounds & adjusts if required.
 c       calculates the negative of the log-likelihood function of the
 c       error components model.
       implicit double precision (a-h,o-z)
-      common/one/nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im
+      common/one/nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im,imult
       common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit,icode
       data pi/3.1415926/ 
       dimension b(n),yy(nn,nt),xx(nn,nt,nr)
@@ -484,10 +490,7 @@ c       error components model.
       epr=dble(0)    
       do 103 l=1,nt   
       if (xx(i,l,1).ne.dble(0)) then
-      ee=yy(i,l)  
-      do 102 j=1,nb   
-      ee=ee-b(j)*xx(i,l,j)   
-  102   continue   
+      call resid(b,i,l,yy,xx,ee)
       epr=epr+ee*dexp(-e*(dble(l)-fnt))   
       end if
   103   continue   
@@ -501,10 +504,7 @@ c       error components model.
       a=a-dislog(zi)
       do 133 l=1,nt   
       if (xx(i,l,1).ne.dble(0)) then
-      ee=yy(i,l)  
-      do 134 j=1,nb   
-      ee=ee-b(j)*xx(i,l,j)   
- 134    continue    
+      call resid(b,i,l,yy,xx,ee)
       a2=a2+ee**2 
       end if
  133    continue    
@@ -519,7 +519,7 @@ c       error components model.
 c       calculates the first-order partial derivatives of the negative
 c       of the log-likelihood function of the error components model.
       implicit double precision (a-h,o-z)
-      common/one/nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im
+      common/one/nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im,imult
       common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit,icode
       dimension b(n),gx(n),yy(nn,nt),xx(nn,nt,nr) 
       call check(b)  
@@ -560,10 +560,7 @@ c       of the log-likelihood function of the error components model.
       epe=dble(0)
       do 103 l=1,nt   
       if (xx(i,l,1).ne.dble(0)) then
-      ee=yy(i,l)  
-      do 102 j=1,nb   
-      ee=ee-b(j)*xx(i,l,j)   
-  102   continue   
+      call resid(b,i,l,yy,xx,ee)
       epr=epr+ee*dexp(-e*(dble(l)-fnt))   
       epe=epe+dexp(-dble(2)*e*(dble(l)-fnt))    
       end if
@@ -574,10 +571,7 @@ c       of the log-likelihood function of the error components model.
       do 132 j=1,nb   
       do 134 l=1,nt   
       if(xx(i,l,1).ne.dble(0)) then
-      ee=yy(i,l)  
-      do 135 k=1,nb   
-      ee=ee-xx(i,l,k)*b(k)   
- 135    continue    
+      call resid(b,i,l,yy,xx,ee)
       gx(j)=gx(j)-xx(i,l,j)*ee/(s2*(dble(1)-g))
       endif
  134    continue    
@@ -594,10 +588,7 @@ c       of the log-likelihood function of the error components model.
       ss=dble(0)
       do 138 l=1,nt   
       if(xx(i,l,1).ne.dble(0)) then
-      ee=yy(i,l)  
-      do 139 j=1,nb   
-      ee=ee-xx(i,l,j)*b(j)   
- 139    continue    
+      call resid(b,i,l,yy,xx,ee)
       ss=ss+ee**2 
       endif
  138    continue
@@ -627,10 +618,7 @@ c       of the log-likelihood function of the error components model.
       if (xx(i,l,1).eq.1) then  
       t=dble(l)
       de=de-dble(2)*(t-fnt)*dexp(-dble(2)*e*(t-fnt))    
-      ee=yy(i,l)  
-      do 153 j=1,nb   
-      ee=ee-xx(i,l,j)*b(j)   
-  153   continue   
+      call resid(b,i,l,yy,xx,ee)
       d=d+(t-fnt)*dexp(-e*(t-fnt))*ee
       end if
   152   continue   
@@ -653,7 +641,7 @@ c       of the log-likelihood function of the error components model.
 c       calculates the negative of the log-likelihood function of the
 c       TE effects model.
       implicit double precision (a-h,o-z)
-      common/one/nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im
+      common/one/nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im,imult
       common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit,icode
       dimension b(n),yy(nn,nt),xx(nn,nt,nr)
       data pi/3.1415926/ 
@@ -667,11 +655,7 @@ c       TE effects model.
       do 10 i=1,nn   
       do 10 l=1,nt
       if (xx(i,l,1).ne.dble(0)) then
-      xb=dble(0)  
-      do 11 j=1,nb   
-      xb=xb+xx(i,l,j)*b(j) 
-   11   continue   
-      ee=(yy(i,l)-xb)
+      call resid(b,i,l,yy,xx,ee)
       zd=dble(0)  
       if (nz.ne.0) then  
       do 12 j=nb+1,nr
@@ -694,7 +678,7 @@ c       TE effects model.
 c       calculates the first-order partial derivatives of the negative
 c       of the log-likelihood function of the TE effects model.   
       implicit double precision (a-h,o-z)
-      common/one/nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im
+      common/one/nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im,imult
       common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit,icode
       dimension b(n),gx(n),yy(nn,nt),xx(nn,nt,nr)
       call check(b)  
@@ -709,11 +693,7 @@ c       of the log-likelihood function of the TE effects model.
       do 10 i=1,nn   
       do 10 l=1,nt
       if (xx(i,l,1).ne.dble(0)) then
-      xb=dble(0)  
-      do 11 j=1,nb   
-      xb=xb+xx(i,l,j)*b(j) 
-   11   continue   
-      ee=(yy(i,l)-xb)
+      call resid(b,i,l,yy,xx,ee)
       zd=dble(0)  
       if (nz.ne.0) then  
       do 12 j=nb+1,nr
@@ -746,6 +726,21 @@ c    +  (dble(2)*(ee+zd)/ss+ds*(dble(1)-dble(2)*g)/(g*(dble(1)-g))))
       ndrv=ndrv+1
       return 
       end
+
+      subroutine resid(b,i,l,yy,xx,ee)
+c       calculates the residual for a single observation, 
+c       i.e. e = y - x ' b 
+      implicit double precision (a-h,o-z)
+      common/one/nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im,imult
+      common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit,icode
+      dimension b(n),yy(nn,nt),xx(nn,nt,nr)
+      xb=dble(0)
+      do 102 j=1,nb   
+      xb=xb+b(j)*xx(i,l,j)   
+  102   continue
+      ee=yy(i,l)-xb
+      return
+      end   
  
       subroutine info( nStartVal, startVal,
      $  nRowData, nColData, dataTable, 
@@ -753,7 +748,7 @@ c    +  (dble(2)*(ee+zd)/ss+ds*(dble(1)-dble(2)*g)/(g*(dble(1)-g))))
 c       accepts instructions from the terminal or from a file and 
 c       also reads data from a file.  
       implicit double precision (a-h,o-z)
-      common/one/nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im
+      common/one/nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im,imult
       common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit,icode
       dimension yy(:,:),xx(:,:,:),mm(:),sv(:),xxd(:)
       dimension startVal(nStartVal)
@@ -804,17 +799,23 @@ c       also reads data from a file.
       icode=103
       return
       endif
-      allocate(yy(nn,nt),xx(nn,nt,nr),mm(nn),xxd(nr))
+      allocate(yy(nn,nt),xx(nn,nt,nr),mm(nn),xxd(nr-nmu*(im-1)))
       do 135 i=1,nn
       mm(i)=0
       do 135 l=1,nt
       xx(i,l,1)=dble(0)
   135   continue
+      if ((2+nr-nmu*(im-1)).ne.nColData) then
+      call intpr( 'internal error: 2 + nr - nmu * (im-1)',-1, 0, 0 )
+      call intpr( 'is not equal to argument ''nColData''',-1, 0, 0 )
+      icode=109
+      return
+      endif
       do 134 k=1,nob  
       fii=dataTable(k,1)
       ftt=dataTable(k,2)
       yyd=dataTable(k,3)
-      do 143 i=2,nr
+      do 143 i=2,(nr-nmu*(im-1))
       xxd(i)=dataTable(k,2+i)
   143 continue
       i=int(fii)   
@@ -871,7 +872,7 @@ c       also reads data from a file.
       subroutine grid(x,y,yy,xx,ob,gb)
 c       does a grid search across gamma
       implicit double precision (a-h,o-z)
-      common/one/nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im
+      common/one/nn,nz,nb,nr,nt,nob,nmu,neta,ipc,im,imult
       common/two/fx,fy
       common/three/n,nfunct,ndrv,iter,indic,iprint,igrid,maxit,icode
       common/five/tol,tol2,bmu,bignum,step1,gridno,igrid2

@@ -50,6 +50,8 @@ print.summary.frontier <- function( x, effic = x$printEffic, ... ) {
    if( x$nRestart != 0 ) {
       cat( "Multiplied the initial values", x$nRestart, "time(s) by",
          x$restartFactor, "before the search procedure could start\n" )
+      cat( "You could try to use different starting values or",
+         "try to reduce the step size specified in argument 'searchStep'\n" )
    }
 
    cat( "\nfinal maximum likelihood estimates\n" )
