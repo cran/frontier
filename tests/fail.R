@@ -48,22 +48,22 @@ try( sfa( log( output ) ~ log( capital ) + log( labour ) | log(-firmNo ),
 ## no convergence
 a1 <- sfa( log( output ) ~ log( capital ) + log( labour ),
    data = front41Data, maxit = 2 )
-summary( a1 )
+print( summary( a1 ), digits = 2 )
 
 ## no convergence, L(MLE) < L(OLS)
 a2 <- sfa( log( output ) ~ log( capital ) + log( labour ),
    data = front41Data, maxit = 2, start = c( 1, 0, 0, 1, 0.5 ) )
-summary( a2 )
+print( summary( a2 ), digits = 2 )
 
 ## no convergence, L(MLE) < L(OLS), wrong skewness
 a3 <- sfa( log( output ) ~ log( capital ) + log( labour ),
    data = front41Data, maxit = 2, ineffDecrease = FALSE )
-summary( a3, farrell = FALSE )
+print( summary( a3, effMinusU = FALSE ), digits = 1 )
 
 ## L(MLE) < L(OLS)
 a4 <- sfa( log( output ) ~ log( capital ) + log( labour ),
    data = front41Data, start = c( 1, 0, 0, 1, 0.999995 ) )
-summary( a4 )
+print( summary( a4 ), digits = 1 )
 
 ## too many starting values 
 try( sfa( log( output) ~ log( capital ) + log( labour ), data = front41Data,
@@ -87,49 +87,49 @@ rd <- riceProdPhil
 rd$FMERCODE <- rd$FMERCODE - 2
 rd <- plm.data( rd, c( "FMERCODE", "YEARDUM" ) )
 b1 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ), data = rd )
-summary( b1 )
-efficiencies( b1 )
+print( summary( b1 ), digits = 1 )
+round( efficiencies( b1 ), 2 )
 
 ## firm number > number of firms (works now)
 rd <- riceProdPhil
 rd$FMERCODE[ rd$FMERCODE == 9 ] <- 47
 rd <- plm.data( rd, c( "FMERCODE", "YEARDUM" ) )
 b2 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ), data = rd )
-summary( b2 )
-efficiencies( b2 )
+print( summary( b2 ), digits = 1 )
+round( efficiencies( b2 ), 2 )
 # now with NA
 rd <- riceProdPhil
 rd$PROD[ rd$FMERCODE == 22 ] <- NA
 rd <- plm.data( rd, c( "FMERCODE", "YEARDUM" ) )
 b2b <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ), data = rd )
-summary( b2b )
-efficiencies( b2b )
+print( summary( b2b ), digits = 1 )
+round( efficiencies( b2b ), 2 )
 
 ## non-positive period number (works now)
 rd <- riceProdPhil
 rd$YEARDUM <- rd$YEARDUM - 2
 rd <- plm.data( rd, c( "FMERCODE", "YEARDUM" ) )
 b3 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ), data = rd )
-summary( b3 )
+print( summary( b3 ), digits = 1 )
 
 ## period number > number of periods (works now)
 rd <- riceProdPhil
 rd$YEARDUM[ rd$YEARDUM == 4 ] <- 10
 rd <- plm.data( rd, c( "FMERCODE", "YEARDUM" ) )
 b4 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ), data = rd )
-summary( b4 )
+print( summary( b4 ), digits = 1 )
 # now with NA
 rd <- riceProdPhil
 rd$AREA[ rd$YEARDUM == 4 ] <- NA
 rd <- plm.data( rd, c( "FMERCODE", "YEARDUM" ) )
 b4b <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ), data = rd )
-summary( b4b )
+print( summary( b4b ), digits = 1 )
 
 ## firm without valid observations (works now)
 rd <- riceProdPhil
 rd$PROD[ rd$FMERCODE == 12 ] <- NA
 rd <- plm.data( rd, c( "FMERCODE", "YEARDUM" ) )
 b5 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ), data = rd )
-summary( b5 )
-efficiencies( b5 )
+print( summary( b5 ), digits = 1 )
+round( efficiencies( b5 ), 2 )
 

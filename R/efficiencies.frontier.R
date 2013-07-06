@@ -1,6 +1,7 @@
 # efficiencies of frontier models
 efficiencies.frontier <- function( object, asInData = FALSE,
-      logDepVar = TRUE, farrell = TRUE, margEff = FALSE, ... ) {
+   logDepVar = TRUE, minusU = farrell, farrell = TRUE, 
+   margEff = FALSE, ... ) {
 
    resid <- residuals( object )
    fitted <- - resid
@@ -12,7 +13,7 @@ efficiencies.frontier <- function( object, asInData = FALSE,
    sigmaSq <- coef( object )[ "sigmaSq" ]
    gamma <- coef( object )[ "gamma" ]
    lambda <- sqrt( gamma / ( 1 - gamma ) )
-   if( farrell ) {
+   if( minusU ) {
       dir <- 1
    } else {
       dir <- -1
@@ -69,7 +70,7 @@ efficiencies.frontier <- function( object, asInData = FALSE,
                exp( - dir * muStar * etaStar[j] + 0.5 * sigmaStarSq * etaStar[j]^2 )
          }
       } else {
-         if( object$ineffDecrease == farrell ) {
+         if( object$ineffDecrease == minusU ) {
             fittedStar <- rep( NA, object$nn )
             tInd <- rep( NA, object$nn )
             for( i in 1:object$nn ) {
@@ -85,7 +86,7 @@ efficiencies.frontier <- function( object, asInData = FALSE,
          } else {
             warning( "currently, the efficiency estimates based on models",
                " with non-logged dependent variable can be calculated only",
-               " if 'ineffDecrease' is equal to 'farrell'" )
+               " if 'ineffDecrease' is equal to 'minusU'" )
          }
       }
       # set efficiency estimates of missing observations to NA
@@ -148,7 +149,7 @@ efficiencies.frontier <- function( object, asInData = FALSE,
             }
          }
       } else {
-         if( object$ineffDecrease == farrell ) {
+         if( object$ineffDecrease == minusU ) {
             result <- 1 - tau * ( muBar + sigmaBar *
                exp( dnorm( muBar / sigmaBar, log = TRUE ) -
                   pnorm( muBar / sigmaBar, log.p = TRUE ) ) ) /
@@ -157,7 +158,7 @@ efficiencies.frontier <- function( object, asInData = FALSE,
             result <- matrix( NA, nrow = nrow( fitted ), ncol = ncol( fitted ) )
             warning( "currently, the efficiency estimates based on models",
                " with non-logged dependent variable can be calculated only",
-               " if 'ineffDecrease' is equal to 'farrell'" )
+               " if 'ineffDecrease' is equal to 'minusU'" )
          }
          if( margEff ) {
             warning( "calculation of marginal effects of z variables",
@@ -171,7 +172,7 @@ efficiencies.frontier <- function( object, asInData = FALSE,
          object$modelType, "'" )
    }
 
-   if( farrell ) {
+   if( minusU ) {
       result[ result > 1 ] <- 1
    } else {
       result[ result < 1 ] <- 1

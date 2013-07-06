@@ -51,16 +51,16 @@ frontierTranslogRay( yNames, xNames, shifterNames = NULL,
 }
 
 \references{
-   Löthgren, M. (1997)
+   LÃ¶thgren, M. (1997)
    Generalized stochastic frontier production models,
    \emph{Economics Letters}, 57, 255-259.
 
-   Löthgren, M. (1997)
+   LÃ¶thgren, M. (1997)
    \emph{A Multiple Output Stochastic Ray Frontier Production Model},
    Working Paper Series in Economics and Finance, No. 158,
    Stockholm School of Economics.
 
-   Löthgren, M. (2000)
+   LÃ¶thgren, M. (2000)
    Specification and estimation of stochastic multiple-output production
    and technical inefficiency
    \emph{Applied Economics}, 32, 1533-1540.

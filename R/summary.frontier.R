@@ -1,12 +1,12 @@
 summary.frontier <- function( object, effic = FALSE,
-      logDepVar = TRUE, farrell = TRUE, ... ) {
+      logDepVar = TRUE, effMinusU = farrell, farrell = TRUE, ... ) {
 
    # save variable 'logDepVar'
    object$logDepVar <- logDepVar
 
    # calculate efficiency estimates
    object$effic <- efficiencies( object, logDepVar = logDepVar, 
-      farrell = farrell )
+      minusU = effMinusU )
 
    # matrix of OLS estimates, their standard errors, t-values and P-values
    olsParam <- matrix( NA, length( object$olsParam ) , 4 )

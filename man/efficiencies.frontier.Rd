@@ -10,7 +10,8 @@
 
 \usage{
 \method{efficiencies}{frontier}( object, asInData = FALSE,
-   logDepVar = TRUE, farrell = TRUE, margEff = FALSE, \dots )
+   logDepVar = TRUE, minusU = farrell, farrell = TRUE, 
+   margEff = FALSE, \dots )
 }
 
 \arguments{
@@ -22,18 +23,24 @@
       used for the estimation
       (see section \sQuote{value} below).}
    \item{logDepVar}{logical. Is the dependent variable logged?}
-   \item{farrell}{logical. If \code{TRUE} (the default), 
-      Farrel-type efficiencies are returned for input-oriented models and
+   \item{minusU}{logical. If \code{TRUE} (the default), 
+      the efficiencies are calculated by E[exp(-u)],
+      i.e. Farrel-type efficiencies are returned for input-oriented models,
       Shepard-type efficiencies are returned for output-oriented models,
-      i.e.\ the returned efficiency estimates have values 
+      and the returned efficiency estimates have values 
       between zero and one,
-      where a one indicates a fully efficient firm.
+      where a one indicates a fully efficient firm
+      and a zero indicates a fully inefficient firm.
       If \code{FALSE}, 
-      Shepard-type efficiencies are returned for input-oriented models and
+      the efficiencies are calculated by E[exp(u)],
+      i.e. Shepard-type efficiencies are returned for input-oriented models,
       Farrell-type efficiencies are returned for output-oriented models,
-      i.e.\ the returned efficiency estimates have values larger than 
+      and the returned efficiency estimates have values larger than 
       or equal to one,
-      where a one indicates a fully efficient firm.}
+      where a one indicates a fully efficient firm
+      and plus infinity indicates a fully inefficient firm.}
+   \item{farrell}{logical. This argument is only kept for backward compatibility
+      and will be removed in the future.}
    \item{margEff}{logical. If \code{TRUE}, the marginal effects
       of the \eqn{z} variables (of an Efficiency Effects Frontier, EEF)
       on the efficiency measure are returned as an \sQuote{attribute} 

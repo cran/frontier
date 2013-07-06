@@ -5,7 +5,17 @@ A full ChangeLog is available in the log messages of the SVN repository
 on R-Forge.
 
 
-            CHANGES IN VERSION 0.997-14  (2012-XX-XX)
+            CHANGES IN VERSION 1.0-2  (2013-07-06)
+
+* added argument "minusU" to efficiencies.frontier() and argument "effMinusU"
+to summary.frontier() that will replace argument "farrell" in the future
+
+* added a CITATION file
+
+* added a start-up message
+
+
+            CHANGES IN VERSION 0.997-14  (2012-12-04)
 
 * fixed a bug in the Fortran code that could result in a segmentation fault 
 error when an efficiency effects frontier model with intercept is estimated 

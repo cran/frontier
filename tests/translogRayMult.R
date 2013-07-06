@@ -5,6 +5,22 @@ library( "fdrtool" )  # for function rhalfnorm
 library( "MCMCpack" )  # for function rdirichlet
 options( digits = 5 )
 
+printAll <- function( x ) {
+   for( n in names( x ) ) {
+      cat( "$", n, "\n", sep = "" )
+      if( n %in% c( "olsParam", "gridParam", "mleParam", "olsStdEr", "mleCov" ) ) {
+         print( round( x[[ n ]], 2 ) )
+      } else if( n %in% c( "resid", "olsResid" ) ) {
+         print( round( x[[ n ]], 3 ) )
+      } else {
+         print( x[[ n ]] )
+      }
+      cat( "\n" )
+   }
+   cat( "class\n" )
+   print( class( x ) )
+}
+
 # seed for pseudo random number generator
 set.seed( 200 )
 
@@ -156,16 +172,16 @@ all.equal( data$cosTheta3Test, rep( 1, nObs ) )
 result <- frontierTranslogRay( yNames= c( "Y1", "Y2", "Y3" ), 
    xNames= c( "X1", "X2", "X3" ), data = data )
 
-print( result )
-coef( result )
-summary( result )
-efficiencies( result )
+print( result, digits = 2 )
+round( coef( result ), 3 )
+print( summary( result ), digits = 1 )
+round( efficiencies( result ), 2 )
 
-print.default( result )
+printAll( result )
 
-all.equal( data$Y, result$distance )
-all.equal( data$theta1, result$theta_1 )
-all.equal( data$theta2, result$theta_2 )
+all.equal( data$Y, result$distance, tol = 1e-4 )
+all.equal( data$theta1, result$theta_1, tol = 1e-4 )
+all.equal( data$theta2, result$theta_2, tol = 1e-4 )
 
 # compPlot( exp( -data$u ), efficiencies( result, asInData = TRUE ) )
 
