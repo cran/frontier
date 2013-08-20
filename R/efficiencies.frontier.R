@@ -104,7 +104,7 @@ efficiencies.frontier <- function( object, asInData = FALSE,
          for( i in 1:nz ) {
             zDelta <- zDelta + object$dataTable[ ,
                   ncol( object$dataTable ) - nz + i ] *
-               coef( object )[ object$nb + object$zIntercept + 1 + i  ]
+               coef( object )[ object$icept + object$nb + object$zIntercept + i  ]
          }
       } else {
          zDelta <- rep( zDelta, nrow( object$dataTable ) )
@@ -144,7 +144,7 @@ efficiencies.frontier <- function( object, asInData = FALSE,
                   c( nrow( margEffectsBase ), ncol( margEffectsBase ), nz ) )
                for( i in 1:nz ) {
                   margEffects[ , , i ] <- margEffectsBase *
-                     coef( object )[ object$nb + object$zIntercept + 1 + i  ]
+                     coef( object )[ object$icept + object$nb + object$zIntercept + i  ]
                }
             }
          }
@@ -188,8 +188,8 @@ efficiencies.frontier <- function( object, asInData = FALSE,
    if( margEff ) {
       dimnames( margEffects ) <- list( rownames( resid ),
          if( ncol( result ) > 1 ){ colnames( resid ) } else { "efficiency" },
-         names( coef( object ) )[ ( object$nb + object$zIntercept + 2 ):( 
-            object$nb + object$zIntercept + 1 + nz ) ] )
+         names( coef( object ) )[ ( object$icept + object$nb + object$zIntercept + 1 ):( 
+            object$icept + object$nb + object$zIntercept + nz ) ] )
    }
 
    if( asInData ) {

@@ -9,7 +9,7 @@ returned by \code{\link{frontier}}.
 }
 
 \usage{
-\method{summary}{frontier}( object, effic = FALSE,
+\method{summary}{frontier}( object, extraPar = FALSE, effic = FALSE,
    logDepVar = TRUE, effMinusU = farrell, farrell = TRUE, \dots )
 \method{print}{summary.frontier}( x, effic = x$printEffic, \dots )
 }
@@ -19,6 +19,28 @@ returned by \code{\link{frontier}}.
       (returned by the function \code{\link{frontier}}).}
    \item{x}{an object of class \code{summary.frontier} 
       (returned by the function \code{summary.frontier}).}
+   \item{extraPar}{logical. If \code{TRUE}, some additional parameters,
+      their standard errors, z-values, and P values are returned:
+      \code{sigmaSqU} = \code{sigmaSq} * \code{gamma} 
+      (with \eqn{u} ~ \eqn{N^+}{N+}( \code{mu}, \code{sigmaSqU} )),
+      \code{sigmaSqV} = \code{sigmaSq} * ( 1 - \code{gamma} )
+      (with \eqn{v} ~ N( 0, \code{sigmaSqV} )),
+      \code{sigma} = \code{sigmaSq}^0.5,
+      \code{sigmaU} = \code{sigmaSqU}^0.5,
+      \code{sigmaV} = \code{sigmaSqV}^0.5,
+      \code{lambdaSq} = \code{sigmaSqU} / \code{sigmaSqV},
+      and \code{lambda} = \code{sigmaU} / \code{sigmaV}.
+      Please note that \code{sigmaSqU} and \code{sigmaU} are not
+      the variance and standard error, respectively, of \eqn{u}.
+      If the model is an error components frontier,
+      also the following additional parameters are returned:
+      \code{varU} = the variance of \eqn{u},
+      \code{sdU} = \code{varU}^0.5,
+      and \code{gammaVar} = \code{varU} / ( \code{varU} + \code{sigmaSqV} ).
+      Please note that the variance of \eqn{u}
+      usually differs between observations
+      if the model is an error component frontier with \sQuote{time effect}
+      or an efficiency effects frontier.}
    \item{effic}{logical. Print the individual efficiency estimates?}
    \item{logDepVar}{logical. Is the dependent variable logged?}
    \item{effMinusU}{logical. If \code{TRUE} (the default), 
@@ -33,6 +55,29 @@ returned by \code{\link{frontier}}.
       are currently ignored;
       further arguments to the \code{print} method
       are forwarded to \code{\link[stats]{printCoefmat}}.}
+}
+
+\details{
+   The standard errors of the estimated parameters
+   are taken from the direction matrix
+   that is used in the final iteration of the Davidon-Fletcher-Powell procedure
+   that is used for maximising the (log) likelihood function.
+   
+   If argument \code{extraPar} is \code{TRUE},
+   the standard errors of the additional parameters
+   are obtained by the delta method.
+   Please note that the delta method might provide poor approximations
+   of the \sQuote{true} standard errors,
+   because parameter \eqn{\sigma^2}{sigma^2} is left-censored
+   and parameter \eqn{\gamma}{gamma} is both left-censored and right-censored
+   so that these parameters cannot be normally distributed.
+   
+   Please note further
+   that the t statistic and the z statistic are not reliable
+   for testing the statistical signicance of \eqn{\sigma^2}{sigma^2},
+   \eqn{\gamma}{gamma}, and the \sQuote{additional parameters},
+   because these parameters are censored and cannot follow 
+   a normal distribution or a t distribution.
 }
 
 \value{
@@ -57,8 +102,8 @@ returned by \code{\link{frontier}}.
 
 \author{Arne Henningsen}
 
-\seealso{\code{\link{sfa}}, \code{\link{efficiencies.frontier}},
-   and \code{\link{lrtest.frontier}}.}
+\seealso{\code{\link{sfa}}, \code{\link{efficiencies.frontier}}, 
+   \code{\link{vcov.frontier}}, and \code{\link{lrtest.frontier}}.}
 
 \examples{
    # example included in FRONTIER 4.1 (cross-section data)
@@ -69,7 +114,8 @@ returned by \code{\link{frontier}}.
    summary( sfaResult )
 
    # rice producers in the Phillipines (panel data)
-   data( riceProdPhil )
+   data( "riceProdPhil" )
+   library( "plm" )
    riceProdPhil <- plm.data( riceProdPhil, c( "FMERCODE", "YEARDUM" ) )
 
    # Error Components Frontier

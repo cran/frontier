@@ -18,7 +18,7 @@
 \usage{
 sfa( formula, data = sys.frame( sys.parent() ),
    ineffDecrease = TRUE, truncNorm = FALSE,
-   timeEffect = FALSE, multErr = FALSE, startVal = NULL,
+   timeEffect = FALSE, startVal = NULL,
    tol = 0.00001, maxit = 1000, muBound = 2, bignum = 1.0E+16,
    searchStep = 0.00001, searchTol = 0.001, searchScale = NA,
    gridSize = 0.1, gridDouble = TRUE,
@@ -58,11 +58,6 @@ frontier( yName, xNames = NULL, zNames = NULL, data,
       if \code{TRUE}, time is allowed to have an effect on efficiency
       (this argument is ignored in case of an
       \sQuote{Efficiency Effects Frontier}).}
-   \item{multErr}{logical. If \code{FALSE} (default),
-      the error terms are additive;
-      if \code{TRUE}, the error terms are multiplicative,
-      i.e. \eqn{y = f( x ) * ( 1 + v +/- u)}
-      (not implemented yet).}
    \item{startVal}{numeric vector. Optional starting values for the ML
       estimation.}
    \item{tol}{numeric. Convergence tolerance (proportional).}
@@ -254,6 +249,12 @@ frontier( yName, xNames = NULL, zNames = NULL, data,
          the log-likelihood value obtained in the previous step;
       \code{6} = search failed on gradient step;
       \code{10} = maximum number of iterations reached.}
+   \item{nFuncEval}{Number of evaluations of the log likelihood function
+      during the grid search and the iterative ML estimation.}
+   \item{fitted}{matrix. Fitted \dQuote{frontier} values
+      of the dependent variable:
+      each row corresponds to a cross-section;
+      each column corresponds to a time period.}
    \item{resid}{matrix. Residuals:
       each row corresponds to a cross-section;
       each column corresponds to a time period.}
@@ -285,7 +286,9 @@ frontier( yName, xNames = NULL, zNames = NULL, data,
 \seealso{\code{\link{frontierQuad}} for quadratic/translog frontiers,
    \code{\link{summary.frontier}} for creating and printing summary results,
    \code{\link{efficiencies.frontier}} for calculating efficiency estimates,
-   and \code{\link{lrtest.frontier}} for comparing models by LR tests.}
+   \code{\link{lrtest.frontier}} for comparing models by LR tests,
+   \code{\link{fitted.frontier}} for obtaining the fitted \dQuote{frontier} values,
+   ang \code{\link{residuals.frontier}} for obtaining the residuals.}
 
 \author{Tim Coelli and Arne Henningsen}
 
@@ -314,6 +317,7 @@ frontier( yName, xNames = NULL, zNames = NULL, data,
    summary( riceTrue )
 
    # add data set with information about its panel structure
+   library( "plm" )
    ricePanel <- plm.data( riceProdPhil, c( "FMERCODE", "YEARDUM" ) )
 
    # Error Components Frontier (Battese & Coelli 1992)

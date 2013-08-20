@@ -1,4 +1,5 @@
-library( frontier )
+library( "frontier" )
+library( "plm" )
 options( digits = 5 )
 
 ## example data included in FRONTIER 4.1 (cross-section data)

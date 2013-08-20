@@ -1,16 +1,17 @@
-\name{residuals.frontier}
-\alias{residuals.frontier}
+\name{fitted.frontier}
+\alias{fitted.frontier}
 
-\title{Returning Residuals}
+\title{Returning Fitted (Frontier) Values}
 
 \description{
-   This method returns the residuals from stochastic frontier models
+   This method returns the fitted \dQuote{frontier} values
+   from stochastic frontier models
    estimated with the \pkg{frontier} package 
    (e.g. function \code{\link{sfa}}).
 }
 
 \usage{
-\method{residuals}{frontier}( object, asInData = FALSE, \dots )
+\method{fitted}{frontier}( object, asInData = FALSE, \dots )
 }
 
 \arguments{
@@ -18,7 +19,7 @@
       estimated with the \pkg{frontier} package 
       (e.g. function \code{\link{sfa}}).}
    \item{asInData}{logical. If \code{TRUE},
-      the residuals are returned in the same order
+      the fitted values are returned in the same order
       as the corresponding observations in the data set
       used for the estimation
       (see section \sQuote{value} below).}
@@ -27,20 +28,20 @@
 
 \value{
    If argument \code{asInData} is \code{FALSE} (default),
-   a matrix of the residuals is returned,
+   a matrix of the fitted values is returned,
    where each row corresponds to a firm (cross-section unit)
    and each column corresponds to a time period.
 
    If argument \code{asInData} is \code{TRUE},
-   a vector of residuals is returned,
-   where the residuals are in the same order
+   a vector of fitted values is returned,
+   where the fitted values are in the same order
    as the corresponding observations in the data set
    used for the estimation.
 }
 
 \author{Arne Henningsen}
 
-\seealso{\code{\link{sfa}}, \code{\link{residuals}}.}
+\seealso{\code{\link{sfa}}, \code{\link{fitted}}.}
 
 \examples{
    # rice producers in the Philippines (panel data)
@@ -51,14 +52,14 @@
    # Error Components Frontier (Battese & Coelli 1992), no time effect
    rice <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ),
       data = riceProdPhil )
-   residuals( rice )
-   riceProdPhil$residuals <- residuals( rice, asInData = TRUE )
+   fitted( rice )
+   riceProdPhil$fitted <- fitted( rice, asInData = TRUE )
 
    # Error Components Frontier (Battese & Coelli 1992), with time effect
    riceTime <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ),
       data = riceProdPhil, timeEffect = TRUE )
-   residuals( riceTime )
-   riceProdPhil$residualsTime <- residuals( riceTime, asInData = TRUE )
+   fitted( riceTime )
+   riceProdPhil$fittedTime <- fitted( riceTime, asInData = TRUE )
 }
 
 \keyword{methods}

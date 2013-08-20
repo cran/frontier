@@ -3,7 +3,6 @@ sfa <- function(
       ineffDecrease = TRUE,
       truncNorm = FALSE,
       timeEffect = FALSE,
-      multErr = FALSE,
       startVal = NULL,
       tol = 0.00001,
       maxit = 1000,
@@ -58,13 +57,7 @@ sfa <- function(
       warning( "argument 'timeEffect' is ignored in case of",
          " cross-sectional data" )
    }
-   # multErr (imult)
-   if( !is.logical( multErr ) || length( multErr ) != 1 ) {
-      stop( "argument 'multErr' must be a single logical value" )
-   }
-   if( multErr ) {
-      stop( "multiplicative errors are not yet implemented" )
-   }
+
    # printIter (iprint)
    if( !is.numeric( printIter ) ) {
       stop( "argument 'printIter' must be numeric" )
@@ -161,11 +154,6 @@ sfa <- function(
    mf <- eval( mf, parent.frame() )
    mt <- attr( mf, "terms" )
    xMat <- model.matrix( mt, mf )
-   if( ncol( xMat ) > 0 && colnames( xMat )[ 1 ] == "(Intercept)" ) {
-      xMat <- xMat[ , -1, drop = FALSE ]
-   } else {
-      stop( "the model cannot be estimated without an intercept" )
-   }
    xNames <- colnames( xMat )
    yVec <- model.response( mf )
    yName <- as.character( formula )[ 2 ]
@@ -183,8 +171,7 @@ sfa <- function(
       dataTable <- matrix( 1:length( yVec ), ncol = 1 )
       dataTable <- cbind( dataTable, rep( 1, nrow( dataTable ) ) )
    }
-   nXvars <- length( xNames )
-   nb <- nXvars
+   nb <- length( xNames )
 
    # endogenous variable
    dataTable <- cbind( dataTable, yVec )
@@ -194,9 +181,9 @@ sfa <- function(
 
    # exogenous variables
    dataTable <- cbind( dataTable, xMat )
-   paramNames <- "(Intercept)";
-   if( nXvars > 0 ) {
-      for( i in 1:nXvars ) {
+   paramNames <- NULL
+   if( nb > 0 ) {
+      for( i in 1:nb ) {
          paramNames <- c( paramNames, xNames[ i ] )
          if( sum( !is.na( xMat[ , i ] ) & is.finite( xMat[ , i ] ) ) == 0 ) {
             stop( "regressor '", xNames[ i ], "' has no valid observations" )
@@ -340,7 +327,7 @@ sfa <- function(
    rownames( dataTable ) <- obsNames[ validObs ]
    names( validObs ) <- obsNames
 
-   nParamTotal <- nb + 3 + mu + eta
+   nParamTotal <- nb + 2 + mu + eta
    if( nParamTotal > nob ) {
       stop( "the model cannot be estimated,",
          " because the number of parameters (", nParamTotal,
@@ -359,19 +346,31 @@ sfa <- function(
    }
 
    # OLS estimation
-   if( nXvars > 0 ) {
-      ols <- lm( dataTable[ , 3 ] ~ dataTable[ , 4:( 3 + nb ) ] )
-   } else {
-      ols <- lm( dataTable[ , 3 ] ~ 1 )
+   if( nb > 0 ) {
+      ols <- lm( dataTable[ , 3 ] ~ dataTable[ , 4:( 3 + nb ) ] - 1 )
+   } else if( nb == 0 ) {
+      ols <- lm( dataTable[ , 3 ] ~ -1 )
    }
    olsParam <- c( coef( ols ), summary( ols )$sigma^2 )
    olsStdEr <- sqrt( diag( vcov( ols ) ) )
    olsLogl  <- logLik( ols )[ 1 ]
+   
+   # factors for adjusting the parameters in the grid search
+   if( nb > 0 ) {
+      gridAdj <- coef( 
+         lm( rep( 1, nrow( dataTable ) ) ~ dataTable[ , 4:( 3 + nb ) ] - 1 ) )
+   } else {
+      gridAdj <- numeric( 0 )
+   }
+   if( length( gridAdj ) != nb ) {
+      stop( "internal error: the length of 'gridAdj' is not equal to 'nb'.",
+         " Please contact the maintainer of the frontier package" )
+   }
 
    returnObj <- .Fortran( "front41",
       modelType = as.integer( modelType ),
       ineffDecrease = as.integer( ( !ineffDecrease ) + 1 ),
-      imult = as.integer( multErr ),
+      icept = as.integer( 0 ),
       nn = as.integer( nn ),
       nt = as.integer( nt ),
       nob = as.integer( nob ),
@@ -399,13 +398,15 @@ sfa <- function(
          ncol( dataTable ), dimnames = dimnames( dataTable ) ),
       nParamTotal = as.integer( nParamTotal ),
       olsParam = as.double( c( olsParam, rep( 0, 1 + mu + eta ) ) ),
+      gridAdj = as.double( gridAdj ),
       gridParam = as.double( rep( 0, nParamTotal ) ),
       startLogl = as.double( 0 ),
       mleParam = as.double( rep( 0, nParamTotal ) ),
       mleCov = matrix( as.double( 0 ), nParamTotal, nParamTotal ),
       mleLogl = as.double( 0 ),
       nIter = as.integer( 0 ),
-      code = as.integer( 0 ) )
+      code = as.integer( 0 ),
+      nFuncEval = as.integer( 0 ) )
 
    # check if the return code indicates an error
    if( returnObj$code == 101 ) {
@@ -448,10 +449,25 @@ sfa <- function(
    returnObj$olsStdEr <- olsStdEr
    returnObj$olsLogl  <- olsLogl
 
+   ## calculate fitted "frontier" values
+   if( ncol( xMat ) == 0 ) {
+      fitVal <- rep( 0, sum( validObs ) )
+   } else {
+      fitVal <- drop( xMat[ validObs, , drop = FALSE ] %*% 
+            returnObj$mleParam[ 1:nb ] )
+   }
+   returnObj$fitted <- matrix( NA, nrow = nn, ncol = nt )
+   if( length( fitVal ) != nrow( dataTable ) ) {
+      stop( "internal error: length of the fitted values is not equal to",
+         " the number of rows of the data table (valid observations)" )
+   }
+   for( i in 1:length( fitVal ) ) {
+      returnObj$fitted[ dataTable[ i, 1 ], dataTable[ i, 2 ] ] <-
+         fitVal[ i ]
+   }
+
    ## calculate residuals
-   resid <- drop( dataTable[ , 3 ] -
-      cbind( rep( 1, nrow( dataTable ) ), xMat[ validObs, ] ) %*%
-      returnObj$mleParam[ 1:( nb + 1 ) ] )
+   resid <- drop( dataTable[ , 3 ] - fitVal )
    returnObj$resid <- matrix( NA, nrow = nn, ncol = nt )
    if( length( resid ) != nrow( dataTable ) ) {
       stop( "internal error: length of residuals is not equal to",
@@ -531,11 +547,21 @@ sfa <- function(
    returnObj$indic <- NULL
    if( length( startVal ) == 1 ){
       if( modelType == 1 ) {
-         returnObj$gridParam <- returnObj$gridParam[ 1:( nb + 3 ) ]
+         idx <- 1:( nb + 2 )
       } else {
-         returnObj$gridParam <- returnObj$gridParam[
-            c( 1:( nb + 1 ), ( nParamTotal - 1 ):nParamTotal ) ]
+         if( nb == 0 ) {
+            idx <- NULL
+         } else {
+            idx <- 1:nb
+         }
+         idx <- c( idx, ( nParamTotal - 1 ):nParamTotal )
       }
+      if( any( returnObj$gridParam[ (1:nParamTotal)[ -idx ] ] != 0 ) ) {
+         warning( "internal error: some unused grid-search parameters are",
+            " non-zero: ", paste( returnObj$gridParam, collapse = " " ),
+            " please contact the maintainer of the 'frontier' package" )
+      }
+      returnObj$gridParam <- returnObj$gridParam[ idx ]
       names( returnObj )[ names( returnObj ) == "startLogl" ] <- "gridLogl"
    } else {
       returnObj$gridParam <- NULL
@@ -569,12 +595,15 @@ sfa <- function(
          paramNames <- c( paramNames, "time" )
       }
    }
-   names( returnObj$olsParam ) <- c( paramNames[ 1:( nb + 1 ) ],
-      "sigmaSq" )
-   names( returnObj$olsStdEr ) <- paramNames[ 1:( nb + 1 ) ]
+   if( nb >= 1 ) {
+      betaNames <- paramNames[ 1:nb ]
+   } else {
+      betaNames <- NULL
+   }
+   names( returnObj$olsParam ) <- c( betaNames, "sigmaSq" )
+   names( returnObj$olsStdEr ) <- betaNames
    if( !is.null( returnObj$gridParam ) ) {
-      names( returnObj$gridParam ) <- c( paramNames[ 1:( nb + 1 ) ],
-         "sigmaSq", "gamma" )
+      names( returnObj$gridParam ) <- c( betaNames, "sigmaSq", "gamma" )
    }
    names( returnObj$mleParam ) <- paramNames
    rownames( returnObj$mleCov ) <- paramNames

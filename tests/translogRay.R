@@ -6,7 +6,7 @@ printAll <- function( x ) {
       cat( "$", n, "\n", sep = "" )
       if( n %in% c( "olsParam", "gridParam", "mleParam", "olsStdEr", "mleCov" ) ) {
          print( round( x[[ n ]], 2 ) )
-      } else if( n %in% c( "resid", "olsResid" ) ) {
+      } else if( n %in% c( "fitted", "resid", "olsResid" ) ) {
          print( round( x[[ n ]], 3 ) )
       } else {
          print( x[[ n ]] )

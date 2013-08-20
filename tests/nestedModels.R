@@ -1,4 +1,5 @@
-library( frontier )
+library( "frontier" )
+library( "plm" )
 options( digits = 5 )
 
 ## data set of rice producers in the Philippines
@@ -22,7 +23,7 @@ sbb5ecf <- sfa( lPROD ~ lAREA + lLABOR + lNPK,
    data = as.data.frame( riceProdPhil ) )
 bb5ecf <- frontier( data = as.data.frame( riceProdPhil ),
    yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ) )
-all.equal( sbb5ecf[-39], bb5ecf[-39], tol = 1e-3 )
+all.equal( sbb5ecf[-42], bb5ecf[-42], tol = 1e-3 )
 
 # Efficiency Effects Frontier (EEF)
 sbb5eef <- sfa( lPROD ~ lAREA + lLABOR + lNPK | - 1,
@@ -30,7 +31,7 @@ sbb5eef <- sfa( lPROD ~ lAREA + lLABOR + lNPK | - 1,
 bb5eef <- frontier( data = as.data.frame( riceProdPhil ),
    yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ),
    zNames = NA )
-all.equal( sbb5eef[-39], bb5eef[-39], tol = 1e-3 )
+all.equal( sbb5eef[-42], bb5eef[-42], tol = 1e-3 )
 tmp <- efficiencies( sbb5eef, margEff = TRUE )
 
 # Comparisons
@@ -47,7 +48,7 @@ sbb6ecf <- sfa( lPROD ~ lAREA + lLABOR + lNPK,
 bb6ecf <- frontier( data = as.data.frame( riceProdPhil ),
    yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ),
    truncNorm = TRUE, muBound = 0 )
-all.equal( sbb6ecf[-39], bb6ecf[-39], tol = 1e-3 )
+all.equal( sbb6ecf[-42], bb6ecf[-42], tol = 1e-3 )
 
 # Efficiency Effects Frontier (EEF)
 sbb6eef <- sfa( lPROD ~ lAREA + lLABOR + lNPK | 1,
@@ -55,7 +56,7 @@ sbb6eef <- sfa( lPROD ~ lAREA + lLABOR + lNPK | 1,
 bb6eef <- frontier( data = as.data.frame( riceProdPhil ),
    yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ),
    zIntercept = TRUE, zNames = NA )
-all.equal( sbb6eef[-39], bb6eef[-39], tol = 1e-3 )
+all.equal( sbb6eef[-42], bb6eef[-42], tol = 1e-3 )
 tmp <- efficiencies( sbb6eef, margEff = TRUE )
 
 # Comparisons
@@ -75,8 +76,8 @@ sb5eef <- sfa( lPROD ~ lAREA + lLABOR + lNPK | - 1,
 b5eef <- frontier( data = riceProdPhil,
    yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ),
    zNames = NA )
-all.equal( sb5eef[-39], b5eef[-39], tol = 1e-3 )
-all.equal( b5eef[ -c( 4, 5, 20, 31, 39 ) ], bb5eef[ -c( 4, 5, 20, 31, 39 ) ], 
+all.equal( sb5eef[-42], b5eef[-42], tol = 1e-3 )
+all.equal( b5eef[ -c( 4, 5, 20, 33, 34, 42 ) ], bb5eef[ -c( 4, 5, 20, 33, 34, 42 ) ], 
    tol = 1e-3 )
 all.equal( c( t( residuals( b5eef ) ) ), c( residuals( bb5eef ) ), tol = 1e-3 )
 
@@ -95,8 +96,8 @@ sb6ecf <- sfa( lPROD ~ lAREA + lLABOR + lNPK,
 b6ecf <- frontier( data = as.data.frame( riceProdPhil ),
    yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ),
    truncNorm = TRUE, muBound = Inf )
-all.equal( sb6ecf[-39], b6ecf[-39], tol = 1e-3 )
-all.equal( b6ecf[-39], bb6ecf[-39], tol = 1e-3 )
+all.equal( sb6ecf[-42], b6ecf[-42], tol = 1e-3 )
+all.equal( b6ecf[-42], bb6ecf[-42], tol = 1e-3 )
 
 # Efficiency Effects Frontier (EEF)
 sb6eef <- sfa( lPROD ~ lAREA + lLABOR + lNPK | 1,
@@ -104,15 +105,15 @@ sb6eef <- sfa( lPROD ~ lAREA + lLABOR + lNPK | 1,
 b6eef <- frontier( data = riceProdPhil,
    yName = "lPROD", xNames = c( "lAREA", "lLABOR", "lNPK" ),
    zIntercept = TRUE, zNames = NA )
-all.equal( sb6eef[-39], b6eef[-39], tol = 1e-3 )
-all.equal( b6eef[ -c( 4, 5, 20, 31, 39 ) ], bb6eef[ -c( 4, 5, 20, 31, 39 ) ], 
+all.equal( sb6eef[-42], b6eef[-42], tol = 1e-3 )
+all.equal( b6eef[ -c( 4, 5, 20, 33, 34, 42 ) ], bb6eef[ -c( 4, 5, 20, 33, 34, 42 ) ], 
    tol = 1e-3 )
 all.equal( c( efficiencies( b6ecf ) ), c( efficiencies( bb6eef ) ), tol = 1e-3 )
-all.equal( c( residuals( b6ecf ) ), c( residuals( bb6eef ) ), tol = 1e-3 )
+all.equal( c( residuals( b6ecf ) ), c( residuals( bb6eef ) ), tol = 5e-3 )
 
 # Comparisons
 round( rbind( coef( b6ecf ), coef( b6eef )[ c( 1:4, 6:7, 5 ) ] ), 2 )
 all.equal( c( efficiencies( b6ecf ) ), c( t( efficiencies( b6eef ) ) ), 
    tol = 1e-3 )
-all.equal( c( residuals( b6ecf ) ), c( t( residuals( b6eef ) ) ), tol = 1e-3 )
+all.equal( c( residuals( b6ecf ) ), c( t( residuals( b6eef ) ) ), tol = 5e-3 )
 

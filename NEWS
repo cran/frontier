@@ -5,6 +5,26 @@ A full ChangeLog is available in the log messages of the SVN repository
 on R-Forge.
 
 
+            CHANGES IN VERSION 1.1-0  (2013-08-20)
+
+* stochastic frontier models can be estimated without an intercept
+
+* added fitted() method for objects of class "frontier" for obtaining the
+fitted/predicted frontier values of each observation
+
+* added argument "extraPar" to the coef(), vcov(), and summary() methods for
+frontier models: if this argument is set to TRUE, further parameters are
+calculated (based on the estimated parameters) and returned
+
+* removed unused argument "multErr" of sfa(), because this feature probably
+will not be implemented in the near future
+
+* frontierTranslogRay() now makes sure that the ratios (arcs) are in the
+interval [-1,1] before it takes the arc-cosine of the ratio, because small
+rouding errors can make that a few ratios are around 1+1e-8 or -1-1e-8
+(suggested by Tomasz Czekaj)
+
+
             CHANGES IN VERSION 1.0-2  (2013-07-06)
 
 * added argument "minusU" to efficiencies.frontier() and argument "effMinusU"

@@ -29,8 +29,10 @@ frontierTranslogRay <- function( yNames, xNames, shifterNames = NULL,
 
    sinProd <- 1
    for( i in 1:( nOutput - 1 ) ) {
-      logData[[ paste( "theta", i, sep = "_" ) ]] <-
-         acos( data[[ yNames[ i ] ]] / ( distance * sinProd ) )
+      ratio <- data[[ yNames[ i ] ]] / ( distance * sinProd )
+      ratio[ ratio > 1 ] <- 1
+      ratio[ ratio < -1 ] <- -1
+      logData[[ paste( "theta", i, sep = "_" ) ]] <- acos( ratio )
       sinProd <- sinProd * sin( logData[[ paste( "theta", i, sep = "_" ) ]] )
    }
 

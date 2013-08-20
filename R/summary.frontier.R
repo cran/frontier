@@ -1,6 +1,11 @@
-summary.frontier <- function( object, effic = FALSE,
+summary.frontier <- function( object, extraPar = FALSE, effic = FALSE,
       logDepVar = TRUE, effMinusU = farrell, farrell = TRUE, ... ) {
 
+   # check argument 'extraPar'
+   if( length( extraPar ) != 1 || !is.logical( extraPar[1] ) ) {
+      stop( "argument 'extraPar' must be a single logical value" )
+   }
+   
    # save variable 'logDepVar'
    object$logDepVar <- logDepVar
 
@@ -21,12 +26,13 @@ summary.frontier <- function( object, effic = FALSE,
    object$olsParam <- olsParam
 
    # matrix of ML estimates, their standard errors, t-values and P-values
-   mleParam <- matrix( NA, length( object$mleParam ) , 4 )
-   rownames( mleParam ) <- names( object$mleParam )
+   mlePar <- coef( object, extraPar = extraPar )
+   mleParam <- matrix( NA, nrow = length( mlePar ), ncol = 4 )
+   rownames( mleParam ) <- names( mlePar )
    colnames( mleParam ) <- c( "Estimate", "Std. Error", "z value",
       "Pr(>|z|)" )
-   mleParam[ , 1 ] <- object$mleParam
-   mleParam[ , 2 ] <- diag( object$mleCov )^0.5
+   mleParam[ , 1 ] <- mlePar
+   mleParam[ , 2 ] <- diag( vcov( object, extraPar = extraPar ) )^0.5
    mleParam[ , 3 ] <- mleParam[ , 1 ] / mleParam[ , 2 ]
    df <- object$nob - length( object$mleParam )
    mleParam[ , 4 ] <- 2 * pnorm( abs( mleParam[ , 3 ] ), lower.tail = FALSE )

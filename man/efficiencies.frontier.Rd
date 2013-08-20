@@ -131,7 +131,8 @@
 
 \examples{
    # rice producers in the Philippines (panel data)
-   data( riceProdPhil )
+   data( "riceProdPhil" )
+   library( "plm" )
    riceProdPhil <- plm.data( riceProdPhil, c( "FMERCODE", "YEARDUM" ) )
 
    # Error Components Frontier (Battese & Coelli 1992), no time effect
