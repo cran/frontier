@@ -5,6 +5,24 @@ A full ChangeLog is available in the log messages of the SVN repository
 on R-Forge.
 
 
+            CHANGES IN VERSION 1.1-2  (2017-03-17)
+
+* added function resettestFrontier() that applies Ramsey's RESET test to
+stochastic frontier models
+
+* added argument "lrTests" to frontierQuad(): if this argument is TRUE,
+likelihood ratio tests are conducted for each X variable
+
+* made this package compatible with future versions of the 'plm' package, e.g.
+users can now use pdata.frame() (in addition to plm.data()) to specify the
+panel structure of (panel) data sets
+
+* a more informative error message is issued if coefficients estimated by OLS
+are NA
+
+* several internal (not user-visible) enhancements
+
+
             CHANGES IN VERSION 1.1-0  (2013-08-20)
 
 * stochastic frontier models can be estimated without an intercept

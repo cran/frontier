@@ -12,7 +12,8 @@ riceProdPhil$farm <-
    paste( "F_", ifelse( riceProdPhil$FMERCODE > 9, "", "0" ),
    riceProdPhil$FMERCODE, sep = "" )
 riceProdPhil$year <- riceProdPhil$YEARDUM + 1998
-riceProdPhil <- plm.data( riceProdPhil, c( "farm", "year" ) )
+riceProdPhil <- pdata.frame( riceProdPhil, c( "farm", "year" ), 
+   row.names = FALSE )
 
 
 ########## cross-section data #############
@@ -78,7 +79,7 @@ b5eef <- frontier( data = riceProdPhil,
    zNames = NA )
 all.equal( sb5eef[-42], b5eef[-42], tol = 1e-3 )
 all.equal( b5eef[ -c( 4, 5, 20, 33, 34, 42 ) ], bb5eef[ -c( 4, 5, 20, 33, 34, 42 ) ], 
-   tol = 1e-3 )
+   check.attributes = FALSE, tol = 1e-3 )
 all.equal( c( t( residuals( b5eef ) ) ), c( residuals( bb5eef ) ), tol = 1e-3 )
 
 # Comparisons
@@ -107,7 +108,7 @@ b6eef <- frontier( data = riceProdPhil,
    zIntercept = TRUE, zNames = NA )
 all.equal( sb6eef[-42], b6eef[-42], tol = 1e-3 )
 all.equal( b6eef[ -c( 4, 5, 20, 33, 34, 42 ) ], bb6eef[ -c( 4, 5, 20, 33, 34, 42 ) ], 
-   tol = 1e-3 )
+   check.attributes = FALSE, tol = 1e-3 )
 all.equal( c( efficiencies( b6ecf ) ), c( efficiencies( bb6eef ) ), tol = 1e-3 )
 all.equal( c( residuals( b6ecf ) ), c( residuals( bb6eef ) ), tol = 5e-3 )
 

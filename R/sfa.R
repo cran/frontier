@@ -53,7 +53,8 @@ sfa <- function(
    if( !is.logical( timeEffect ) ) {
       stop( "argument 'timeEffect' must be logical" )
    }
-   if( timeEffect && ! "plm.dim" %in% class( data ) ) {
+   if( timeEffect && !( inherits( data, "pdata.frame" ) ||
+         inherits( data, "plm.dim" ) ) ) {
       warning( "argument 'timeEffect' is ignored in case of",
          " cross-sectional data" )
    }
@@ -142,158 +143,26 @@ sfa <- function(
       stop( "argument 'restartFactor' must be finite" )
    }
 
-
-   # preparing model matrix and model response
+   # obtain call with full names of arguments
    mc <- match.call( expand.dots = FALSE )
-   m <- match( "data", names( mc ), 0 )
-   mf <- mc[ c( 1, m ) ]
-   mf$formula <- formula
-   attributes( mf$formula ) <- NULL
-   mf$na.action <- na.pass
-   mf[[ 1 ]] <- as.name( "model.frame" )
-   mf <- eval( mf, parent.frame() )
-   mt <- attr( mf, "terms" )
-   xMat <- model.matrix( mt, mf )
-   xNames <- colnames( xMat )
-   yVec <- model.response( mf )
-   yName <- as.character( formula )[ 2 ]
-   if( length( yVec ) != nrow( xMat ) ) {
-      stop( "the number of observations of the endogenous variable (",
-         length( yVec ), ") is not equal to the number of observations",
-         " of the exogenous variables (", nrow( xMat ), ")" )
+   # prepare data table, etc
+   tmp <- frontierDataTable( formula = formula, effFormula = effFormula, 
+      data = data, mc = mc )
+   if( is.character( tmp ) ) {
+      stop( tmp )
    }
-
-   # cross section and time period identifier
-   if( "plm.dim" %in% class( data ) ) {
-      dataTable <- matrix( as.integer( data[[ 1 ]] ), ncol = 1 )
-      dataTable <- cbind( dataTable, as.integer( data[[ 2 ]] ) )
-   } else {
-      dataTable <- matrix( 1:length( yVec ), ncol = 1 )
-      dataTable <- cbind( dataTable, rep( 1, nrow( dataTable ) ) )
-   }
-   nb <- length( xNames )
-
-   # endogenous variable
-   dataTable <- cbind( dataTable, yVec )
-   if( sum( !is.na( yVec ) & is.finite( yVec ) ) == 0 ) {
-      stop( "the dependent variable has no valid observations" )
-   }
-
-   # exogenous variables
-   dataTable <- cbind( dataTable, xMat )
-   paramNames <- NULL
-   if( nb > 0 ) {
-      for( i in 1:nb ) {
-         paramNames <- c( paramNames, xNames[ i ] )
-         if( sum( !is.na( xMat[ , i ] ) & is.finite( xMat[ , i ] ) ) == 0 ) {
-            stop( "regressor '", xNames[ i ], "' has no valid observations" )
-         }
-      }
-   }
-
-   # variables explaining the efficiency level
-   if( is.null( effFormula  ) ) {
-      zNames <- NULL
-      zIntercept <- FALSE
-   } else {
-      if( class( effFormula ) != "formula" ) {
-         stop( "argument 'effFormula' must be a formula" )
-      } else if( length( effFormula ) != 2 ) {
-         stop( "argument 'formula' must be a 1-sided formula" )
-      }
-      me <- match( "data", names( mc ), 0 )
-      mfe <- mc[ c( 1, me ) ]
-      mfe$formula <- effFormula
-      attributes( mfe$formula ) <- NULL
-      mfe$na.action <- na.pass
-      mfe[[ 1 ]] <- as.name( "model.frame" )
-      mfe <- eval( mfe, parent.frame() )
-      mte <- attr( mfe, "terms" )
-      zMat <- model.matrix( mte, mfe )
-      if( ncol( zMat ) > 0 && colnames( zMat )[ 1 ] == "(Intercept)" ) {
-         zIntercept <- TRUE
-         zMat <- zMat[ , -1, drop = FALSE ]
-      } else {
-         zIntercept <- FALSE
-      }
-      if( nrow( zMat ) != nrow( xMat ) ) {
-         stop( "the number of observations of the variables explaining",
-            " efficiency (", nrow( zMat ), ") is not equal to the number",
-            " of observations of the (regular) regressors (",
-            nrow( xMat ), ")" )
-      }
-      dataTable <- cbind( dataTable, zMat )
-      zNames <- colnames( zMat )
-      if( length( zNames ) > 0 ) {
-         for( i in 1:length( zNames ) ) {
-            if( sum( !is.na( zMat[ , i ] ) & is.finite( zMat[ , i ] ) ) == 0 ) {
-               stop( "the regressor for the inefficiency term '", zNames[ i ],
-                  "' has no valid observations" )
-            }
-         }
-      }
-   }
-   nZvars <- length( zNames )
-
-   # detect and remove observations with NAs, NaNs, and INFs
-   validObs <- rowSums( is.na( dataTable ) | is.infinite( dataTable ) ) == 0
-   dataTable <- dataTable[ validObs, ]
-   # number of (valid) observations
-   nob <- sum( validObs )
-
-   # make sure that the cross-section units are numbered continously
-   firmId <- sort( unique( dataTable[ , 1 ] ) )
-   # number of cross-section units
-   nn <- length( firmId )
-   firmNo <- rep( NA, nrow( dataTable ) )
-   for( i in 1:nn ) {
-      firmNo[ dataTable[ , 1 ] == firmId[ i ] ] <- i
-   }
-   dataTable[ , 1 ] <- firmNo
-
-   # check consistency of firm numbers
-   if( any( is.na( dataTable[ , 1 ] ) ) ) {
-      stop( "internal error: at least one firm number is NA" )
-   }
-   if( min( dataTable[ , 1 ] ) != 1 ) {
-      stop( "internal error: the smallest firm number must be one" )
-   }
-   if( max( dataTable[ , 1 ] ) > nn ) {
-      stop( "internal error: a firm number is larger than the number of firms" )
-   }
-
-   # make sure that the time periods are numbered continously
-   timeId <- sort( unique( dataTable[ , 2 ] ) )
-   # number of time periods
-   nt <- length( unique( dataTable[ , 2 ] ) )
-   timeNo <- rep( NA, nrow( dataTable ) )
-   for( i in 1:nt ) {
-      timeNo[ dataTable[ , 2 ] == timeId[ i ] ] <- i
-   }
-   dataTable[ , 2 ] <- timeNo
-
-   # check consistency of time period numbers
-   if( any( is.na( dataTable[ , 2 ] ) ) ) {
-      stop( "internal error: at least one time period number is NA" )
-   }
-   if( min( dataTable[ , 2 ] ) != 1 ) {
-      stop( "internal error: the smallest time period number must be one" )
-   }
-   if( max( dataTable[ , 2 ] ) > nt ) {
-      stop( "internal error: a time period number is larger",
-         " than the number of time periods" )
-   }
-
-   # check for double entries for firm/period combinations
-   for( i in 1:nn ) {
-      for( j in 1:nt ) {
-         if( sum( dataTable[ , 1 ] == i & dataTable[ , 2 ] == j ) > 1 ){
-            stop( "more than one observation for firm '", firmId[ i ],
-               "' in period '", timeId[ j ], "'" )
-         }
-      }
-   }
-
+   validObs   <- tmp$validObs
+   dataTable  <- cbind( tmp$idVec, tmp$timeVec, tmp$yVec, tmp$xMat, tmp$zMat )
+   rownames( dataTable ) <- names( validObs )[ validObs ]
+   colnames( dataTable )[1:3] <- c( "id", "t", tmp$yName )
+   firmId     <- tmp$firmId
+   timeId     <- tmp$timeId
+   nb         <- ncol( tmp$xMat )
+   nob        <- sum( validObs )
+   nn         <- max( tmp$idVec )
+   nt         <- max( tmp$timeVec )
+   zIntercept <- tmp$zIntercept
+   nZvars     <- ncol( tmp$zMat )
 
    # mu: truncNorm, zIntercept
    if( modelType == 1 ) {
@@ -308,24 +177,6 @@ sfa <- function(
    } else {
       eta <- nZvars
    }
-
-   # adding column names to the data table
-   colnames( dataTable ) <- c( "id", "t", yName, xNames, zNames )
-
-   # obtaining names of the observations
-   if( !is.null( rownames( data ) ) ) {
-      obsNames <- rownames( data )
-   } else if( !is.null( names( yVec ) ) ) {
-      obsNames <- names( yVec )
-   } else if( !is.null( rownames( xMat ) ) ) {
-      obsNames <- rownames( xMat )
-   } else if( !is.null( rownames( zMat ) ) ) {
-      obsNames <- rownames( zMat )
-   } else {
-      obsNames <- NULL
-   }
-   rownames( dataTable ) <- obsNames[ validObs ]
-   names( validObs ) <- obsNames
 
    nParamTotal <- nb + 2 + mu + eta
    if( nParamTotal > nob ) {
@@ -347,9 +198,14 @@ sfa <- function(
 
    # OLS estimation
    if( nb > 0 ) {
-      ols <- lm( dataTable[ , 3 ] ~ dataTable[ , 4:( 3 + nb ) ] - 1 )
+      ols <- lm( tmp$yVec ~ tmp$xMat - 1 )
    } else if( nb == 0 ) {
-      ols <- lm( dataTable[ , 3 ] ~ -1 )
+      ols <- lm( tmp$yVec ~ -1 )
+   }
+   if( any( is.na( coef( ols ) ) ) ) {
+      stop( "at least one coefficient estimated by OLS is NA: ",
+         paste( colnames( tmp$xMat )[ is.na( coef( ols ) ) ], collapse = ", " ),
+      ". This may have been caused by (nearly) perfect multicollinearity" )
    }
    olsParam <- c( coef( ols ), summary( ols )$sigma^2 )
    olsStdEr <- sqrt( diag( vcov( ols ) ) )
@@ -367,7 +223,7 @@ sfa <- function(
          " Please contact the maintainer of the frontier package" )
    }
 
-   returnObj <- .Fortran( "front41",
+   returnObj <- .Fortran( C_front41,
       modelType = as.integer( modelType ),
       ineffDecrease = as.integer( ( !ineffDecrease ) + 1 ),
       icept = as.integer( 0 ),
@@ -450,10 +306,10 @@ sfa <- function(
    returnObj$olsLogl  <- olsLogl
 
    ## calculate fitted "frontier" values
-   if( ncol( xMat ) == 0 ) {
+   if( nb == 0 ) {
       fitVal <- rep( 0, sum( validObs ) )
    } else {
-      fitVal <- drop( xMat[ validObs, , drop = FALSE ] %*% 
+      fitVal <- drop( dataTable[ , 4:(3+nb), drop = FALSE ] %*% 
             returnObj$mleParam[ 1:nb ] )
    }
    returnObj$fitted <- matrix( NA, nrow = nn, ncol = nt )
@@ -567,19 +423,22 @@ sfa <- function(
       returnObj$gridParam <- NULL
    }
    # assign row names and column names to residuals
-   if( "plm.dim" %in% class( data ) ) {
-      rownames( returnObj$resid ) <- levels( data[[ 1 ]] )[ firmId ]
-      colnames( returnObj$resid ) <- levels( data[[ 2 ]] )[ timeId ]
+   if( inherits( data, "pdata.frame" ) || inherits( data, "plm.dim" ) ) {
+      rownames( returnObj$resid ) <- levels( index( data )[[ 1 ]] )[ firmId ]
+      colnames( returnObj$resid ) <- levels( index( data )[[ 2 ]] )[ timeId ]
    } else {
-      rownames( returnObj$resid ) <- obsNames[ validObs ]
+      rownames( returnObj$resid ) <- names( validObs )[ validObs ]
       colnames( returnObj$resid ) <- "residuals"
    }
+
+   # names of the parameters
+   paramNames <- colnames( tmp$xMat )
    if( modelType == 2 ) {
       if( zIntercept ){
          paramNames <- c( paramNames, "Z_(Intercept)" )
       }
       if( nZvars > 0 ) {
-         paramNames <- c( paramNames, paste( "Z", zNames, sep = "_" ) )
+         paramNames <- c( paramNames, paste( "Z", colnames( tmp$zMat ), sep = "_" ) )
       }
    }
 

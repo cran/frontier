@@ -69,7 +69,7 @@
 # rice producers in the Philippines (panel data)
 data( "riceProdPhil" )
 library( "plm" )
-riceProdPhil <- plm.data( riceProdPhil, c( "FMERCODE", "YEARDUM" ) )
+riceProdPhil <- pdata.frame( riceProdPhil, c( "FMERCODE", "YEARDUM" ) )
 
 # Error Components Frontier with truncated normal distribution
 # and time effects (unrestricted model)

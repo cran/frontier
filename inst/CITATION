@@ -9,11 +9,11 @@ citEntry(entry = "Manual",
       as.person("Arne Henningsen")),
    year = year,
    note = vers,
-   URL = "http://CRAN.R-Project.org/package=frontier",
+   URL = "https://CRAN.R-Project.org/package=frontier",
    
    textVersion =
       paste0("Tim Coelli and Arne Henningsen (",
          year,
          "). frontier: Stochastic Frontier Analysis. ",
          vers, ". ",
-         "http://CRAN.R-Project.org/package=frontier." ))
+         "https://CRAN.R-Project.org/package=frontier." ))

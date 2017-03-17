@@ -10,7 +10,7 @@
 
 \usage{
 frontierQuad( yName, xNames, shifterNames = NULL, zNames = NULL,
-   data, \dots )
+   data, lrTests = FALSE, \dots )
 }
 
 \arguments{
@@ -27,8 +27,10 @@ frontierQuad( yName, xNames, shifterNames = NULL, zNames = NULL,
       if \code{data} is a usual data.frame,
       it is assumed that these are cross-section data;
       if \code{data} is a panel data frame
-      (created with \code{\link[plm]{plm.data}}),
+      (created with \code{\link[plm]{pdata.frame}}),
       it is assumed that these are panel data.}
+   \item{lrTests}{logical. If \code{TRUE}, likelihood ratio tests are conducted
+      to test the statistical significance of each X variable.}
    \item{\ldots}{further arguments passed to \code{\link{frontier}}.}
 }
 
@@ -36,6 +38,10 @@ frontierQuad( yName, xNames, shifterNames = NULL, zNames = NULL,
    \code{frontierQuad} returns a list of class \code{frontierQuad}
    (and \code{frontier})
    containing the same elements as returned by \code{\link{frontier}}.
+   If argument \code{lrTest} is set to \code{TRUE},
+   the returned object has a component \code{lrTests}
+   that contains the results of likelihood-ratio tests
+   of the statistical significance of each X variable.   
 }
 
 \seealso{\code{\link{frontier}}.}

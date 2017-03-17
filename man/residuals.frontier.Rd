@@ -46,7 +46,7 @@
    # rice producers in the Philippines (panel data)
    data( "riceProdPhil" )
    library( "plm" )
-   riceProdPhil <- plm.data( riceProdPhil, c( "FMERCODE", "YEARDUM" ) )
+   riceProdPhil <- pdata.frame( riceProdPhil, c( "FMERCODE", "YEARDUM" ) )
 
    # Error Components Frontier (Battese & Coelli 1992), no time effect
    rice <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ),

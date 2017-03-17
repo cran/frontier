@@ -38,7 +38,7 @@ frontier( yName, xNames = NULL, zNames = NULL, data,
       if \code{data} is a usual data.frame,
       it is assumed that these are cross-section data;
       if \code{data} is a panel data frame
-      (created with \code{\link[plm]{plm.data}}),
+      (created with \code{\link[plm]{pdata.frame}}),
       it is assumed that these are panel data.}
    \item{ineffDecrease}{logical. If \code{TRUE},
       inefficiency decreases the endogenous variable
@@ -276,7 +276,7 @@ frontier( yName, xNames = NULL, zNames = NULL, data,
    Coelli, T. (1996) A Guide to FRONTIER Version 4.1: A Computer
       Program for Stochastic Frontier Production and Cost Function
       Estimation, CEPA Working Paper 96/08,
-      \url{http://www.uq.edu.au/economics/cepa/frontier.htm},
+      \url{http://www.uq.edu.au/economics/cepa/frontier.php},
       University of New England.
 
    Himmelblau, D.M. (1972), \emph{Applied Non-Linear Programming},
@@ -318,7 +318,7 @@ frontier( yName, xNames = NULL, zNames = NULL, data,
 
    # add data set with information about its panel structure
    library( "plm" )
-   ricePanel <- plm.data( riceProdPhil, c( "FMERCODE", "YEARDUM" ) )
+   ricePanel <- pdata.frame( riceProdPhil, c( "FMERCODE", "YEARDUM" ) )
 
    # Error Components Frontier (Battese & Coelli 1992)
    # with time-invariant efficiencies

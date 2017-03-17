@@ -74,19 +74,34 @@ try( sfa( log( output) ~ log( capital ) + log( labour ), data = front41Data,
 try( sfa( log( output) ~ log( capital ) + log( labour ), data = front41Data,
    truncNorm = TRUE, startVal = c( 0.5, 0.3, 0.5, 0.5, 0.9 ) ) )
 
+## one explanatory variable specifiec twice (works)
+sfa( log( output) ~ log( capital ) + log( labour ) + log( capital ), 
+   data = front41Data )
+
+## perfect multicollinearity -> NAs in OLS coefficiencts
+front41Data$capital10 <- 10 * front41Data$capital
+try( sfa( log( output) ~ log( capital ) + log( labour ) + log( capital10 ), 
+   data = front41Data ) )
+
+## perfect multicollinearity -> 2 NAs in OLS coefficiencts
+front41Data$capitalLabour <- front41Data$capital * front41Data$labour
+try( sfa( log( output) ~ log( capital ) + log( labour ) + log( capital10 ) + 
+      log( capitalLabour ), data = front41Data ) )
+
+
 ## load data abour rice production in the Phillipines
 data( "riceProdPhil")
 
 ## nobs > nn * nt 
 rd <- riceProdPhil
 rd <- rbind( rd, rd[ 11, ] )
-rd <- plm.data( rd, c( "FMERCODE", "YEARDUM" ) )
+rd <- pdata.frame( rd, c( "FMERCODE", "YEARDUM" ), row.names = FALSE )
 try( sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ), data = rd ) )
 
 ## non-positive firm number (works now)
 rd <- riceProdPhil
 rd$FMERCODE <- rd$FMERCODE - 2
-rd <- plm.data( rd, c( "FMERCODE", "YEARDUM" ) )
+rd <- pdata.frame( rd, c( "FMERCODE", "YEARDUM" ), row.names = FALSE )
 b1 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ), data = rd )
 print( summary( b1 ), digits = 1 )
 round( efficiencies( b1 ), 2 )
@@ -94,14 +109,14 @@ round( efficiencies( b1 ), 2 )
 ## firm number > number of firms (works now)
 rd <- riceProdPhil
 rd$FMERCODE[ rd$FMERCODE == 9 ] <- 47
-rd <- plm.data( rd, c( "FMERCODE", "YEARDUM" ) )
+rd <- pdata.frame( rd, c( "FMERCODE", "YEARDUM" ), row.names = FALSE )
 b2 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ), data = rd )
 print( summary( b2 ), digits = 1 )
 round( efficiencies( b2 ), 2 )
 # now with NA
 rd <- riceProdPhil
 rd$PROD[ rd$FMERCODE == 22 ] <- NA
-rd <- plm.data( rd, c( "FMERCODE", "YEARDUM" ) )
+rd <- pdata.frame( rd, c( "FMERCODE", "YEARDUM" ), row.names = FALSE )
 b2b <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ), data = rd )
 print( summary( b2b ), digits = 1 )
 round( efficiencies( b2b ), 2 )
@@ -109,27 +124,27 @@ round( efficiencies( b2b ), 2 )
 ## non-positive period number (works now)
 rd <- riceProdPhil
 rd$YEARDUM <- rd$YEARDUM - 2
-rd <- plm.data( rd, c( "FMERCODE", "YEARDUM" ) )
+rd <- pdata.frame( rd, c( "FMERCODE", "YEARDUM" ), row.names = FALSE )
 b3 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ), data = rd )
 print( summary( b3 ), digits = 1 )
 
 ## period number > number of periods (works now)
 rd <- riceProdPhil
 rd$YEARDUM[ rd$YEARDUM == 4 ] <- 10
-rd <- plm.data( rd, c( "FMERCODE", "YEARDUM" ) )
+rd <- pdata.frame( rd, c( "FMERCODE", "YEARDUM" ), row.names = FALSE )
 b4 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ), data = rd )
 print( summary( b4 ), digits = 1 )
 # now with NA
 rd <- riceProdPhil
 rd$AREA[ rd$YEARDUM == 4 ] <- NA
-rd <- plm.data( rd, c( "FMERCODE", "YEARDUM" ) )
+rd <- pdata.frame( rd, c( "FMERCODE", "YEARDUM" ), row.names = FALSE )
 b4b <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ), data = rd )
 print( summary( b4b ), digits = 1 )
 
 ## firm without valid observations (works now)
 rd <- riceProdPhil
 rd$PROD[ rd$FMERCODE == 12 ] <- NA
-rd <- plm.data( rd, c( "FMERCODE", "YEARDUM" ) )
+rd <- pdata.frame( rd, c( "FMERCODE", "YEARDUM" ), row.names = FALSE )
 b5 <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ), data = rd )
 print( summary( b5 ), digits = 1 )
 round( efficiencies( b5 ), 2 )

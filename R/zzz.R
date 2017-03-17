@@ -3,7 +3,7 @@
       paste0( "\nPlease cite the 'frontier' package as:\n",
          "Tim Coelli and Arne Henningsen (2013). ",
          "frontier: Stochastic Frontier Analysis. ",
-         "R package version 1.0. ",
+         "R package version 1.1. ",
          "http://CRAN.R-Project.org/package=frontier.\n\n",
          "If you have questions, suggestions, or comments ",
          "regarding the 'frontier' package, ",

@@ -121,7 +121,7 @@
    Investment utilization and farm efficiency in Danish agriculture. 
    FOI working paper 2011/13, Institute of Food and Resource Economics, 
    University of Copenhagen, 
-   \url{http://econpapers.repec.org/RePEc:foi:wpaper:2011_13}.
+   \url{http://EconPapers.repec.org/RePEc:foi:wpaper:2011_13}.
 }
 
 \author{Arne Henningsen}
@@ -133,7 +133,7 @@
    # rice producers in the Philippines (panel data)
    data( "riceProdPhil" )
    library( "plm" )
-   riceProdPhil <- plm.data( riceProdPhil, c( "FMERCODE", "YEARDUM" ) )
+   riceProdPhil <- pdata.frame( riceProdPhil, c( "FMERCODE", "YEARDUM" ) )
 
    # Error Components Frontier (Battese & Coelli 1992), no time effect
    rice <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ),

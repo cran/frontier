@@ -1,6 +1,6 @@
 frontierQuad <- function(
       yName, xNames, shifterNames = NULL, zNames = NULL, data,
-      ...  ) {
+      lrTests = FALSE, ...  ) {
 
    # check names of variables
    checkNames( c( yName, xNames, shifterNames ), names( data ) )
@@ -10,7 +10,12 @@ frontierQuad <- function(
       }
    }
 
-   if ("plm.dim" %in% class(data)) {
+   if( inherits( data, "pdata.frame" ) ) {
+      # current panel data format from pkg plm
+      dataQuad <- index( data )
+      dataQuad$y <- data[[ yName ]]
+   } else if( inherits( data, "plm.dim" ) ) {
+      # deprecated panel data format from pkg plm
       dataQuad <- data[, 1:2]
       dataQuad$y <- data[[ yName ]]
    } else {
@@ -70,6 +75,29 @@ frontierQuad <- function(
    names( result$mleParam ) <- allParNames
    rownames( result$mleCov ) <- allParNames
    colnames( result$mleCov ) <- allParNames
+   
+   if( lrTests ) {
+      for( i in 1:length( xNames ) ) {
+         tmpModel <- frontierQuad( yName = yName, xNames = xNames[ -i ], 
+            shifterNames = shifterNames, zNames = zNames, data = data,
+            lrTests = FALSE, ...  )
+         tmpLrtest <- lrtest( result, tmpModel ) 
+         if( i == 1 ) {
+            result$lrTests <- tmpLrtest
+         } else {
+            rownames( tmpLrtest )[ 2 ] <- i + 1
+            result$lrTests <- rbind( result$lrTests, tmpLrtest[ -1 , ] )
+         }
+      }
+      attributes( result$lrTests )$heading[ 1 ] <- 
+         paste( attributes( result$lrTests )$heading[ 1 ],
+            "Note: all models are tested against the full model (model 1)\n",
+            sep = "" )
+      attributes( result$lrTests )$heading[ 2 ] <- 
+         paste( "Model 1: full model\n",
+            paste( "Model ", 2:( length( xNames ) + 1 ), ": without '", 
+               xNames, "'\n", sep = "", collapse = "" ), sep = "" )
+   }
 
    class( result ) <- c( "frontierQuad", class( result ) )
 
