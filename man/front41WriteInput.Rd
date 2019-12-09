@@ -9,10 +9,10 @@
 }
 
 \usage{
-   front41WriteInput( data, crossSectionName, timePeriodName = NULL,
+front41WriteInput( data, crossSectionName, timePeriodName = NULL,
    yName, xNames = NULL, qxNames = NULL, zNames = NULL, quadHalf = TRUE,
    modelType = ifelse( is.null( zNames ), 1, 2 ), functionType = 1,
-   logDepVar = TRUE, mu = FALSE, eta = FALSE,
+   logDepVar = TRUE, mu = FALSE, eta = FALSE, path = ".",
    insFile = "front41.ins", dtaFile = sub( "\\\\.ins$", ".dta", insFile ),
    outFile = sub( "\\\\.ins$", ".out", insFile ), startUpFile = "front41.000",
    iprint = 5, indic = 1, tol = 0.00001, tol2 = 0.001, bignum = 1.0E+16,
@@ -47,6 +47,8 @@
       be included in the estimation.}
    \item{eta}{logical. Should an 'eta' be included in the estimation
       (only in case of an 'Error Components Frontier', i.e. modelType = 1).}
+   \item{path}{path in which the instruction file, the data file,
+      and the start-up file should be written.}
    \item{insFile}{name of the instruction file.}
    \item{dtaFile}{name of the data file.}
    \item{outFile}{name of the output file.}
@@ -126,11 +128,13 @@
    front41Data$logLabour  <- log( front41Data$labour )
 
    front41WriteInput( front41Data, "firm", yName = "logOutput",
-      xNames = c( "logCapital", "logLabour" ), insFile = "coelli.ins" )
+      xNames = c( "logCapital", "logLabour" ), 
+      path = tempdir(), insFile = "coelli.ins" )
 
    \dontrun{
-   system( "front41.bin coelli.ins" )
-   sfa <- front41ReadOutput( "coelli.out" )
+   system( paste0( "cd ", tempdir(), "; front41.bin coelli.ins" ) )
+   sfa <- front41ReadOutput( file.path( tempdir(), "coelli.out" ) )
+   summary( sfa )
    }
 }
 

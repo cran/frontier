@@ -3,7 +3,7 @@ lrtest.frontier <- function( object, ... ) {
 
    thisCall <- match.call()
 
-   if( ! "frontier" %in% class( object ) ){
+   if( !inherits( object, "frontier" ) ){
       stop( "argument 'object' must be of class 'frontier'" )
    }
 
@@ -61,7 +61,7 @@ lrtest.frontier <- function( object, ... ) {
 
       ## test if all objects are of class "frontier"
       for( i in 1:length( objectList ) ) {
-         if( ! "frontier" %in% class( objectList[[ i ]] ) ){
+         if( !inherits( objectList[[ i ]], "frontier" ) ){
             stop( "all further arguments ('...') must be of class 'frontier'" )
          }
       }

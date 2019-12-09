@@ -1,6 +1,6 @@
-eb475292503800214066cf2106818049 *DESCRIPTION
+ea6c327c148bdcc4ce5a31c91dc24f26 *DESCRIPTION
 55a63158bff9e0459366d8f831d8b5b6 *NAMESPACE
-085b7e69b5538e7f53747524d77cff9a *NEWS
+40db14c2aad873cd34f9bd7712763ffb *NEWS
 e3babd76fec6b1c5ab4604f68d45ef1c *R/checkNames.R
 174d508729e50941c3b60977654cfb18 *R/coef.front41Output.R
 9e918d3825c31217c942691177496cb4 *R/coef.frontier.R
@@ -11,13 +11,13 @@ b175f63b12f8bdfd0d88db7fd4b12ea6 *R/efficiencies.frontier.R
 d9508d5a0611fe9caabecc6482e3d72e *R/fitted.frontier.R
 0e4e08ad27bbfc3ec15cc12258f86508 *R/front41Est.R
 36e8131f6c9104e380b09c7251e23b4b *R/front41ReadOutput.R
-27499c431380d5901cb03377019d3a49 *R/front41WriteInput.R
+2e51594f287bd1a572db8503b7c63b24 *R/front41WriteInput.R
 3fd70f744f4e21bab986e494bc4bbbf3 *R/frontier.R
-d902a10cf67283e48a9f242ceaf8ad15 *R/frontierDataTable.R
+e3dbb3ace39d770a9726e39d69740be5 *R/frontierDataTable.R
 a56da8e8a6ffc4c395b3faa4fb2a9b9b *R/frontierQuad.R
 2200e8065d822116bf98755be4f3b639 *R/frontierTranslogRay.R
-ee97d418fd063e94b841728642c2585c *R/logLik.frontier.R
-16c0e0f67f751f6a3a3515d67c7c541f *R/lrtest.frontier.R
+f3b3722b828c3aca24a56fc606c4028f *R/logLik.frontier.R
+0de67a9af84258bbae9b6eec428f1c2f *R/lrtest.frontier.R
 2010376918d1fcdfe87e6ba4ca903063 *R/nobs.frontier.R
 b7d9845c471e2c17f44f1dd78aa44f42 *R/print.front41Output.R
 cb2784cb64aac3363bd23be3eeb0d553 *R/print.frontier.R
@@ -25,7 +25,7 @@ cb2784cb64aac3363bd23be3eeb0d553 *R/print.frontier.R
 54a6c49f902a6124ce9e0ee55851551d *R/print.summary.frontier.R
 6f29e6678ea4f3e1f1c37b3c2bcfa3fd *R/resettestFrontier.R
 9453157fb87b77e82d75ae40fc1e8555 *R/residuals.frontier.R
-a61534c21069a95522c9278b48c5c8e4 *R/sfa.R
+c7373dd0ccc983709a591df33e4fcbd7 *R/sfa.R
 b5c7b78a44cee7a4cf89b0e78a284a8a *R/summary.front41Output.R
 a5d86202f7e1953b2137ee1848b0175d *R/summary.frontier.R
 40c1004524084924c6951eb1cddb2268 *R/vcov.frontier.R
@@ -44,8 +44,8 @@ aedac0cfe2a5fc3f4a67f73aa5b11bac *man/elas.frontierQuad.Rd
 3a0d583c9751ae488b25fb64ccd8f18a *man/fitted.frontier.Rd
 438dc1633a88bf6a6598ffe9abc89fb2 *man/front41Data.Rd
 76d933906f7caf6f6d3c72ea77c0f0be *man/front41Est.Rd
-5f2e587cfa52813d9cc78b34eaa0014d *man/front41ReadOutput.Rd
-76a0aa85a27102fd216a95a6508dec3b *man/front41WriteInput.Rd
+b6f733b4e252388c8c8ebec1599b44ac *man/front41ReadOutput.Rd
+7f2f559261872c2ad06417434393855f *man/front41WriteInput.Rd
 10bbb99b075b02c3e6e917f5f0a0909d *man/frontier.Rd
 4917db875cee4302a7b1df3c690caa0d *man/frontierQuad.Rd
 1db34cd48c2dc8a1a45c0aafbc977cc5 *man/frontierTranslogRay.Rd
@@ -62,7 +62,7 @@ eb2d6f5a4d4cc2c7906c40bb74c3944a *src/dis.c
 84acecfe429a05442b10f5fc4e775585 *src/front41.f
 e41f986db7d369098da93726ecc97bc8 *src/frontier_init.c
 fcd126416b1aef73d5997c0eb2397b04 *tests/fail.R
-871d2e01c26688a49faa0cf1e944754d *tests/frontier41.R
+0e8df4db4df8b5dafba5859203b7da0e *tests/frontier41.R
 d75f72880c2743ee512acef87d38db04 *tests/frontierTest.R
 babd3dc9cd9d46f9f02833dabcbeac15 *tests/nestedModels.R
 ed2815a839a0da16063fc0fb81029dfd *tests/translogRay.R

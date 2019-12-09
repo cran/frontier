@@ -4,6 +4,12 @@ Please note that only the most significant changes are reported here.
 A full ChangeLog is available in the log messages of the SVN repository
 on R-Forge.
 
+            CHANGES IN VERSION 1.1-6  (2019-12-09)
+
+* added argument "path" to front41WriteInput()
+
+* internal improvements to make this package compatible with R 4.0.0            
+
 
             CHANGES IN VERSION 1.1-2  (2017-03-17)
 

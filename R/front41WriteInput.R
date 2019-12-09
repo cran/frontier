@@ -2,6 +2,7 @@ front41WriteInput <- function( data, crossSectionName, timePeriodName = NULL,
    yName, xNames = NULL, qxNames = NULL, zNames = NULL, quadHalf = TRUE,
    modelType = ifelse( is.null( zNames ), 1, 2 ), functionType = 1,
    logDepVar = TRUE, mu = FALSE, eta = FALSE,
+   path = ".",
    insFile = "front41.ins", dtaFile = sub( "\\.ins$", ".dta", insFile ),
    outFile = sub( "\\.ins$", ".out", insFile ), startUpFile = "front41.000",
    iprint = 5, indic = 1, tol = 0.00001, tol2 = 0.001, bignum = 1.0E+16,
@@ -118,42 +119,44 @@ front41WriteInput <- function( data, crossSectionName, timePeriodName = NULL,
 
    cat( modelType, rep( " ", commentRow - 1 ),
       "1=ERROR COMPONENTS MODEL, 2=TE EFFECTS MODEL\n",
-      file = insFile, sep = "" )
+      file = file.path( path, insFile ), sep = "" )
    cat( dtaFile, rep( " ", commentRow - nchar( dtaFile ) ),
-      "DATA FILE NAME\n", file = insFile, append = TRUE, sep = "" )
+      "DATA FILE NAME\n", file = file.path( path, insFile ), 
+      append = TRUE, sep = "" )
    cat( outFile, rep( " ", commentRow - nchar( outFile ) ),
-      "OUTPUT FILE NAME\n", file = insFile, append = TRUE, sep = "" )
+      "OUTPUT FILE NAME\n", file = file.path( path, insFile ), 
+      append = TRUE, sep = "" )
    cat( functionType, rep( " ", commentRow - 1 ),
       "1=PRODUCTION FUNCTION, 2=COST FUNCTION\n",
-      file = insFile, append = TRUE, sep = "" )
+      file = file.path( path, insFile ), append = TRUE, sep = "" )
    cat( ifelse( logDepVar, "y", "n" ), rep( " ", commentRow - 1 ),
       "LOGGED DEPENDENT VARIABLE (Y/N)\n",
-      file = insFile, append = TRUE, sep = "" )
+      file = file.path( path, insFile ), append = TRUE, sep = "" )
    cat( nCrossSection,
       rep( " ", commentRow - nchar( as.character( nCrossSection ) ) ),
       "NUMBER OF CROSS-SECTIONS\n",
-      file = insFile, append = TRUE, sep = "" )
+      file = file.path( path, insFile ), append = TRUE, sep = "" )
    cat( nTimePeriods,
       rep( " ", commentRow - nchar( as.character( nTimePeriods ) ) ),
       "NUMBER OF TIME PERIODS\n",
-      file = insFile, append = TRUE, sep = "" )
+      file = file.path( path, insFile ), append = TRUE, sep = "" )
    cat( nTotalObs,
       rep( " ", commentRow - nchar( as.character( nTotalObs ) ) ),
       "NUMBER OF OBSERVATIONS IN TOTAL\n",
-      file = insFile, append = TRUE, sep = "" )
+      file = file.path( path, insFile ), append = TRUE, sep = "" )
    cat( nXtotal,
       rep( " ", commentRow - nchar( as.character( nXtotal ) ) ),
       "NUMBER OF REGRESSOR VARIABLES (Xs)\n",
-      file = insFile, append = TRUE, sep = "" )
+      file = file.path( path, insFile ), append = TRUE, sep = "" )
    cat( ifelse( mu, "y", "n" ), rep( " ", commentRow - 1 ),
       "MU (Y/N) [OR DELTA0 (Y/N) IF USING TE EFFECTS MODEL]\n",
-      file = insFile, append = TRUE, sep = "" )
+      file = file.path( path, insFile ), append = TRUE, sep = "" )
    cat( eta, rep( " ", commentRow - nchar( as.character( eta ) ) ),
       "ETA (Y/N) [OR NUMBER OF TE EFFECTS REGRESSORS (Zs)]\n",
-      file = insFile, append = TRUE, sep = "" )
+      file = file.path( path, insFile ), append = TRUE, sep = "" )
    cat( "n", rep( " ", commentRow - 1 ),
       "STARTING VALUES (Y/N)\n",
-      file = insFile, append = TRUE, sep = "" )
+      file = file.path( path, insFile ), append = TRUE, sep = "" )
 
    ## create table for data
    # cross section identifier
@@ -195,83 +198,83 @@ front41WriteInput <- function( data, crossSectionName, timePeriodName = NULL,
    }
 
    # write data file to disk
-   write.table( dataTable, file = dtaFile, row.names = FALSE,
+   write.table( dataTable, file = file.path( path, dtaFile ), row.names = FALSE,
       col.names = FALSE, sep = "\t" )
 
    ## create start-up file
    if( !is.null( startUpFile ) ) {
       cat( "KEY VALUES USED IN FRONTIER PROGRAM (VERSION 4.1)\n",
-         file = startUpFile )
+         file = file.path( path, startUpFile ) )
       cat( "NUMBER:         DESCRIPTION:\n",
-         file = startUpFile, append = TRUE )
+         file = file.path( path, startUpFile ), append = TRUE )
       cat( iprint,
          rep( " ", 16 - nchar( as.character( iprint ) ) ),
          "IPRINT - PRINT INFO EVERY \"N\" ITERATIONS, 0=DO NOT PRINT\n",
-         file = startUpFile, append = TRUE, sep = "" )
+         file = file.path( path, startUpFile ), append = TRUE, sep = "" )
       cat( indic,
          rep( " ", 16 - nchar( as.character( indic ) ) ),
          "INDIC - USED IN UNIDIMENSIONAL SEARCH PROCEDURE - SEE BELOW\n",
-         file = startUpFile, append = TRUE, sep = "" )
+         file = file.path( path, startUpFile ), append = TRUE, sep = "" )
       tolString <- sub( "e", "D", format( tol, scientific = 2 ) )
       cat( tolString,
          rep( " ", 16 - nchar( tolString ) ),
          "TOL - CONVERGENCE TOLERANCE (PROPORTIONAL)\n",
-         file = startUpFile, append = TRUE, sep = "" )
+         file = file.path( path, startUpFile ), append = TRUE, sep = "" )
       tol2String <- sub( "e", "D", format( tol2, scientific = 2 ) )
       cat( tol2String,
          rep( " ", 16 - nchar( tol2String ) ),
          "TOL2 - TOLERANCE USED IN UNI-DIMENSIONAL SEARCH PROCEDURE\n",
-         file = startUpFile, append = TRUE, sep = "" )
+         file = file.path( path, startUpFile ), append = TRUE, sep = "" )
       bignumString <- sub( "e", "D", format( bignum, scientific = 2 ) )
       cat( bignumString,
          rep( " ", 16 - nchar( bignumString ) ),
          "BIGNUM - USED TO SET BOUNDS ON DEN & DIST\n",
-         file = startUpFile, append = TRUE, sep = "" )
+         file = file.path( path, startUpFile ), append = TRUE, sep = "" )
       step1String <- sub( "e", "D", format( step1, scientific = 2 ) )
       cat( step1String,
          rep( " ", 16 - nchar( step1String ) ),
          "STEP1 - SIZE OF 1ST STEP IN SEARCH PROCEDURE\n",
-         file = startUpFile, append = TRUE, sep = "" )
+         file = file.path( path, startUpFile ), append = TRUE, sep = "" )
       cat( igrid2,
          rep( " ", 16 - nchar( as.character( igrid2 ) ) ),
          "IGRID2 - 1=DOUBLE ACCURACY GRID SEARCH, 0=SINGLE\n",
-         file = startUpFile, append = TRUE, sep = "" )
+         file = file.path( path, startUpFile ), append = TRUE, sep = "" )
       cat( gridno,
          rep( " ", 16 - nchar( as.character( gridno ) ) ),
          "GRIDNO - STEPS TAKEN IN SINGLE ACCURACY GRID SEARCH ON GAMMA\n",
-         file = startUpFile, append = TRUE, sep = "" )
+         file = file.path( path, startUpFile ), append = TRUE, sep = "" )
       cat( maxit,
          rep( " ", 16 - nchar( as.character( maxit ) ) ),
          "MAXIT - MAXIMUM NUMBER OF ITERATIONS PERMITTED\n",
-         file = startUpFile, append = TRUE, sep = "" )
+         file = file.path( path, startUpFile ), append = TRUE, sep = "" )
       cat( ite,
          rep( " ", 16 - nchar( as.character( ite ) ) ),
          "ITE - 1=PRINT ALL TE ESTIMATES, 0=PRINT ONLY MEAN TE\n",
-         file = startUpFile, append = TRUE, sep = "" )
+         file = file.path( path, startUpFile ), append = TRUE, sep = "" )
       cat( "\n",
-         file = startUpFile, append = TRUE )
+         file = file.path( path, startUpFile ), append = TRUE )
       cat( "THE NUMBERS IN THIS FILE ARE READ BY THE FRONTIER PROGRAM WHEN IT BEGINS\n",
-         file = startUpFile, append = TRUE )
+         file = file.path( path, startUpFile ), append = TRUE )
       cat( "EXECUTION. YOU MAY CHANGE THE NUMBERS IN THIS FILE IF YOU WISH. IT IS\n",
-         file = startUpFile, append = TRUE )
+         file = file.path( path, startUpFile ), append = TRUE )
       cat( "ADVISED THAT A BACKUP OF THIS FILE IS MADE PRIOR TO ALTERATION.\n",
-         file = startUpFile, append = TRUE )
+         file = file.path( path, startUpFile ), append = TRUE )
       cat( "\n",
-         file = startUpFile, append = TRUE )
+         file = file.path( path, startUpFile ), append = TRUE )
       cat( "FOR MORE INFORMATION ON THESE VARIABLES SEE: COELLI (1996), CEPA WORKING\n",
-         file = startUpFile, append = TRUE )
+         file = file.path( path, startUpFile ), append = TRUE )
       cat( "PAPER 96/07, UNIVERSITY OF NEW ENGLAND, ARMIDALE, NSW, 2351, AUSTRALIA.\n",
-         file = startUpFile, append = TRUE )
+         file = file.path( path, startUpFile ), append = TRUE )
       cat( "\n",
-         file = startUpFile, append = TRUE )
+         file = file.path( path, startUpFile ), append = TRUE )
       cat( "INDIC VALUES:\n",
-         file = startUpFile, append = TRUE )
+         file = file.path( path, startUpFile ), append = TRUE )
       cat( "indic=2 says do not scale step length in unidimensional search\n",
-         file = startUpFile, append = TRUE )
+         file = file.path( path, startUpFile ), append = TRUE )
       cat( "indic=1 says scale (to length of last step) only if last step was smaller\n",
-         file = startUpFile, append = TRUE )
+         file = file.path( path, startUpFile ), append = TRUE )
       cat( "indic= any other number says scale (to length of last step) \n",
-         file = startUpFile, append = TRUE )
+         file = file.path( path, startUpFile ), append = TRUE )
    }
 
    returnList <- list( data = dataTable,
@@ -286,6 +289,7 @@ front41WriteInput <- function( data, crossSectionName, timePeriodName = NULL,
       logDepVar = logDepVar,
       mu = mu,
       eta = eta,
+      path = path,
       insFile = insFile,
       dtaFile = dtaFile,
       outFile = outFile,

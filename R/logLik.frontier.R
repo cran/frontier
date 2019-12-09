@@ -24,7 +24,7 @@ logLik.frontier <- function( object, which = "mle", newParam = NULL, ... ) {
       if( tolower( which ) != "mle" ) {
          warning( "argument 'which' has been ignored" )
       }
-      if( "frontierQuad" %in% class( object ) ) {
+      if( inherits( object, "frontierQuad" ) ) {
          result <- logLik( frontierQuad(
             yName = eval( object$call$yName ),
             xNames = eval( object$call$xNames ),

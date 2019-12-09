@@ -31,7 +31,7 @@ sfa <- function(
    formula <- formula( formula, lhs = 1, rhs = 1 )
 
    # formula
-   if( class( formula ) != "formula" ) {
+   if( !inherits( formula, "formula" ) ) {
       stop( "argument 'formula' must be a formula" )
    } else if( length( formula ) != 3 ) {
       stop( "argument 'formula' must be a 2-sided formula" )
@@ -489,7 +489,7 @@ sfa <- function(
             " is not positive semidefinite" )
       } else {
          testSingularCov <- try( solve( returnObj$mleCov ), silent = TRUE )
-         if( class( testSingularCov ) == "try-error" ) {
+         if( inherits( testSingularCov, "try-error" ) ) {
             if( grepl( "singular", testSingularCov[1] ) ) {
                warning( "the covariance matrix of the maximum likelihood estimates",
                   " is singular" )

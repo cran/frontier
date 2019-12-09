@@ -1,6 +1,6 @@
 Package: frontier
-Version: 1.1-2
-Date: 2017-03-17
+Version: 1.1-6
+Date: 2019-12-09
 Title: Stochastic Frontier Analysis
 Author: Tim Coelli, Arne Henningsen
 Maintainer: Arne Henningsen <arne.henningsen@gmail.com>
@@ -12,12 +12,13 @@ Description: Maximum Likelihood Estimation of
    Stochastic Frontier Production and Cost Functions.
    Two specifications are available:
    the error components specification with time-varying efficiencies
-   (Battese and Coelli, 1992)
+   (Battese and Coelli, 1992, <doi:10.1007/BF00158774>)
    and a model specification in which the firm effects are directly 
-   influenced by a number of variables (Battese and Coelli, 1995).
+   influenced by a number of variables (Battese and Coelli, 1995,
+   <doi:10.1007/BF01205442>).
 License: GPL (>= 2)
 URL: http://frontier.r-forge.r-project.org/
 NeedsCompilation: yes
-Packaged: 2017-03-17 13:38:59 UTC; arne
+Packaged: 2019-12-09 19:31:04 UTC; gsl324
 Repository: CRAN
-Date/Publication: 2017-03-17 18:56:00 UTC
+Date/Publication: 2019-12-09 20:40:08 UTC

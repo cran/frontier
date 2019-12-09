@@ -53,7 +53,7 @@ frontierDataTable <- function( data, formula, effFormula, mc, mfe ) {
       zMat <- NULL
       zIntercept <- FALSE
    } else {
-      if( class( effFormula ) != "formula" ) {
+      if( !inherits( effFormula, "formula" ) ) {
          stop( "argument 'effFormula' must be a formula" )
       } else if( length( effFormula ) != 2 ) {
          stop( "argument 'formula' must be a 1-sided formula" )

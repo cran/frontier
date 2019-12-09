@@ -1,4 +1,5 @@
 library( frontier )
+suppressWarnings( RNGversion( "3.5.3" ) )
 
 ## *****************************
 ## Testing front41WriteInput
@@ -8,31 +9,29 @@ front41Data$logOutput  <- log( front41Data$output )
 front41Data$logCapital <- log( front41Data$capital )
 front41Data$logLabour  <- log( front41Data$labour )
 
-insFile <- file()
-dtaFile  <- file()
-
 front41Ins <- front41WriteInput( front41Data, "firm", yName = "logOutput",
-   xNames = c( "logCapital", "logLabour" ), insFile = insFile, dtaFile = dtaFile  )
+   xNames = c( "logCapital", "logLabour" ), path = tempdir() )
 
-print( front41Ins )
+print( front41Ins[ names( front41Ins ) != "path" ] )
 
-print( readLines( insFile ) )
-print( readLines( dtaFile ) )
+print( readLines( file.path( tempdir(), "front41.ins" ) ) )
+print( readLines( file.path( tempdir(), "front41.dta" ) ) )
+print( readLines( file.path( tempdir(), "front41.000" ) ) )
+
 
 # irregular firm (cross section) identifier
 set.seed( 20061705 )
+
 front41Data$firm <- sample( c( 1:( nrow( front41Data ) + 20 ) ) )[ 1:nrow( front41Data ) ]
 
 front41Ins <- front41WriteInput( front41Data, "firm", yName = "logOutput",
-   xNames = c( "logCapital", "logLabour" ), insFile = insFile, dtaFile = dtaFile  )
+   xNames = c( "logCapital", "logLabour" ), path = tempdir() )
 
-print( front41Ins )
+print( front41Ins[ names( front41Ins ) != "path" ] )
 
-print( readLines( insFile ) )
-print( readLines( dtaFile ) )
-
-close( insFile )
-close( dtaFile )
+print( readLines( file.path( tempdir(), "front41.ins" ) ) )
+print( readLines( file.path( tempdir(), "front41.dta" ) ) )
+print( readLines( file.path( tempdir(), "front41.000" ) ) )
 
 
 ## *****************************
