@@ -1,6 +1,6 @@
 
       subroutine front41(
-     $  imArg, ipcArg, iceptArg,
+     $  imArg, ipcArg,
      $  nnArg, ntArg, nobArg, nbArg, nmuArg, netaArg,
      $  iprintArg, indicArg, tolArg, tol2Arg, bignumArg,
      $  step1Arg, igrid2Arg, gridnoArg, maxitArg, bmuArg,
@@ -104,6 +104,7 @@ c       contains the main loop of this iterative program.
       dimension yy(nn,nt),xx(nn,nt,nr),sv(n)
       dimension ob(n),ga(nb),gb(n),x(:),y(n),s(:)
       dimension h(n,n),delx(:),delg(:),gx(:),gy(:)
+      dimension arpr(1)
       allocatable :: x,s,delx,delg,gx,gy
       allocate(x(n),s(n))
       allocate(delx(n),delg(n),gx(n),gy(n))
@@ -132,7 +133,8 @@ c       contains the main loop of this iterative program.
       if (iprint.ne.0) then
         call intpr( 'iteration', -1, iter, 1 )
         call intpr( 'function evaluations', -1, nfunct, 1 )
-        call dblepr( 'log-likelihood value', -1, -fy, 1 )
+        arpr(1)=-fy
+        call dblepr( 'log-likelihood value', -1, arpr, 1 )
         call dblepr( 'parameters', -1, y, n )
       endif
       if (maxit.eq.0) goto 70
@@ -162,8 +164,9 @@ c       contains the main loop of this iterative program.
       if (ipass.eq.1.) then
         if ((iter.eq.1).and.(icode.eq.5).and.(nrestart.le.mrestart))
      $      then
+          arpr(1)=frestart
           call dblepr( 'restarting with starting values multiplied by',
-     $      -1, frestart, 1 )
+     $      -1, arpr, 1 )
           do 108 i=1,n
             sv(i)=x(i)*frestart
   108     continue
@@ -178,7 +181,8 @@ c       contains the main loop of this iterative program.
         if (printcon.eq.dble(0)) then
           call intpr( 'iteration', -1, iter, 1 )
           call intpr( 'function evaluations', -1, nfunct, 1 )
-          call dblepr( 'log-likelihood value', -1, -fy, 1 )
+          arpr(1)=-fy
+          call dblepr( 'log-likelihood value', -1, arpr, 1 )
           call dblepr( 'parameters', -1, y, n )
         endif
       endif
@@ -201,7 +205,8 @@ c       contains the main loop of this iterative program.
       if (iprint.ne.0) then
         call intpr( 'iteration', -1, iter, 1 )
         call intpr( 'function evaluations', -1, nfunct, 1 )
-        call dblepr( 'log-likelihood value', -1, -fy, 1 )
+        arpr(1)=-fy
+        call dblepr( 'log-likelihood value', -1, arpr, 1 )
         call dblepr( 'parameters', -1, y, n )
       endif
       deallocate(x,s,delx,delg,gx,gy)
@@ -345,7 +350,13 @@ c       determines the step length (t) using a unidimensional search.
         return
       endif
       k=k+1
-      if(f-fa) 5,3,6
+      if (f.lt.fa) then
+        goto 5
+      elseif (f.eq.fa) then
+        goto 3
+      else
+        goto 6
+      endif
     3 do 4 i=1,n
         y(i)=x(i)+da*s(i)
     4 continue
@@ -363,7 +374,13 @@ c       determines the step length (t) using a unidimensional search.
       da=d
       d=dble(2)*d+step
       goto 1
-    6 if(k) 7,8,9
+    6 if (k.lt.0) then
+        goto 7
+      elseif (k.eq.0) then
+        goto 8
+      else
+        goto 9
+      endif
     7 fb=f
       db=d
       d=-d
@@ -388,7 +405,13 @@ c       determines the step length (t) using a unidimensional search.
    11 continue
       if (im.eq.1) call fun1(y,f,yy,xx)
       if (im.eq.2) call fun2(y,f,yy,xx)
-   12 if((dc-d)*(d-db)) 15,13,18
+   12 if ((dc-d)*(d-db).lt.0) then
+        goto 15
+      elseif ((dc-d)*(d-db).eq.0) then
+        goto 13
+      else
+        goto 18
+      endif
    13 do 14 i=1,n
         y(i)=x(i)+db*s(i)
    14 continue
@@ -399,7 +422,13 @@ c       determines the step length (t) using a unidimensional search.
      $    -1, 0, 0 )
       endif
       goto 325
-   15 if(f-fb) 16,13,17
+   15 if (f.lt.fb) then
+        goto 16
+      elseif (f.eq.fb) then
+        goto 13
+      else
+        goto 17
+      endif
    16 fc=fb
       fb=f
       dc=db
@@ -408,7 +437,13 @@ c       determines the step length (t) using a unidimensional search.
    17 fa=f
       da=d
       goto 21
-   18 if(f-fb) 19,13,20
+   18 if (f.lt.fb) then
+        goto 19
+      elseif (f.eq.fb) then
+        goto 13
+      else
+        goto 20
+      endif
    19 fa=fb
       fb=f
       da=db
@@ -417,25 +452,51 @@ c       determines the step length (t) using a unidimensional search.
    20 fc=f
       dc=d
    21 a=fa*(db-dc)+fb*(dc-da)+fc*(da-db)
-      if(a) 22,30,22
+      if (a.lt.0) then
+        goto 22
+      elseif (a.eq.0) then
+        goto 30
+      else
+        goto 22
+      endif
    22 d=dble(0.5)*
      $  ((db*db-dc*dc)*fa+(dc*dc-da*da)*fb+(da*da-db*db)*fc)/a
-      if((da-d)*(d-dc)) 13,13,23
+      if ((da-d)*(d-dc).gt.0) then
+        goto 23
+      else
+        goto 13
+      endif
    23 do 24 i=1,n
         y(i)=x(i)+d*s(i)
    24 continue
       if (im.eq.1) call fun1(y,f,yy,xx)
       if (im.eq.2) call fun2(y,f,yy,xx)
-      if(dabs(fb)-ftol2) 25,25,26
+      if (dabs(fb)-ftol2.gt.0) then
+        goto 26
+      else
+        goto 25
+      endif
    25 a=dble(1)
       goto 27
    26 a=dble(1)/fb
-   27 if((dabs(fb-f)*a)-ftol) 28,28,12
+   27 if ((dabs(fb-f)*a).gt.ftol) then
+        goto 12
+      else
+        goto 28
+      endif
    28 iexit=1
-      if(f-fb) 29,13,13
+      if (f.lt.fb) then
+        goto 29
+      else
+        goto 13
+      endif
    29 fy=f
       goto 32
-   30 if(m) 31,31,13
+   30 if (m.gt.0) then
+        goto 13
+      else
+        goto 31
+      endif
    31 m=m+1
       goto 10
    32 do 99 i=1,n
@@ -570,18 +631,13 @@ c       of the log-likelihood function of the error components model.
       g=b(n2)
       u=dble(0)
       e=dble(0)
+      n3=nb+nz+3
+      n4=nb+nz+3+nmu
       if (nmu.eq.1) then
-        n3=nb+nz+3
         u=b(n3)
-        if (neta.eq.1) then
-          n4=nb+nz+4
-          e=b(n4)
-        endif
-      else
-        if (neta.eq.1) then
-          n4=nb+nz+3
-          e=b(n4)
-        endif
+      endif
+      if (neta.eq.1) then
+        e=b(n4)
       endif
       sc=dble(1)
       if (ipc.eq.2) sc=-dble(1)
@@ -843,11 +899,12 @@ c       also reads data from a file.
         return
       endif
       allocate(yy(nn,nt),xx(nn,nt,nr),mm(nn),xxd(nr-nmu*(im-1)))
-      do 135 i=1,nn
+      do 145 i=1,nn
         mm(i)=0
         do 135 l=1,nt
           xx(i,l,1)=dble(0)
   135   continue
+  145 continue
       if ((2+nr-nmu*(im-1)).ne.nColData) then
       call intpr( 'internal error: 2 + nr - nmu * (im-1)',-1, 0, 0 )
       call intpr( 'is not equal to argument ''nColData''',-1, 0, 0 )

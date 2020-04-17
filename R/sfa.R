@@ -179,7 +179,7 @@ sfa <- function(
    }
 
    nParamTotal <- nb + 2 + mu + eta
-   if( nParamTotal > nob ) {
+   if( nParamTotal > nob && maxit > 0 ) {
       stop( "the model cannot be estimated,",
          " because the number of parameters (", nParamTotal,
          ") is larger than the number of",
@@ -197,26 +197,36 @@ sfa <- function(
    }
 
    # OLS estimation
-   if( nb > 0 ) {
-      ols <- lm( tmp$yVec ~ tmp$xMat - 1 )
-   } else if( nb == 0 ) {
-      ols <- lm( tmp$yVec ~ -1 )
+   if( maxit > 0 ) {
+      if( nb > 0 ) {
+         ols <- lm( tmp$yVec ~ tmp$xMat - 1 )
+      } else if( nb == 0 ) {
+         ols <- lm( tmp$yVec ~ -1 )
+      }
+      if( any( is.na( coef( ols ) ) ) ) {
+         stop( "at least one coefficient estimated by OLS is NA: ",
+            paste( colnames( tmp$xMat )[ is.na( coef( ols ) ) ], collapse = ", " ),
+         ". This may have been caused by (nearly) perfect multicollinearity" )
+      }
+      olsParam <- c( coef( ols ), summary( ols )$sigma^2 )
+      olsStdEr <- sqrt( diag( vcov( ols ) ) )
+      olsLogl  <- logLik( ols )[ 1 ]
+   } else {
+      olsParam <- rep( 0, ncol( tmp$xMat ) + 1 )
+      olsStdEr <- rep( NA, ncol( tmp$xMat ) )
+      olsLogl  <- NA
    }
-   if( any( is.na( coef( ols ) ) ) ) {
-      stop( "at least one coefficient estimated by OLS is NA: ",
-         paste( colnames( tmp$xMat )[ is.na( coef( ols ) ) ], collapse = ", " ),
-      ". This may have been caused by (nearly) perfect multicollinearity" )
-   }
-   olsParam <- c( coef( ols ), summary( ols )$sigma^2 )
-   olsStdEr <- sqrt( diag( vcov( ols ) ) )
-   olsLogl  <- logLik( ols )[ 1 ]
    
    # factors for adjusting the parameters in the grid search
-   if( nb > 0 ) {
-      gridAdj <- coef( 
-         lm( rep( 1, nrow( dataTable ) ) ~ dataTable[ , 4:( 3 + nb ) ] - 1 ) )
+   if( maxit > 0 ) {
+      if( nb > 0 ) {
+         gridAdj <- coef( 
+            lm( rep( 1, nrow( dataTable ) ) ~ dataTable[ , 4:( 3 + nb ) ] - 1 ) )
+      } else {
+         gridAdj <- numeric( 0 )
+      }
    } else {
-      gridAdj <- numeric( 0 )
+      gridAdj <- rep( 0, nb )
    }
    if( length( gridAdj ) != nb ) {
       stop( "internal error: the length of 'gridAdj' is not equal to 'nb'.",
@@ -226,7 +236,6 @@ sfa <- function(
    returnObj <- .Fortran( C_front41,
       modelType = as.integer( modelType ),
       ineffDecrease = as.integer( ( !ineffDecrease ) + 1 ),
-      icept = as.integer( 0 ),
       nn = as.integer( nn ),
       nt = as.integer( nt ),
       nob = as.integer( nob ),
@@ -335,21 +344,26 @@ sfa <- function(
    }
 
    ## skewness of OLS residuals
-   returnObj$olsResid <- residuals( ols )
+   if( maxit > 0 ) {
+      returnObj$olsResid <- residuals( ols )
+   } else {
+      returnObj$olsResid <- rep( NA, nob )
+   }
    returnObj$olsSkewness <- skewness( returnObj$olsResid )
    returnObj$olsSkewnessOkay <- returnObj$olsSkewness * ( -1 )^ineffDecrease >= 0
 
 
    ## warnings regarding wrong skewness, smaller logLik value, and no convergence
    warnMaxit <- maxit <= returnObj$nIter && maxit > 0
-   if( !returnObj$olsSkewnessOkay && returnObj$mleLogl < returnObj$olsLogl ) {
+   if( !returnObj$olsSkewnessOkay && returnObj$mleLogl < returnObj$olsLogl &&
+         maxit > 0 ) {
       warning( "the residuals of the OLS estimates are ",
          ifelse( ineffDecrease, "right", "left" ), "-skewed",
          " and the likelihood value of the ML estimation is less",
          " than that obtained using OLS;",
          " this usually indicates that there is no inefficiency",
          " or that the model is misspecified" )
-   } else if( !returnObj$olsSkewnessOkay ) {
+   } else if( !returnObj$olsSkewnessOkay && maxit > 0 ) {
       warning( "the residuals of the OLS estimates are ",
          ifelse( ineffDecrease, "right", "left" ), "-skewed;",
          " this might indicate that there is no inefficiency",

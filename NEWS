@@ -4,6 +4,19 @@ Please note that only the most significant changes are reported here.
 A full ChangeLog is available in the log messages of the SVN repository
 on R-Forge.
 
+            CHANGES IN VERSION 1.1-8  (2020-04-15)
+
+* added a cooks.distance() method for obtaining Pseudo-Cook's Distances
+
+* added a predict() method for predicting frontier values
+
+* added argument "newdata" to the efficiencies() method so that efficiency
+estimates can be calculated for other observations than for those that were
+used in the estimation
+
+* made Fortran code compatible with gfortran 10
+
+
             CHANGES IN VERSION 1.1-6  (2019-12-09)
 
 * added argument "path" to front41WriteInput()

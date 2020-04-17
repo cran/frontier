@@ -14,9 +14,9 @@
    This data frame contains the following columns:
    \describe{
       \item{firm}{firm ID.}
-      \item{output}{output.}
-      \item{capital}{capital.}
-      \item{labour}{labour.}
+      \item{output}{output quantity (value added).}
+      \item{capital}{capital input quantity (quantity index).}
+      \item{labour}{labour input quantity (quantity index).}
    }
 }
 

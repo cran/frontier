@@ -1,6 +1,6 @@
 Package: frontier
-Version: 1.1-6
-Date: 2019-12-09
+Version: 1.1-8
+Date: 2020-04-15
 Title: Stochastic Frontier Analysis
 Author: Tim Coelli, Arne Henningsen
 Maintainer: Arne Henningsen <arne.henningsen@gmail.com>
@@ -19,6 +19,6 @@ Description: Maximum Likelihood Estimation of
 License: GPL (>= 2)
 URL: http://frontier.r-forge.r-project.org/
 NeedsCompilation: yes
-Packaged: 2019-12-09 19:31:04 UTC; gsl324
+Packaged: 2020-04-15 07:29:45 UTC; gsl324
 Repository: CRAN
-Date/Publication: 2019-12-09 20:40:08 UTC
+Date/Publication: 2020-04-17 16:10:03 UTC

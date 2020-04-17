@@ -1,8 +1,26 @@
 # efficiencies of frontier models
 efficiencies.frontier <- function( object, asInData = FALSE,
    logDepVar = TRUE, minusU = farrell, farrell = TRUE, 
-   margEff = FALSE, ... ) {
+   margEff = FALSE, newdata = NULL, ... ) {
 
+   if( !is.null( newdata ) ) {
+      if( !is.data.frame( newdata ) ) {
+         stop( "argument 'newdata' must be of class data.frame")
+      }
+      estCall <- object$call
+      estFunc <- as.character( estCall[[ 1 ]] )
+      estArg <- as.list( estCall )[ -1 ]
+      estArg$data <- newdata
+      
+      estArg$maxit <- 0
+      estArg$startVal <- object$mleParam
+      estNew <- suppressWarnings( do.call( estFunc, estArg ) )
+      eff <- efficiencies( estNew, asInData = asInData,
+         logDepVar = logDepVar, minusU = minusU, farrell = farrell, 
+         margEff = margEff, ... )
+      return( eff )
+   }
+   
    resid <- residuals( object )
    fitted <- - resid
    for( i in 1:nrow( object$dataTable ) ) {
@@ -104,7 +122,7 @@ efficiencies.frontier <- function( object, asInData = FALSE,
          for( i in 1:nz ) {
             zDelta <- zDelta + object$dataTable[ ,
                   ncol( object$dataTable ) - nz + i ] *
-               coef( object )[ object$icept + object$nb + object$zIntercept + i  ]
+               coef( object )[ object$nb + object$zIntercept + i  ]
          }
       } else {
          zDelta <- rep( zDelta, nrow( object$dataTable ) )
@@ -144,7 +162,7 @@ efficiencies.frontier <- function( object, asInData = FALSE,
                   c( nrow( margEffectsBase ), ncol( margEffectsBase ), nz ) )
                for( i in 1:nz ) {
                   margEffects[ , , i ] <- margEffectsBase *
-                     coef( object )[ object$icept + object$nb + object$zIntercept + i  ]
+                     coef( object )[ object$nb + object$zIntercept + i  ]
                }
             }
          }
@@ -188,8 +206,8 @@ efficiencies.frontier <- function( object, asInData = FALSE,
    if( margEff ) {
       dimnames( margEffects ) <- list( rownames( resid ),
          if( ncol( result ) > 1 ){ colnames( resid ) } else { "efficiency" },
-         names( coef( object ) )[ ( object$icept + object$nb + object$zIntercept + 1 ):( 
-            object$icept + object$nb + object$zIntercept + nz ) ] )
+         names( coef( object ) )[ ( object$nb + object$zIntercept + 1 ):( 
+            object$nb + object$zIntercept + nz ) ] )
    }
 
    if( asInData ) {

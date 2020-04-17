@@ -11,7 +11,7 @@
 \usage{
 \method{efficiencies}{frontier}( object, asInData = FALSE,
    logDepVar = TRUE, minusU = farrell, farrell = TRUE, 
-   margEff = FALSE, \dots )
+   margEff = FALSE, newdata = NULL, \dots )
 }
 
 \arguments{
@@ -50,6 +50,12 @@
       which was slightly adjusted for the differing model specifications.
       Currently, this feature is implemented only for models 
       with logged dependent variables.}
+   \item{newdata}{an optional data frame from which the values 
+      of explanatory variables and the dependent variable are taken 
+      to calculate the efficiency estimates.
+      If this argument is \code{NULL} (the default),
+      the efficiency estimates are calculated for the observations
+      that were used in the estimation.}
    \item{\dots}{currently ignored.}
 }
 
@@ -140,6 +146,10 @@
       data = riceProdPhil )
    efficiencies( rice )
    riceProdPhil$efficiencies <- efficiencies( rice, asInData = TRUE )
+
+   # efficiency of an 'average' farm
+   efficiencies( rice, 
+      newdata = data.frame( t( colMeans( riceProdPhil[ , -c(1,2) ] ) ) ) )
 
    # Error Components Frontier (Battese & Coelli 1992), with time effect
    riceTime <- sfa( log( PROD ) ~ log( AREA ) + log( LABOR ) + log( NPK ),
